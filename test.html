@@ -4,32 +4,83 @@
     <meta charset="UTF-8">
     <title>welcome!</title>
     <style>
-        .parent {
-            width: 100vw;
-            height: 100vh;            
-            display: flex;
-            justify-content: center;  
-            align-items: center;      
-            background: #000000;
+        body {
+            cursor: none;
+            margin: 0;
+            padding: 0;
+            height: 200vh;
+            overflow-x: hidden;
         }
-        .center-box {
-            width: 350px;
-            height: 350px;
-            background-color: aqua;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: large;
-            color: #000000;
+
+        .background {
+            background-image: url("bg_ocean.jpg");
+            background-size: cover;
+            background-position: 50% 50%;
+            height: 200vh;
+            font: 900 18rem Arial, sans-serif;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            position: relative;
             text-align: center;
+            overflow: hidden;
+        }
+
+        .background::before {
+            content: '';
+            background-image: inherit;
+            background-size: cover;
+            background-position: 50% 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -99;
+        }
+
+        #mouse-follower {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 38px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="parent">
-        <div class="center-box">
-            welcome to whack!
-        </div>
-    </div>
+    <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
+    <div class="background"><span>Welcome<br>To<br>Whack</span></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const follower = document.getElementById('mouse-follower');
+
+            document.addEventListener('mousemove', function (e) {
+                follower.style.display = 'block';
+                follower.style.left = (e.clientX - 24) + 'px';
+                follower.style.top = (e.clientY - 24) + 'px';
+            });
+
+            document.addEventListener('mouseleave', function () {
+                follower.style.display = 'none';
+            });
+        });
+
+        const bg = document.querySelector(".background");
+        document.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            if (scrollY !== 0) {
+                bg.style.backgroundPosition = `calc(50% + ${scrollY}px) calc(50% + ${scrollY}px)`;
+            } else {
+                bg.style.backgroundPosition = '';
+            }
+        });
+    </script>
 </body>
 </html>
