@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>This is a visualization</title>
+    <style>
+        body {
+            cursor: none;
+            margin: 0;
+            padding: 0;
+            height: 200vh;
+            overflow-x: hidden;
+        }
+
+        .background {
+            background-image: url("sky.jpg");
+            background-size: cover;
+            background-position: 50% 50%;
+            height: 200vh;
+            font: 900 18rem Arial, sans-serif;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .background::before {
+            content: '';
+            background-image: inherit;
+            background-size: cover;
+            background-position: 50% 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -99;
+        }
+        .wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            transition: transform 0.05s ease-out;
+            opacity: 0.8;
+            width: 1400px;
+            height: auto;
+        }
+        #wave1 { z-index: 1; }
+        #wave2 { z-index: 2; }
+        #wave3 { z-index: 3; }
+
+        #mouse-follower {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 38px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background">VISUAL</div>
+
+    <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
+    
+    <img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
+    <img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
+    <img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const follower = document.getElementById('mouse-follower');
+        const wave1 = document.getElementById('wave1');
+        const wave2 = document.getElementById('wave2');
+        const wave3 = document.getElementById('wave3');
+        const bg = document.querySelector(".background");
+
+        document.addEventListener('mousemove', function (e) {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Show and move main follower
+            follower.style.display = 'block';
+            follower.style.left = (x - 24) + 'px';
+            follower.style.top = (y - 24) + 'px';
+
+            // Parallax waves: smaller factor = slower movement
+            wave1.style.transform = `translate(${x * 0.02}px, ${y * 0.02}px)`;
+            wave2.style.transform = `translate(${x * 0.05}px, ${y * 0.05}px)`;
+            wave3.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+
+            // Move background to follow mouse
+            const percentX = x / window.innerWidth;
+            const percentY = y / window.innerHeight;
+            const offsetX = (percentX - 0.5) * 50; // max offset of ±25%
+            const offsetY = (percentY - 0.5) * 50;
+
+            bg.style.backgroundPosition = `calc(50% + ${offsetX}%) calc(50% + ${offsetY}%)`;
+        });
+
+        document.addEventListener('mouseleave', function () {
+            follower.style.display = 'none';
+        });
+    });
+</script>
+
+</body>
+</html>
