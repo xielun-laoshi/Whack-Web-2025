@@ -13,32 +13,21 @@
         }
 
         .background {
-            background-image: url("sky.jpg");
+            background-image: url("sky.png");
             background-size: cover;
-            background-position: 50% 50%;
+            background-position: center;
+            width: 100vw; /* full viewport width */
             height: 200vh;
-            font: 900 18rem Arial, sans-serif;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            position: relative;
+            font: 900 10rem Arial, sans-serif;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            overflow: hidden;
+            position: relative;
+            overflow-x: hidden; /* prevent horizontal scroll */
         }
 
-        .background::before {
-            content: '';
-            background-image: inherit;
-            background-size: cover;
-            background-position: 50% 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            z-index: -99;
-        }
         .wave {
             position: absolute;
             top: 0;
@@ -47,12 +36,14 @@
             z-index: 1;
             transition: transform 0.05s ease-out;
             opacity: 0.8;
-            width: 1400px;
+            width: 100vw; /* full viewport width */
             height: auto;
         }
+
         #wave1 { z-index: 1; }
         #wave2 { z-index: 2; }
         #wave3 { z-index: 3; }
+
 
         #mouse-follower {
             position: fixed;
@@ -67,7 +58,7 @@
     </style>
 </head>
 <body>
-    <div class="background">VISUAL</div>
+    <div class="background"></div>
 
     <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
     
