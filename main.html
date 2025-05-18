@@ -24,7 +24,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            position: fixed; /* changed from relative to fixed for scroll animation */
+            position: fixed;
             top: 0;
             left: 0;
             z-index: -2;
@@ -34,7 +34,7 @@
         .wave {
             width: 100vw;
             height: 100vh;
-            position: fixed; /* fixed for scroll animation */
+            position: fixed;
             bottom: 0;
             left: 0;
             object-fit: cover;
@@ -77,42 +77,45 @@
             const wave3 = document.getElementById('wave3');
             const bg = document.querySelector(".background");
 
+            let scrollY = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            function updateTransforms() {
+                // Background scroll parallax
+                bg.style.transform = `translateY(${-scrollY * 0.3}px)`;
+                bg.style.backgroundPosition = `${-offsetX * 0.02}px ${-offsetY * 0.02}px`;
+                
+                // Waves parallax from mouse and scroll
+                wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02 - scrollY * 0.1}px)`;
+                wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05 - scrollY * 0.2}px)`;
+                wave3.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 0.3}px)`;
+            }
+
             document.addEventListener('mousemove', function (e) {
                 const x = e.clientX;
                 const y = e.clientY;
 
                 const centerX = window.innerWidth / 2;
                 const centerY = window.innerHeight / 2;
-                const offsetX = x - centerX;
-                const offsetY = y - centerY;
+                offsetX = x - centerX;
+                offsetY = y - centerY;
 
                 // Show and move follower
                 follower.style.display = 'block';
                 follower.style.left = (x - 24) + 'px';
                 follower.style.top = (y - 24) + 'px';
 
-                // Parallax move waves
-                wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02}px)`;
-                wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05}px)`;
-                wave3.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1}px)`;
-
-                // Background parallax
-                bg.style.backgroundPosition = `${-offsetX * 0.02}px ${-offsetY * 0.02}px`;
+                updateTransforms();
             });
 
             document.addEventListener('mouseleave', function () {
                 follower.style.display = 'none';
             });
 
-            // Scroll-triggered movement
-            window.addEventListener('scroll', function () {
-                const scrollY = window.scrollY;
-
-                // Move background and waves upward
-                bg.style.transform = `translateY(${-scrollY * 0.3}px)`;
-                wave1.style.transform += ` translateY(${-scrollY * 0.1}px)`;
-                wave2.style.transform += ` translateY(${-scrollY * 0.2}px)`;
-                wave3.style.transform += ` translateY(${-scrollY * 0.3}px)`;
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
+                updateTransforms();
             });
         });
     </script>
