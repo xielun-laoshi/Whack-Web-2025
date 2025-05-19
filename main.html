@@ -4,12 +4,36 @@
     <meta charset="UTF-8">
     <title>This is a visualization</title>
     <style>
-        body {
-            cursor: none;
+        body, html {
             margin: 0;
             padding: 0;
-            height: 200vh;
+            height: auto;
             overflow-x: hidden;
+            cursor: none;
+        }
+
+        .layer1, .layer2 {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            will-change: transform;
+        }
+
+        .layer2 {
+            background-color: #3b37ce;
+            position: absolute;
+            top: 100vh; /* Start right after layer1 (below the fold) */
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            will-change: transform;
+        }
+
+        .layer1 {
+            z-index: 1;
         }
 
         .background {
@@ -61,13 +85,17 @@
     </style>
 </head>
 <body>
-    <div class="background"></div>
+    <div class="layer2"></div>
 
-    <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
-    
-    <img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
-    <img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
-    <img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+    <div class="layer1">
+        <div class="background"></div>
+
+        <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
+
+        <img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
+        <img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
+        <img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -76,20 +104,24 @@
             const wave2 = document.getElementById('wave2');
             const wave3 = document.getElementById('wave3');
             const bg = document.querySelector(".background");
+            const layer2 = document.querySelector('.layer2');
 
             let scrollY = 0;
             let offsetX = 0;
             let offsetY = 0;
 
             function updateTransforms() {
-                // Background scroll parallax
+                // Background parallax
                 bg.style.transform = `translateY(${-scrollY * 0.3}px)`;
                 bg.style.backgroundPosition = `${-offsetX * 0.02}px ${-offsetY * 0.02}px`;
-                
-                // Waves parallax from mouse and scroll
+
+                // Waves parallax
                 wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02 - scrollY * 0.1}px)`;
                 wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05 - scrollY * 0.2}px)`;
                 wave3.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 0.3}px)`;
+
+                // Layer2 scrolls upward at the same speed as wave3
+                layer2.style.transform = `translateY(-${scrollY * 0.3}px)`;
             }
 
             document.addEventListener('mousemove', function (e) {
@@ -101,7 +133,6 @@
                 offsetX = x - centerX;
                 offsetY = y - centerY;
 
-                // Show and move follower
                 follower.style.display = 'block';
                 follower.style.left = (x - 24) + 'px';
                 follower.style.top = (y - 24) + 'px';
