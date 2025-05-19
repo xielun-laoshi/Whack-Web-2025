@@ -28,7 +28,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
+            z-index: 2;
             will-change: transform;
         }
 
@@ -112,16 +112,16 @@
 
             function updateTransforms() {
                 // Background parallax
-                bg.style.transform = `translateY(${-scrollY * 0.3}px)`;
+                bg.style.transform = `translateY(${-scrollY * 1}px)`;
                 bg.style.backgroundPosition = `${-offsetX * 0.02}px ${-offsetY * 0.02}px`;
 
                 // Waves parallax
-                wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02 - scrollY * 0.1}px)`;
-                wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05 - scrollY * 0.2}px)`;
-                wave3.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 0.3}px)`;
+                wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02 - scrollY * 0.8}px)`;
+                wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05 - scrollY * 0.9}px)`;
+                wave3.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 1}px)`;
 
                 // Layer2 scrolls upward at the same speed as wave3
-                layer2.style.transform = `translateY(-${scrollY * 0.3}px)`;
+                layer2.style.transform = `translateY(-${scrollY * 1}px)`;
             }
 
             document.addEventListener('mousemove', function (e) {
