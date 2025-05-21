@@ -6,4 +6,4 @@ dev log:
 5/12 - Tried fake 3d effect: worked, need improvement   
 5/17 - Fixed fake 3d bugs, added scrolling effect   
 5/18 - Added page 2   
-5/19 - Fixed the animation logistics for wave3 as well as layer 2, fixed small bugs about the cursor
+5/21 - Fixed the animation logistics for wave3 as well as layer 2, fixed small bugs about the cursor
