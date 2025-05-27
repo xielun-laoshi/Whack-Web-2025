@@ -58,14 +58,14 @@
         }
 
         .wave {
-            width: 100vw;
-            height: 100vh;
+            width: 1600px;
             position: fixed;
-            bottom: 0;
-            left: 0;
+            transform: translateX(-50%);
+            bottom: -110px;
+            left: -80px;
             object-fit: cover;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 1;
             transition: transform 0.05s ease-out;
             z-index: -1;
         }
@@ -74,8 +74,8 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: 50px;
-            height: 38px;
+            width: 77px;
+            height: 40px;
             pointer-events: none;
             z-index: 1000;
             display: none;
@@ -94,6 +94,9 @@
 
         <img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
         <img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
+        <img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+        <img class="wave" id="wave4" src="wave4.png" alt="Wave 4">
+
     </div>
 
     <script>
@@ -101,38 +104,57 @@
             const follower = document.getElementById('mouse-follower');
             const wave1 = document.getElementById('wave1');
             const wave2 = document.getElementById('wave2');
+            const wave3 = document.getElementById('wave3');
+            const wave4 = document.getElementById('wave4');
             const wave3_layer2 = document.getElementById('wave3_layer2');
             const bg = document.querySelector(".background");
 
             let scrollY = 0;
             let offsetX = 0;
             let offsetY = 0;
+            let scaleY = 1;
 
             function updateTransforms() {
                 // Background parallax
                 bg.style.transform = `translateY(${-scrollY * 1}px)`;
                 bg.style.backgroundPosition = `${-offsetX * 0.02}px ${-offsetY * 0.02}px`;
 
-                // Waves parallax
-                wave1.style.transform = `translate(${offsetX * 0.02}px, ${offsetY * 0.02 - scrollY * 0.8}px)`;
-                wave2.style.transform = `translate(${offsetX * 0.05}px, ${offsetY * 0.05 - scrollY * 0.9}px)`;
+                // Waves parallax + scale
+                applyTransform(wave1, offsetX * 0.02, offsetY * 0.02 - scrollY * 0.7, scaleY);
+                applyTransform(wave2, offsetX * 0.05, offsetY * 0.05 - scrollY * 0.8, scaleY);
+                applyTransform(wave3, offsetX * 0.08, offsetY * 0.08 - scrollY * 0.9, scaleY);
+                applyTransform(wave4, offsetX * 0.11, offsetY * 0.11 - scrollY * 1, scaleY);
 
                 // Wave3 layer2 parallax
                 wave3_layer2.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 1}px)`;
+            }
+
+            function applyTransform(element, tx, ty, scaleY) {
+                element.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
+                element.style.transformOrigin = 'top';
             }
 
             document.addEventListener('mousemove', function (e) {
                 const x = e.clientX;
                 const y = e.clientY;
 
+                // Update offset for parallax
                 const centerX = window.innerWidth / 2;
                 const centerY = window.innerHeight / 2;
                 offsetX = x - centerX;
-                offsetY = y - centerY;
+                // Cap Y influence if mouse is above 900px
+                const maxInfluenceY = Math.min(y, 900); // Only influence up to 900px
+                offsetY = maxInfluenceY - centerY;
 
+                // Update custom cursor
                 follower.style.display = 'block';
                 follower.style.left = (x - 24) + 'px';
                 follower.style.top = (y - 24) + 'px';
+
+                // Update wave squish (scaleY)
+                const windowHeight = window.innerHeight;
+                const maxCrop = 900; // Max influence height for squish
+                scaleY = Math.max(0.75, Math.min(1, y / maxCrop));  // clamped between 0.75 and 1
 
                 updateTransforms();
             });
@@ -145,6 +167,7 @@
                 scrollY = window.scrollY;
                 updateTransforms();
             });
+            updateTransforms();
         });
     </script>
 </body>
