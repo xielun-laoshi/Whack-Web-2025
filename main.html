@@ -74,7 +74,7 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: 77px;
+            width: 79px;
             height: 40px;
             pointer-events: none;
             z-index: 1000;
@@ -157,6 +157,14 @@
                 scaleY = Math.max(0.75, Math.min(1, y / maxCrop));  // clamped between 0.75 and 1
 
                 updateTransforms();
+            });
+
+            document.addEventListener('mousedown', function () {
+                follower.style.transform = 'scale(0.6)';
+            });
+
+            document.addEventListener('mouseup', function () {
+                follower.style.transform = 'scale(1)';
             });
 
             document.addEventListener('mouseleave', function () {
