@@ -1,194 +1,146 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>This is a visualization</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: auto;
-            overflow-x: hidden;
-            cursor: none;
-        }
+	<meta charset="UTF-8">
+	<title>Clean Parallax Visualization</title>
+	<style>
+		/* Global reset & hide native cursor */
+		html, body {
+			margin: 0;
+			padding: 0;
+			overflow-x: hidden;
+			cursor: none;
+		}
 
-        .layer1 {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            will-change: transform;
-        }
+		/* Custom cursor image */
+		#mouse-follower {
+			position: fixed;
+			display: none;
+			pointer-events: none;
+			width: 79px;
+			height: 40px;
+			z-index: 1000;
+			transition: transform 0.1s;
+		}
 
-        .layer2 {
-            position: absolute;
-            top: 80vh;
-            left: 0;
-            width: 100vw;
-            z-index: 2;
-            text-align: center;
-        }
+		/* Background layer */
+		.background {
+			position: fixed;
+			inset: 0; /* top:0; right:0; bottom:0; left:0 */
+			background: url("sky.png") center/cover no-repeat;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font: 900 10rem Arial, sans-serif;
+			color: #fff;
+			z-index: -2;
+			transition: transform 0.05s, background-position 0.05s;
+		}
 
-        #wave3_layer2 {
-            width: 1600px;
-            height: auto;
-            left: -300px;
-            transform: translateX(-50%);
-            will-change: transform;
-            pointer-events: none;
-            object-fit: cover;
-            pointer-events: none;
-            opacity: 1;
-            transition: transform 0.05s ease-out;
-            z-index: -1;
-        }
+		/* Common wave style */
+		.wave {
+			position: fixed;
+			bottom: -110px;
+			left: -110px;
+			width: 1700px;
+			object-fit: cover;
+			pointer-events: none;
+			transform: translateX(-50%);
+			transition: transform 0.05s;
+			z-index: -1;
+		}
 
-        .background {
-            background-image: url("sky.png");
-            background-size: cover;
-            background-position: center center;
-            width: 100vw;
-            height: 100vh;
-            font: 900 10rem Arial, sans-serif;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -2;
-            transition: transform 0.05s ease-out, background-position 0.05s ease-out;
-        }
-
-        .wave {
-            width: 1600px;
-            position: fixed;
-            transform: translateX(-50%);
-            bottom: -110px;
-            left: -80px;
-            object-fit: cover;
-            pointer-events: none;
-            opacity: 1;
-            transition: transform 0.05s ease-out;
-            z-index: -1;
-        }
-
-        #mouse-follower {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 79px;
-            height: 40px;
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
-        }
-    </style>
+		/* Second layer for the extra wave3 image */
+		.layer2 {
+			position: absolute;
+			top: 80vh;
+			left: 50px;
+			width: 1600px;
+			text-align: center;
+			z-index: 2;
+		}
+		#wave3_layer2 {
+			width: 100%;
+			pointer-events: none;
+			transition: transform 0.05s;
+		}
+	</style>
 </head>
 <body>
-    <img id="mouse-follower" src="mouse.PNG" alt="Mouse">
-    
-    <div class="layer2">
-        <img id="wave3_layer2" src="wave3_layer2.png" alt="Wave 3 Layer 2">
-    </div>
+	<!-- Custom cursor -->
+	<img id="mouse-follower" src="mouse.PNG" alt="Custom Cursor">
 
-    <div class="layer1">
-        <div class="background"></div>
+	<!-- Extra wave3 on a separate layer -->
+	<div class="layer2">
+		<img id="wave3_layer2" src="wave3_layer2.png" alt="Wave 3 Layer 2">
+	</div>
 
-        <!-- wave1 stays where it is -->
-        <img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
+	<!-- Background and four waves -->
+	<div class="background"></div>
+	<img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
+	<img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
+	<img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+	<img class="wave" id="wave4" src="wave4.png" alt="Wave 4">
 
-        <!-- masked waves -->
-        <div class="wave-mask">
-            <img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
-            <img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
-            <img class="wave" id="wave4" src="wave4.png" alt="Wave 4">
-        </div>
-    </div>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const follower    = document.getElementById('mouse-follower');
+			const bg          = document.querySelector('.background');
+			const waves       = Array.from(document.querySelectorAll('.wave'));
+			const wave3Layer2 = document.getElementById('wave3_layer2');
 
+			let scrollY = 0, offsetX = 0, offsetY = 0, scaleY = 1;
+			const moveFactors   = [0.005, 0.05, 0.1, 0.15];
+			const scrollFactors = [0.7,   0.9,  1.1,  1.3];
+			const BASE_SHIFT    = -160;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const follower = document.getElementById('mouse-follower');
-            const wave1 = document.getElementById('wave1');
-            const wave2 = document.getElementById('wave2');
-            const wave3 = document.getElementById('wave3');
-            const wave4 = document.getElementById('wave4');
-            const wave3_layer2 = document.getElementById('wave3_layer2');
-            const bg = document.querySelector(".background");
+			function updateParallax() {
+				// Background parallax
+				bg.style.transform = `translateY(${-scrollY}px)`;
+				bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
 
-            let scrollY = 0;
-            let offsetX = 0;
-            let offsetY = 0;
-            let scaleY = 1;
+				// Apply transform to each wave
+				waves.forEach((wave, i) => {
+					const tx = offsetX * moveFactors[i];
+					const ty = offsetY * moveFactors[i] - scrollY * scrollFactors[i];
+					wave.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
+					wave.style.transformOrigin = 'top';
+				});
 
-            function updateTransforms() {
-                // Background parallax
-                bg.style.transform = `translateY(${-scrollY * 1}px)`;
-                bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
+				// Extra wave3 on layer2
+				const tx3 = offsetX * 0.15 + BASE_SHIFT;
+				const ty3 = offsetY * 0.15 - scrollY * 1.3;
+				wave3Layer2.style.transform = `translate(${tx3}px, ${ty3}px)`;
+			}
 
-                // Waves parallax + scale
-                applyTransform(wave1, offsetX * 0.005, offsetY * 0.005 - scrollY * 0.7, scaleY);
-                applyTransform(wave2, offsetX * 0.05, offsetY * 0.05 - scrollY * 0.9, scaleY);
-                applyTransform(wave3, offsetX * 0.1, offsetY * 0.1 - scrollY * 1.1, scaleY);
-                applyTransform(wave4, offsetX * 0.15, offsetY * 0.15 - scrollY * 1.3, scaleY);
+			// Mouse move handler
+			document.addEventListener('mousemove', e => {
+				offsetX = e.clientX - window.innerWidth / 2;
+				offsetY = Math.min(e.clientY, 900) - window.innerHeight / 2;
+				scaleY  = Math.max(0.8, Math.min(1, e.clientY / 900));
 
-                // Wave3 layer2 parallax
-                wave3_layer2.style.transform = `translate(${offsetX * 0.1}px, ${offsetY * 0.1 - scrollY * 1.1}px)`;
-            }
+				follower.style.display = 'block';
+				follower.style.left    = `${e.clientX - 24}px`;
+				follower.style.top     = `${e.clientY - 24}px`;
 
-            function applyTransform(element, tx, ty, scaleY) {
-                element.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
-                element.style.transformOrigin = 'top';
-            }
+				updateParallax();
+			});
 
-            document.addEventListener('mousemove', function (e) {
-                const x = e.clientX;
-                const y = e.clientY;
+			// Mouse down/up => cursor scale effect
+			document.addEventListener('mousedown',  () => follower.style.transform = 'scale(0.6)');
+			document.addEventListener('mouseup',    () => follower.style.transform = 'scale(1)');
+			document.addEventListener('mouseleave', () => follower.style.display   = 'none');
 
-                // Update offset for parallax
-                const centerX = window.innerWidth / 2;
-                const centerY = window.innerHeight / 2;
-                offsetX = x - centerX;
-                // Cap Y influence if mouse is above 900px
-                const maxInfluenceY = Math.min(y, 900); // Only influence up to 900px
-                offsetY = maxInfluenceY - centerY;
+			// Scroll handler for vertical parallax
+			window.addEventListener('scroll', () => {
+				scrollY = window.scrollY;
+				updateParallax();
+			});
 
-                // Update custom cursor
-                follower.style.display = 'block';
-                follower.style.left = (x - 24) + 'px';
-                follower.style.top = (y - 24) + 'px';
-
-                // Update wave squish (scaleY)
-                const windowHeight = window.innerHeight;
-                const maxCrop = 900; // Max influence height for squish
-                scaleY = Math.max(0.8, Math.min(1, y / maxCrop));  // clamped between 0.8 and 1
-
-                updateTransforms();
-            });
-
-            document.addEventListener('mousedown', function () {
-                follower.style.transform = 'scale(0.6)';
-            });
-
-            document.addEventListener('mouseup', function () {
-                follower.style.transform = 'scale(1)';
-            });
-
-            document.addEventListener('mouseleave', function () {
-                follower.style.display = 'none';
-            });
-
-            window.addEventListener('scroll', () => {
-                scrollY = window.scrollY;
-                updateTransforms();
-            });
-            updateTransforms();
-        });
-    </script>
+			// Initial render
+			updateParallax();
+		});
+	</script>
 </body>
 </html>
+\
