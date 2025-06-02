@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Clean Parallax Visualization</title>
+	<style>
+		/* Global reset & hide native cursor */
+		html, body {
+			margin: 0;
+			padding: 0;
+			overflow-x: hidden;
+			cursor: none;
+		}
+
+		/* Custom cursor image */
+		#mouse-follower {
+			position: fixed;
+			display: none;
+			pointer-events: none;
+			width: 79px;
+			height: 40px;
+			z-index: 1000;
+			transition: transform 0.1s;
+		}
+
+		/* Background layer */
+		.background {
+			position: fixed;
+			width: 101%;
+			height: 101%;
+			top: -5px;
+			left: -5px;
+			background: url("sky.png") center/cover no-repeat;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font: 900 10rem Arial, sans-serif;
+			color: #fff;
+			z-index: -2;
+			transition: transform 0.05s, background-position 0.05s;
+		}
+
+		/* Common wave style */
+		.wave {
+			position: fixed;
+			bottom: -260px;
+			left: -110px;
+			width: 1700px;
+			height: 160vh;
+			object-fit: cover;
+			pointer-events: none;
+			transform: translateX(-50%);
+			transition: transform 0.05s;
+			z-index: -1;
+		}
+
+		/* Ensure wave4 is above the title */
+		#wave4 {
+			z-index: 1;
+		}
+
+		/* TITLE IMAGE – prepare for 3D tilt */
+		#title {
+			position: fixed;
+			top: 5rem;
+			left: 50%;
+			/* no initial rotation, just centered */
+			transform: translateX(-50%) rotateX(0deg) rotateY(0deg);
+			transform-origin: center center;
+			transition: transform 0.2s ease-out;
+			pointer-events: none;
+			width: 70vw;
+			height: auto;
+			z-index: 0;
+			/* give the element its own 3D context */
+			will-change: transform;
+		}
+
+		/* Second layer for the extra wave3 image */
+		.layer2 {
+			position: absolute;
+			top: 89vh;
+			left: 50px;
+			width: 1650px;
+			text-align: center;
+			z-index: 2;
+		}
+		#wave3_layer2 {
+			width: 100%;
+			pointer-events: none;
+			transition: transform 0.05s;
+		}
+	</style>
+</head>
+<body>
+	<!-- Custom cursor -->
+	<img id="mouse-follower" src="mouse.png" alt="Custom Cursor">
+
+	<!-- Extra wave3 on a separate layer -->
+	<div class="layer2">
+		<img id="wave3_layer2" src="wave3_layer2.gif" alt="Wave 3 Layer 2">
+	</div>
+
+	<!-- title image -->
+	<img id="title" src="title.png" alt="Title">
+
+	<!-- Background and four waves -->
+	<div class="background"></div>
+	<img class="wave" id="wave1" src="wave1.png" alt="Wave 1">
+	<img class="wave" id="wave2" src="wave2.png" alt="Wave 2">
+	<img class="wave" id="wave3" src="wave3.png" alt="Wave 3">
+	<img class="wave" id="wave4" src="wave4.png" alt="Wave 4">
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const follower    = document.getElementById('mouse-follower');
+			const bg          = document.querySelector('.background');
+			const waves       = Array.from(document.querySelectorAll('.wave'));
+			const wave3Layer2 = document.getElementById('wave3_layer2');
+			const title       = document.getElementById('title');
+
+			let scrollY = 0, offsetX = 0, offsetY = 0, scaleY = 1;
+			const moveFactors   = [0.005, 0.05, 0.1, 0.15];
+			const scrollFactors = [1, 1.3, 1.5, 1.7];
+			const BASE_SHIFT    = -155;
+			const MAX_ROT_X     = 20;  // maximum tilt (degrees) around X
+			const MAX_ROT_Y     = 20;  // maximum tilt (degrees) around Y
+
+			function updateParallax() {
+				// Background parallax
+				bg.style.transform = `translateY(${-scrollY}px)`;
+				bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
+
+				// Apply transform to each wave
+				waves.forEach((wave, i) => {
+					const tx = offsetX * moveFactors[i];
+					const ty = offsetY * moveFactors[i] - scrollY * scrollFactors[i];
+					wave.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
+					wave.style.transformOrigin = 'top';
+				});
+
+				// Extra wave3 on layer2
+				const tx3 = offsetX * 0.15 + BASE_SHIFT;
+				const ty3 = offsetY * 0.15 - scrollY * 1.3;
+				wave3Layer2.style.transform = `translate(${tx3}px, ${ty3}px)`;
+			}
+
+			function distortTitle(e) {
+				const rect = title.getBoundingClientRect();
+				const px   = (e.clientX - rect.left) / rect.width;
+				const py   = (e.clientY - rect.top)  / rect.height;
+
+				// Compute tilt angles
+				const rotY = (px - 0.5) * 2 * MAX_ROT_Y;      // left/right
+				const rotX = (0.5 - py) * 2 * MAX_ROT_X;      // up/down
+
+				// Apply 3D tilt + keep centered
+				title.style.transform =
+					`perspective(800px)
+					 translateX(-50%)
+					 rotateX(${rotX.toFixed(2)}deg)
+					 rotateY(${rotY.toFixed(2)}deg)`;
+			}
+
+			// Mouse move
+			document.addEventListener('mousemove', e => {
+				offsetX = e.clientX - window.innerWidth / 2;
+				offsetY = Math.min(e.clientY, 900) - window.innerHeight / 2;
+				scaleY  = Math.max(0.8, Math.min(1, e.clientY / 900));
+
+				// custom cursor
+				follower.style.display = 'block';
+				follower.style.left    = `${e.clientX - 24}px`;
+				follower.style.top     = `${e.clientY - 24}px`;
+
+				updateParallax();
+				distortTitle(e);
+			});
+
+			// Reset on mouse up/leave
+			function resetTitle() {
+				title.style.transform = 'translateX(-50%) rotateX(0deg) rotateY(0deg)';
+			}
+			document.addEventListener('mouseup',   resetTitle);
+			document.addEventListener('mouseleave', () => {
+				follower.style.display = 'none';
+				resetTitle();
+			});
+
+			// Mouse down shrinks cursor
+			document.addEventListener('mousedown', () => {
+				follower.style.transform = 'scale(0.6)';
+			});
+
+			// Scroll parallax
+			window.addEventListener('scroll', () => {
+				scrollY = window.scrollY;
+				updateParallax();
+			});
+
+			// Initial draw
+			updateParallax();
+		});
+	</script>
+</body>
+</html>

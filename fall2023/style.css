@@ -1,0 +1,175 @@
+/* colors ------------------------------------------------------------------------------ */
+/* primary */
+/* dark blue:    #002776 */
+/* cadet blue:   #5C9EAD */
+/* ivory white:  #FBFFF1 */
+/* light blue:   #C7F0FF */
+/* secondary */
+/* light orange: #E39774 */
+/* dark orange:  #d46633 */
+/* light green:  #407C59 */
+/* dark green:   #214E34 */
+
+/* global ------------------------------------------------------------------------------ */
+body {
+  font-family: "Cabin", sans-serif;
+  font-style: normal;
+  background-color:#dcebfc!important;
+}
+
+@media (max-width: 500px) {
+  body {
+    background-size: 200%, 300%, 300%;
+  }
+}
+
+/* header navbar ------------------------------------------------------------------------- */
+.mlh-badge, .mlh-img {
+  display:block;
+  max-width:5em;
+  position:fixed;
+  right:10%;
+  top:0;
+  width:10%;
+  z-index:10000;
+}
+
+
+/* main/home section ----------------------------------------------------------------------------- */
+#home {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whack2023 {
+  font-family:'Josefin Sans', sans-serif;
+  font-size:4em;
+  color:#da4a8b;
+}
+
+.subheading {
+  color: #315cc4;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.25em;
+  font-size:1.5em;
+}
+
+#about {
+  max-width:40em;
+  text-align:center;
+  margin:auto;
+  padding:1em;
+  margin-bottom:3em;
+}
+
+#preregistration {
+  text-align:center;
+  margin-bottom:5em;
+}
+
+
+/* faq -------------------------------------------------------------------------------- */
+#faq {
+  display: flex;
+  justify-content: center;
+  margin-bottom:3em;
+}
+
+#faq h1 {
+  font-family:"Josefin Sans", sans-serif;
+  color:#da4a8b;
+  text-align:center;
+}
+
+.faq-card {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  margin-top: 1rem;
+  padding: 1rem auto 1rem auto;
+}
+
+.faq-list {
+  list-style-type: none;
+  padding-left:0px;
+  max-width:40em;
+  margin:auto;
+}
+
+.question:before {
+  content: "";
+  display: inline-block;
+  height: 1.8em;
+  width: 2em;
+  margin-bottom: -5px;
+  background-size: 2em;
+  background-image: url("images/faq-leaf.svg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+.faq_exp:before {
+  height: 3em;
+  width: 2.3em;
+  background-size: 3em;
+  background-image: url("images/dropleaf.svg") !important;
+  background-position: bottom;
+  margin-bottom: -10px;
+}
+
+li span {
+  position: relative;
+  left: 0.7em;
+}
+
+.question {
+  color: #315cc4;
+  text-transform:uppercase;
+  font-weight: 600;
+  letter-spacing: .25em;
+  text-indent: -40px;
+  margin-bottom:1em;
+  max-width:40em;
+}
+
+.answer {
+  font-weight: normal;
+  color:black;
+  text-transform:none;
+  letter-spacing: -0.02em;
+  margin: 0.5em 1em 1em 1em;
+  text-indent: 0px;
+  display: none;
+}
+
+.answer a {
+  color: #b9437e;
+}
+
+.question:hover,
+.answer:hover {
+  cursor: pointer;
+}
+
+.email-blurb {
+  padding:1em;
+}
+
+.email-link {
+  color: #da4a8b;
+  font-weight:bold;
+}
+
+/* footer ------------------------------------------------------------------------------ */
+footer {
+  padding:1em;
+  max-width:40em;
+  text-align:center;
+  margin:auto;
+}
+
+footer a {
+  color:#da4a8b;
+  font-weight:bold;
+}
