@@ -2,40 +2,51 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>对角线拉伸示例（带动态阴影）</title>
+  <title>stretching</title>
   <style>
     #container {
-      width: 400px;
-      height: 300px;
       margin: 50px auto;
-      overflow: visible;
       position: relative;
-      background: transparent;
-      border: 1px transparent #ccc;
+      border: 1px solid black;
       perspective: 800px;
+      display: inline-block;
     }
-    #container img {
-      width: 70vh;
+    .img-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 90vh;
       height: auto;
       transform-origin: center;
-      will-change: transform, box-shadow;
-      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-      position: relative;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+    #shadowImg {
+      z-index: 0;
+    }
+    #mainImg {
       z-index: 1;
+      position: relative;
     }
   </style>
 </head>
 <body>
   <div id="container">
-    <img id="diagonalImg" src="title.png" alt="示例图片">
+    <!-- Shadow image -->
+    <img id="shadowImg" class="img-layer" src="../images/shadow.png" alt="阴影">
+    <!-- Main image -->
+    <img id="mainImg" class="img-layer" src="../images/title.png" alt="主图">
   </div>
 
   <script>
-    (function() {
+    (function () {
       const container = document.getElementById('container');
-      const img = document.getElementById('diagonalImg');
-      const maxRotation = 15;  // max degrees
+      const mainImg = document.getElementById('mainImg');
+      const shadowImg = document.getElementById('shadowImg');
+
+      const maxRotation = 15;
       const maxScale = 1.1;
+      const shadowOffset = 10;
 
       let box = null;
       let ticking = false;
@@ -44,9 +55,6 @@
       function updateBox() {
         box = container.getBoundingClientRect();
       }
-
-      window.addEventListener('resize', updateBox);
-      updateBox();
 
       function applyTransform(e) {
         const centerX = box.left + box.width / 2;
@@ -61,12 +69,14 @@
         const rotateY = (percentX * maxRotation).toFixed(2);
         const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
 
-        img.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+        // Main image transform
+        mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
 
-        // Add a soft moving shadow
-        const shadowX = (-percentX * 20).toFixed(1);
-        const shadowY = (-percentY * 20).toFixed(1);
-        img.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0, 0, 0, 0.3)`;
+        // Shadow image transform
+        const shadowScale = (scale * 1.03).toFixed(3);
+        const offsetX = (percentX * shadowOffset).toFixed(1);
+        const offsetY = (percentY * shadowOffset).toFixed(1);
+        shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
 
         ticking = false;
       }
@@ -80,11 +90,21 @@
       }
 
       function resetTransform() {
-        img.style.transform = '';
-        img.style.boxShadow = '';
+        mainImg.style.transform = '';
+        shadowImg.style.transform = '';
         ticking = false;
       }
 
+      function syncContainerToImage() {
+        // Set the container's width and height to match the loaded image
+        const rect = mainImg.getBoundingClientRect();
+        container.style.width = `${mainImg.offsetWidth}px`;
+        container.style.height = `${mainImg.offsetHeight}px`;
+        updateBox();
+      }
+
+      mainImg.addEventListener('load', syncContainerToImage);
+      window.addEventListener('resize', updateBox);
       container.addEventListener('pointermove', onPointerMove);
       container.addEventListener('pointerleave', resetTransform);
       container.addEventListener('pointercancel', resetTransform);
