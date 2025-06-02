@@ -5,17 +5,16 @@
   <title>stretching</title>
   <style>
     #container {
-      margin: 50px auto;
       position: relative;
-      border: 1px solid black;
+      border: 1px transparent black;
       perspective: 800px;
       display: inline-block;
     }
     .img-layer {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 90vh;
+      top: 17.7%;
+      left: 17.7%;
+      width: 100vh;
       height: auto;
       transform-origin: center;
       transition: transform 0.15s ease-out;
@@ -30,7 +29,7 @@
     }
   </style>
 </head>
-<body>
+<body style="margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: transparent;">
   <div id="container">
     <!-- Shadow image -->
     <img id="shadowImg" class="img-layer" src="../images/shadow.png" alt="阴影">
@@ -98,8 +97,8 @@
       function syncContainerToImage() {
         // Set the container's width and height to match the loaded image
         const rect = mainImg.getBoundingClientRect();
-        container.style.width = `${mainImg.offsetWidth}px`;
-        container.style.height = `${mainImg.offsetHeight}px`;
+        container.style.width = `${mainImg.offsetWidth*1.5}px`;
+        container.style.height = `${mainImg.offsetHeight*1.5}px`;
         updateBox();
       }
 
