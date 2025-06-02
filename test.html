@@ -2,28 +2,26 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>对角线拉伸示例（不裁剪版）</title>
+  <title>对角线拉伸示例（带动态阴影）</title>
   <style>
     #container {
-        width: 400px;
-        height: 300px;
-        margin: 50px auto;
-        /* 去掉 overflow: hidden，改为可见 */
-        overflow: visible;
-        position: relative;
-        /* 透明背景，只有边框 */
-        background: transparent;
-        border: 1px solid #ccc;
+      width: 400px;
+      height: 300px;
+      margin: 50px auto;
+      overflow: visible;
+      position: relative;
+      background: transparent;
+      border: 1px transparent #ccc;
+      perspective: 800px;
     }
     #container img {
-        width:70vh;
-        height: auto;
-        transform-origin: center;
-        will-change: transform;
-        transition: transform 0.15s ease-out;
-        /* 保证图片在容器之上，不被其他元素遮挡 */
-        position: relative;
-        z-index: 1;
+      width: 70vh;
+      height: auto;
+      transform-origin: center;
+      will-change: transform, box-shadow;
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+      position: relative;
+      z-index: 1;
     }
   </style>
 </head>
@@ -35,37 +33,41 @@
   <script>
     (function() {
       const container = document.getElementById('container');
-      const img       = document.getElementById('diagonalImg');
-      const maxStretch = 0.5;
+      const img = document.getElementById('diagonalImg');
+      const maxRotation = 15;  // max degrees
+      const maxScale = 1.1;
 
-      let box       = null;
-      let ticking   = false;
+      let box = null;
+      let ticking = false;
       let lastEvent = null;
 
       function updateBox() {
         box = container.getBoundingClientRect();
       }
+
       window.addEventListener('resize', updateBox);
       updateBox();
 
       function applyTransform(e) {
-        const x  = e.clientX - box.left;
-        const y  = e.clientY - box.top;
-        // 只在容器内部响应
-        if (x < 0 || x > box.width || y < 0 || y > box.height) {
-          resetTransform();
-          ticking = false;
-          return;
-        }
-        const nx   = (x / box.width)  * 2 - 1;
-        const ny   = (y / box.height) * 2 - 1;
-        const proj = (nx - ny) / 2;
-        const scale = 1 + proj * maxStretch;
-        img.style.transform = `
-          rotate(45deg)
-          scaleX(${scale.toFixed(3)})
-          rotate(-45deg)
-        `;
+        const centerX = box.left + box.width / 2;
+        const centerY = box.top + box.height / 2;
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+
+        const percentX = dx / (box.width / 2);
+        const percentY = dy / (box.height / 2);
+
+        const rotateX = (-percentY * maxRotation).toFixed(2);
+        const rotateY = (percentX * maxRotation).toFixed(2);
+        const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+
+        img.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+
+        // Add a soft moving shadow
+        const shadowX = (-percentX * 20).toFixed(1);
+        const shadowY = (-percentY * 20).toFixed(1);
+        img.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0, 0, 0, 0.3)`;
+
         ticking = false;
       }
 
@@ -79,6 +81,8 @@
 
       function resetTransform() {
         img.style.transform = '';
+        img.style.boxShadow = '';
+        ticking = false;
       }
 
       container.addEventListener('pointermove', onPointerMove);
