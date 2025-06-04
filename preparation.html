@@ -28,11 +28,22 @@
       height: 100vh;
       pointer-events: auto;
     }
+
+    #whale {
+      position: fixed;
+      bottom: -25px;
+      right: -10px;
+      width: 170px; /* Adjust size as needed */
+      height: auto;
+      z-index: 10;
+    }
+
   </style>
 </head>
 <body>
   <main>
     <iframe src="title.html"></iframe>
   </main>
+  <img id="whale" src="../images/whale.png" alt="Whale">
 </body>
 </html>
