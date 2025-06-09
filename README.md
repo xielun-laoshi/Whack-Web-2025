@@ -10,4 +10,5 @@ dev log:
 5/27 - [Major Update] Updated the pixel art version to page 1, fixes wave logics, add shrinking effects to the waves, add a clicking effect for the mouse       
 5/28 - Finished artwork for page 2     
 5/31 - Cleaned code, added title image, initialized title transform   
-6/2 - [Major Update] Completed title transform, drafted preparation page
+6/2 - [Major Update] Completed title transform, drafted preparation page    
+6/9 - Updated the subscribe to mailing list link and the interest in sponsorship form
