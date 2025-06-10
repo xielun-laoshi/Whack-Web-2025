@@ -12,3 +12,4 @@ dev log:
 5/31 - Cleaned code, added title image, initialized title transform   
 6/2 - [Major Update] Completed title transform, drafted preparation page    
 6/9 - Updated the subscribe to mailing list link and the interest in sponsorship form
+6/10 - Updated and added whale to preparation page and homepage, the homepage one works but not fully on prep page

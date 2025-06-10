@@ -6,6 +6,13 @@
   <title>Preparation Page</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
+    /* When clicking it addes the whale picture  */
+    
+    .whale {
+              position: absolute; /*Sets the position based on mouse location*/
+              transition: opacity 0.5s ease-out; /* Smooth fade-out effect */
+    }
+
     body {
       margin: 0;
       height: 100vh;
@@ -61,6 +68,8 @@
       font-family: 'Pixelify Sans', sans-serif;
       z-index: 5;
     }
+
+    
   </style>
 </head>
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
@@ -79,5 +88,33 @@
   <div id="placeholder-text">Interested in sponsoring WHACK? Fill out 
     <a href=" https://docs.google.com/spreadsheets/d/1I1-tZ0168397u-7yv_zwCQH5MVmhpgkj/edit?usp=drive_link&ouid=102980471123121705637&rtpof=true&sd=true">this form!</a>
   </div>
+
 </body>
+
+<script>
+    window.onclick=function(event){
+        const whale = document.createElement('img');
+        const size= Math.random() * 100 + 50; // Size resizer for the images 
+
+        whale.src= "images/whale.gif"; 
+        whale.classList.add('whale');
+        whale.style.width = size + 'px';
+        whale.style.height = size + 'px';
+        whale.style.left = event.clientX - size / 2 + 'px';
+        whale.style.top = event.clientY - size / 2 + 'px';
+        
+
+        document.body.appendChild(whale);
+
+        //This works to create a fade-out effect
+        setTimeout(() => {
+            whale.style.opacity="0";
+        }, 500); 
+
+        setTimeout(() => {
+            whale.remove();
+        }, 1500); // Remove the image after 1 second
+    }
+</script>
+
 </html>
