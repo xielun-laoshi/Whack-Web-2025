@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        body{
+            cursor: none;
+            margin: 0;
+            padding: 0;
+            height: 200vh;
+            overflow-x: hidden;
+        }
+        .whale {
+            position: absolute; /*Sets the position based on mouse location*/
+            transition: opacity 0.5s ease-out; /* Smooth fade-out effect */
+        }      
+    </style>
+    
+</body>
+<script>
+    window.onclick=function(event){
+        const whale = document.createElement('img');
+        const size= Math.random() * 100 + 50; // Size resizer for the images 
+
+        whale.src= "whale.gif"; 
+        whale.classList.add('whale');
+        whale.style.width = size + 'px';
+        whale.style.height = size + 'px';
+        whale.style.left = event.clientX - size / 2 + 'px';
+        whale.style.top = event.clientY - size / 2 + 'px';
+        
+
+        document.body.appendChild(whale);
+
+        //This works to create a fade-out effect
+        setTimeout(() => {
+            whale.style.opacity="0";
+        }, 500); 
+
+        setTimeout(() => {
+            whale.remove();
+        }, 1500); // Remove the image after 1 second
+    }
+</script>
+</html>
