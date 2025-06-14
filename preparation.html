@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preparation Page</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <style>
-    /* When clicking it addes the whale picture  */
-    
     .whale {
-              position: absolute; /*Sets the position based on mouse location*/
-              transition: opacity 0.5s ease-out; /* Smooth fade-out effect */
-              z-index: 1000; /* Ensures the whale is above other content */
-              filter: drop-shadow(5px 5px 7px gray);
+      position: absolute;
+      transition: opacity 0.5s ease-out;
+      z-index: -2;
     }
 
     body {
@@ -31,13 +29,8 @@
       height: 100vh;
       display: flex;
       top: -120px;
-    }
-
-    iframe {
-      border: none;
-      width: 100%;
-      height: 100vh;
-      pointer-events: auto;
+      justify-content: center;
+      align-items: center;
     }
 
     #whale {
@@ -71,12 +64,28 @@
       z-index: 5;
     }
 
-    
+    #container {
+      position: relative;
+      border: 1px transparent black;
+      perspective: 800px;
+      display: inline-block;
+    }
+
+    .img-layer {
+      position: absolute;
+      top: 17.7%;
+      left: 17.7%;
+      width: 100vh;
+      height: auto;
+      transform-origin: center;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+
   </style>
 </head>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
 <body>
-  <form action="https://wellesleyhacks.us16.list-manage.com/subscribe/post?u=4c53985ccfc770a6332f9e87a&amp;id=22596d979a&amp;f_id=000704e0f0"  method="POST" target="_blank" style="position: fixed; bottom: 200px; text-align: center; width: 100%; z-index: 5;">
+  <form action="https://wellesleyhacks.us16.list-manage.com/subscribe/post?u=4c53985ccfc770a6332f9e87a&amp;id=22596d979a&amp;f_id=000704e0f0" method="POST" target="_blank" style="position: fixed; bottom: 200px; text-align: center; width: 100%; z-index: 5;">
     <input type="email" name="entry.1234567890" placeholder="Enter your email" required style="padding: 8px; width: 220px; border: none; border-radius: 5px;">
     <button type="submit" style="padding: 8px 12px; margin-left: 6px; background-color: white; color: #2bb8f5; border: none; border-radius: 5px; font-family: 'Pixelify Sans', sans-serif; font-weight: bold; cursor: pointer;">
       Subscribe
@@ -84,39 +93,112 @@
   </form>
   <div id="sub">Subscirbe to our newsletter to learn more about upcoming events!</div>
   <main>
-    <iframe src="title.html"></iframe>
+    <div id="container">
+      <img id="shadowImg" class="img-layer" src="../images/shadow.png" alt="阴影">
+      <img id="mainImg" class="img-layer" src="../images/title.png" alt="主图">
+    </div>
   </main>
   <img id="whale" src="../images/whale.png" alt="Whale">
   <div id="placeholder-text">Interested in sponsoring WHACK? Fill out 
     <a href=" https://docs.google.com/spreadsheets/d/1I1-tZ0168397u-7yv_zwCQH5MVmhpgkj/edit?usp=drive_link&ouid=102980471123121705637&rtpof=true&sd=true">this form!</a>
   </div>
 
-</body>
+  <script>
+    (function () {
+      const container = document.getElementById('container');
+      const mainImg = document.getElementById('mainImg');
+      const shadowImg = document.getElementById('shadowImg');
 
-<script>
+      const maxRotation = 15;
+      const maxScale = 1.1;
+      const shadowOffset = 10;
+
+      let box = null;
+      let ticking = false;
+      let lastEvent = null;
+
+      function updateBox() {
+        box = container.getBoundingClientRect();
+      }
+
+      function applyTransform(e) {
+        const centerX = box.left + box.width / 2;
+        const centerY = box.top + box.height / 2;
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+
+        const percentX = dx / (box.width / 2);
+        const percentY = dy / (box.height / 2);
+
+        const rotateX = (-percentY * maxRotation).toFixed(2);
+        const rotateY = (percentX * maxRotation).toFixed(2);
+        const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+
+        mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+
+        const shadowScale = (scale * 1.05).toFixed(3);
+        const offsetX = (percentX * shadowOffset).toFixed(1);
+        const offsetY = (percentY * shadowOffset).toFixed(1);
+        shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+
+        ticking = false;
+      }
+
+      function onPointerMove(e) {
+        lastEvent = e;
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => applyTransform(lastEvent));
+        }
+      }
+
+      function resetTransform() {
+        mainImg.style.transform = '';
+        shadowImg.style.transform = '';
+        ticking = false;
+      }
+
+      function syncContainerToImage() {
+        const rect = mainImg.getBoundingClientRect();
+        container.style.width = `${mainImg.offsetWidth * 1.5}px`;
+        container.style.height = `${mainImg.offsetHeight * 1.5}px`;
+        updateBox();
+      }
+
+      mainImg.addEventListener('load', syncContainerToImage);
+      window.addEventListener('resize', updateBox);
+      container.addEventListener('pointermove', onPointerMove);
+      container.addEventListener('pointerleave', resetTransform);
+      container.addEventListener('pointercancel', resetTransform);
+      container.addEventListener('pointerout', resetTransform);
+    })();
+
     window.onclick=function(event){
         const whale = document.createElement('img');
-        const size= Math.random() * 100 + 50; // Size resizer for the images 
+        const size = Math.random() * 220 + 50;
 
         whale.src= "images/whale.gif"; 
         whale.classList.add('whale');
+        whale.style.position = 'absolute'; // Ensure absolute, not fixed
         whale.style.width = size + 'px';
         whale.style.height = size + 'px';
-        whale.style.left = event.clientX - size / 2 + 'px';
-        whale.style.top = event.clientY - size / 2 + 'px';
-        
+
+        const maxLeft = window.innerWidth - size;
+        const maxTop = window.innerHeight - size;
+
+        // Calculate position
+        const x = Math.min(event.clientX - size / 2, maxLeft);
+        const y = Math.min(event.clientY - size / 2, maxTop);
+
+        whale.style.left = x + 'px';
+        whale.style.top = y + 'px'; /*changed the clicking to restrain the scope of the image*/
 
         document.body.appendChild(whale);
 
-        //This works to create a fade-out effect
         setTimeout(() => {
-            whale.style.opacity="0";
-        }, 500); 
-
-        setTimeout(() => {
-            whale.remove();
-        }, 1500); // Remove the image after 1 second
+          whale.src = "images/whale.png";
+        }, 700);
     }
-</script>
-
+  </script>
+</body>
 </html>
