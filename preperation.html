@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whack2025</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+
+  <style>
+    .whale {
+      position: absolute;
+      transition: opacity 0.5s ease-out;
+      z-index: -2;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #2bb8f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    main {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      top: -120px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #click-me-text {
+      position: fixed;
+      font-family: 'Pixelify Sans', sans-serif;
+      color: white;
+      font-size: 16px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 999;
+    }
+
+
+    #whale {
+      position: fixed;
+      bottom: -25px;
+      right: -10px;
+      width: 170px;
+      height: auto;
+      z-index: 10;
+    }
+
+    #placeholder-text {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 5;
+    }
+
+    #sub {
+      position: fixed;
+      bottom: 257px;
+      width: 80%;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      font-family: 'Pixelify Sans', sans-serif;
+      z-index: 5;
+    }
+
+    #container {
+      position: relative;
+      border: 1px transparent black;
+      perspective: 800px;
+      display: inline-block;
+    }
+
+    .img-layer {
+      position: absolute;
+      top: 17.7%;
+      left: 17.7%;
+      width: 100vh;
+      height: auto;
+      transform-origin: center;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+  <div id="click-me-text">Click Me</div>
+  <!--------- BEGIN SUBSCRIPTION (Mailchimp embed) ‑-------->
+  <div id="mc_embed_shell"
+       style="position:fixed;bottom:190px;width:100%;text-align:center;z-index:5;">
+
+    <!-- Mailchimp’s own CSS -->
+    <link href="//cdn-images.mailchimp.com/embedcode/classic-061523.css" rel="stylesheet" type="text/css">
+
+    <!-- ONE extra rule → keeps input + button inline -->
+    <style>
+      /* keep Mailchimp’s label for a11y but hide it visually */
+      #mc_embed_signup .mc-field-group label{display:none;}
+
+      /* put e-mail box and button on the same line, keep the 6 px gap */
+      #mc_embed_signup .mc-field-group{
+        display:flex;          /* flex makes children share a row[2] */
+        align-items:center;    /* vertical centring */
+        gap:6px;               /* matches the old spacing */
+      }
+
+      /* kill the default top-margin Mailchimp adds to its button */
+      #mc_embed_signup #mc-embedded-subscribe{margin-top:0;}
+    </style>
+
+
+    <!-- Mailchimp embed form (action URL unchanged) -->
+    <form action="https://wellesleyhacks.us16.list-manage.com/subscribe/post?u=4c53985ccfc770a6332f9e87a&amp;id=22596d979a&amp;f_id=000704e0f0"
+          method="post"
+          id="mc-embedded-subscribe-form"
+          name="mc-embedded-subscribe-form"
+          class="validate"
+          target="_self"
+          novalidate
+          style="display:inline-flex;gap:4px;justify-content:center;align-items:center;flex-wrap:nowrap;">
+
+      <!-- e-mail field -->
+      <input type="email"
+             value=""
+             name="EMAIL"
+             class="required email"
+             id="mce-EMAIL"
+             placeholder="Enter your email"
+             required
+             style="height:20px;padding:10px;width:220px;border:none;border-radius:5px;font-family:'Pixelify Sans',sans-serif;">
+
+      <!-- bot-trap (left intact but hidden off-screen) -->
+      <div style="position:absolute;left:-5000px;" aria-hidden="true">
+        <input type="text" name="b_4c53985ccfc770a6332f9e87a_22596d979a" tabindex="-1" value="">
+      </div>
+
+      <!-- submit button -->
+      <input type="submit"
+             value="Subscribe"
+             name="subscribe"
+             id="mc-embedded-subscribe"
+             class="button"
+             style="height:40px;padding:10px 12px;background:#fff;color:#2bb8f5;border:none;border-radius:5px;font-family:'Pixelify Sans',sans-serif;font-weight:bold;cursor:pointer;">
+    </form>
+  </div>
+  <!--------- END SUBSCRIPTION ‑-------->
+  
+  <div id="sub">Subscribe to our newsletter to learn more about upcoming events!</div>
+
+  <main>
+    <div id="container">
+      <img id="shadowImg" class="img-layer" src="../images/shadow.png">
+      <img id="mainImg" class="img-layer" src="../images/title.png">
+    </div>
+  </main>
+
+  <img id="whale" src="../images/whale.png">
+
+  <div id="placeholder-text">
+    Interested in sponsoring WHACK? Fill out
+    <a href="https://docs.google.com/spreadsheets/d/1I1-tZ0168397u-7yv_zwCQH5MVmhpgkj/edit?usp=drive_link&ouid=102980471123121705637&rtpof=true&sd=true">
+      this form!
+    </a>
+  </div>
+
+  <script>
+    (function () {
+      const container  = document.getElementById('container');
+      const mainImg    = document.getElementById('mainImg');
+      const shadowImg  = document.getElementById('shadowImg');
+
+      const maxRotation   = 15;
+      const maxScale      = 1.1;
+      const shadowOffset  = 10;
+
+      let box = null;
+      let ticking = false;
+      let lastEvent = null;
+
+      function updateBox() {
+        box = container.getBoundingClientRect();
+      }
+
+      function applyTransform(e) {
+        const centerX = box.left + box.width  / 2;
+        const centerY = box.top  + box.height / 2;
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+
+        const percentX = dx / (box.width  / 2);
+        const percentY = dy / (box.height / 2);
+
+        const rotateX = (-percentY * maxRotation).toFixed(2);
+        const rotateY = ( percentX * maxRotation).toFixed(2);
+        const scale   = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+
+        mainImg.style.transform =
+          `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+
+        const shadowScale = (scale * 1.05).toFixed(3);
+        const offsetX = (percentX * shadowOffset).toFixed(1);
+        const offsetY = (percentY * shadowOffset).toFixed(1);
+        shadowImg.style.transform =
+          `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+
+        ticking = false;
+      }
+
+      function onPointerMove(e) {
+        lastEvent = e;
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => applyTransform(lastEvent));
+        }
+      }
+
+      function resetTransform() {
+        mainImg.style.transform   = '';
+        shadowImg.style.transform = '';
+        ticking = false;
+      }
+
+      function syncContainerToImage() {
+        container.style.width  = `${mainImg.offsetWidth  * 1.5}px`;
+        container.style.height = `${mainImg.offsetHeight * 1.5}px`;
+        updateBox();
+      }
+
+      mainImg.addEventListener('load', syncContainerToImage);
+      window.addEventListener('resize', updateBox);
+      container.addEventListener('pointermove',  onPointerMove);
+      container.addEventListener('pointerleave', resetTransform);
+      container.addEventListener('pointercancel', resetTransform);
+      container.addEventListener('pointerout',    resetTransform);
+    })();
+
+    window.onclick = function (event) {
+      const whale = document.createElement('img');
+      const size  = Math.random() * 220 + 50;
+
+      whale.src = 'images/whale.gif';
+      whale.classList.add('whale');
+      whale.style.width  = size + 'px';
+      whale.style.height = size + 'px';
+
+      const maxLeft = window.innerWidth  - size;
+      const maxTop  = window.innerHeight - size;
+
+      const x = Math.min(event.clientX - size / 2, maxLeft);
+      const y = Math.min(event.clientY - size / 2, maxTop);
+
+      whale.style.left = x + 'px';
+      whale.style.top  = y + 'px';
+
+      document.body.appendChild(whale);
+
+      setTimeout(() => { whale.src = 'images/whale.png'; }, 700);
+    };
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let hasClicked = false;
+
+    // Track cursor position
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Update cursor position on first click
+    document.addEventListener('click', function () {
+      hasClicked = true;
+    });
+
+    // Show and hide the "Click Me" tooltip
+    function showClickMe() {
+      const clickMe = document.getElementById('click-me-text');
+      clickMe.style.left = (mouseX + 12) + 'px';
+      clickMe.style.top = (mouseY + 12) + 'px';
+      clickMe.style.opacity = 1;
+
+      setTimeout(() => {
+        clickMe.style.opacity = 0;
+      }, 1000);
+    }
+
+    // Start cycle: first show after 2s, then repeat every 5s
+    setTimeout(() => {
+      showClickMe();
+      setInterval(() => {
+        showClickMe();
+      }, 5000);
+    }, 2000);
+
+
+  </script>
+</body>
+</html>
