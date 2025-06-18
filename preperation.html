@@ -220,10 +220,18 @@
       shadowImg.style.transform =
         `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
 
-      // Apply the same transformation to all whales
+      // Apply the same transformation to all whales and their shadows
       const whales = document.querySelectorAll('.whale');
-      whales.forEach(whale => {
+      const whaleShadows = document.querySelectorAll('.whale-shadow');
+      whales.forEach((whale, index) => {
+        whale.style.transformOrigin = 'center center';
         whale.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+
+        const whaleShadow = whaleShadows[index];
+        if (whaleShadow) {
+          whaleShadow.style.transformOrigin = 'center center';
+          whaleShadow.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+        }
       });
 
       ticking = false;
@@ -242,10 +250,14 @@
       shadowImg.style.transform = '';
       ticking = false;
 
-      // Reset transformation for all whales
+      // Reset transformation for all whales and their shadows
       const whales = document.querySelectorAll('.whale');
+      const whaleShadows = document.querySelectorAll('.whale-shadow');
       whales.forEach(whale => {
         whale.style.transform = '';
+      });
+      whaleShadows.forEach(whaleShadow => {
+        whaleShadow.style.transform = '';
       });
     }
 
@@ -266,12 +278,20 @@
 
   window.onclick = function (event) {
     const whale = document.createElement('img');
+    const whaleShadow = document.createElement('img');
     const size = Math.random() * 220 + 50;
 
     whale.src = '../images/whale.gif';
     whale.classList.add('whale');
     whale.style.width = size + 'px';
     whale.style.height = size + 'px';
+
+    whaleShadow.src = '../images/whaleshadow.png';
+    whaleShadow.classList.add('whale-shadow');
+    whaleShadow.style.width = size + 'px';
+    whaleShadow.style.height = size + 'px';
+    whaleShadow.style.position = 'absolute';
+    whaleShadow.style.zIndex = -2;
 
     const maxLeft = window.innerWidth - size;
     const maxTop = window.innerHeight - size;
@@ -281,7 +301,13 @@
 
     whale.style.left = x + 'px';
     whale.style.top = y + 'px';
+    whale.style.transformOrigin = 'center center';
 
+    whaleShadow.style.left = x + 'px';
+    whaleShadow.style.top = y + 'px';
+    whaleShadow.style.transformOrigin = 'center center';
+
+    document.body.appendChild(whaleShadow);
     document.body.appendChild(whale);
 
     setTimeout(() => { whale.src = '../images/whale.png'; }, 700);
