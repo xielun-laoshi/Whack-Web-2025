@@ -13,4 +13,5 @@ dev log:
 6/2 - [Major Update] Completed title transform, drafted preparation page   
 6/9 - Added whale clicking effect   
 6/11 - Fixed whale clicking effect bugs, created repo for web hosting under whack.github.io   
-6/16 - Updated preparation page, fixed subscription form, added a note for clicking
+6/16 - Updated preparation page, fixed subscription form, added a note for clicking    
+6/17 - Updated transformation for preparation page, things are getting cute now 0v0
