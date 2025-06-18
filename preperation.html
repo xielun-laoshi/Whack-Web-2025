@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
 
   <style>
+    /* Prevent scrollbars from appearing */
+    html, body {
+      overflow: hidden;
+    }
     .whale {
       position: absolute;
       transition: opacity 0.5s ease-out;
@@ -177,136 +181,143 @@
     </a>
   </div>
 
-  <script>
-    (function () {
-      const container  = document.getElementById('container');
-      const mainImg    = document.getElementById('mainImg');
-      const shadowImg  = document.getElementById('shadowImg');
+<script>
+  (function () {
+    const container = document.getElementById('container');
+    const mainImg = document.getElementById('mainImg');
+    const shadowImg = document.getElementById('shadowImg');
+    const maxRotation = 15;
+    const maxScale = 1.1;
+    const shadowOffset = 10;
 
-      const maxRotation   = 15;
-      const maxScale      = 1.1;
-      const shadowOffset  = 10;
+    let box = null;
+    let ticking = false;
+    let lastEvent = null;
 
-      let box = null;
-      let ticking = false;
-      let lastEvent = null;
-
-      function updateBox() {
-        box = container.getBoundingClientRect();
-      }
-
-      function applyTransform(e) {
-        const centerX = box.left + box.width  / 2;
-        const centerY = box.top  + box.height / 2;
-        const dx = e.clientX - centerX;
-        const dy = e.clientY - centerY;
-
-        const percentX = dx / (box.width  / 2);
-        const percentY = dy / (box.height / 2);
-
-        const rotateX = (-percentY * maxRotation).toFixed(2);
-        const rotateY = ( percentX * maxRotation).toFixed(2);
-        const scale   = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
-
-        mainImg.style.transform =
-          `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
-
-        const shadowScale = (scale * 1.05).toFixed(3);
-        const offsetX = (percentX * shadowOffset).toFixed(1);
-        const offsetY = (percentY * shadowOffset).toFixed(1);
-        shadowImg.style.transform =
-          `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
-
-        ticking = false;
-      }
-
-      function onPointerMove(e) {
-        lastEvent = e;
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(() => applyTransform(lastEvent));
-        }
-      }
-
-      function resetTransform() {
-        mainImg.style.transform   = '';
-        shadowImg.style.transform = '';
-        ticking = false;
-      }
-
-      function syncContainerToImage() {
-        container.style.width  = `${mainImg.offsetWidth  * 1.5}px`;
-        container.style.height = `${mainImg.offsetHeight * 1.5}px`;
-        updateBox();
-      }
-
-      mainImg.addEventListener('load', syncContainerToImage);
-      window.addEventListener('resize', updateBox);
-      container.addEventListener('pointermove',  onPointerMove);
-      container.addEventListener('pointerleave', resetTransform);
-      container.addEventListener('pointercancel', resetTransform);
-      container.addEventListener('pointerout',    resetTransform);
-    })();
-
-    window.onclick = function (event) {
-      const whale = document.createElement('img');
-      const size  = Math.random() * 220 + 50;
-
-      whale.src = 'images/whale.gif';
-      whale.classList.add('whale');
-      whale.style.width  = size + 'px';
-      whale.style.height = size + 'px';
-
-      const maxLeft = window.innerWidth  - size;
-      const maxTop  = window.innerHeight - size;
-
-      const x = Math.min(event.clientX - size / 2, maxLeft);
-      const y = Math.min(event.clientY - size / 2, maxTop);
-
-      whale.style.left = x + 'px';
-      whale.style.top  = y + 'px';
-
-      document.body.appendChild(whale);
-
-      setTimeout(() => { whale.src = 'images/whale.png'; }, 700);
-    };
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let hasClicked = false;
-
-    // Track cursor position
-    document.addEventListener('mousemove', function (e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    // Update cursor position on first click
-    document.addEventListener('click', function () {
-      hasClicked = true;
-    });
-
-    // Show and hide the "Click Me" tooltip
-    function showClickMe() {
-      const clickMe = document.getElementById('click-me-text');
-      clickMe.style.left = (mouseX + 12) + 'px';
-      clickMe.style.top = (mouseY + 12) + 'px';
-      clickMe.style.opacity = 1;
-
-      setTimeout(() => {
-        clickMe.style.opacity = 0;
-      }, 1000);
+    function updateBox() {
+      box = container.getBoundingClientRect();
     }
 
-    // Start cycle: first show after 2s, then repeat every 5s
+    function applyTransform(e) {
+      const centerX = box.left + box.width / 2;
+      const centerY = box.top + box.height / 2;
+      const dx = e.clientX - centerX;
+      const dy = e.clientY - centerY;
+
+      const percentX = dx / (box.width / 2);
+      const percentY = dy / (box.height / 2);
+
+      const rotateX = (-percentY * maxRotation).toFixed(2);
+      const rotateY = (percentX * maxRotation).toFixed(2);
+      const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+
+      mainImg.style.transform =
+        `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+
+      const shadowScale = (scale * 1.05).toFixed(3);
+      const offsetX = (percentX * shadowOffset).toFixed(1);
+      const offsetY = (percentY * shadowOffset).toFixed(1);
+      shadowImg.style.transform =
+        `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+
+      // Apply the same transformation to all whales
+      const whales = document.querySelectorAll('.whale');
+      whales.forEach(whale => {
+        whale.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+      });
+
+      ticking = false;
+    }
+
+    function onPointerMove(e) {
+      lastEvent = e;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => applyTransform(lastEvent));
+      }
+    }
+
+    function resetTransform() {
+      mainImg.style.transform = '';
+      shadowImg.style.transform = '';
+      ticking = false;
+
+      // Reset transformation for all whales
+      const whales = document.querySelectorAll('.whale');
+      whales.forEach(whale => {
+        whale.style.transform = '';
+      });
+    }
+
+    function syncContainerToImage() {
+      container.style.width = `${mainImg.offsetWidth * 1.5}px`;
+      container.style.height = `${mainImg.offsetHeight * 1.5}px`;
+      updateBox();
+    }
+
+    mainImg.addEventListener('load', syncContainerToImage);
+    window.addEventListener('resize', updateBox);
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerleave', resetTransform);
+    document.addEventListener('pointercancel', resetTransform);
+    document.addEventListener('pointerout', resetTransform);
+  })();
+
+  window.onclick = function (event) {
+    const whale = document.createElement('img');
+    const size = Math.random() * 220 + 50;
+
+    whale.src = '../images/whale.gif';
+    whale.classList.add('whale');
+    whale.style.width = size + 'px';
+    whale.style.height = size + 'px';
+
+    const maxLeft = window.innerWidth - size;
+    const maxTop = window.innerHeight - size;
+
+    const x = Math.min(event.clientX - size / 2, maxLeft);
+    const y = Math.min(event.clientY - size / 2, maxTop);
+
+    whale.style.left = x + 'px';
+    whale.style.top = y + 'px';
+
+    document.body.appendChild(whale);
+
+    setTimeout(() => { whale.src = '../images/whale.png'; }, 700);
+  };
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let hasClicked = false;
+
+  document.addEventListener('mousemove', function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  document.addEventListener('click', function () {
+    hasClicked = true;
+  });
+
+  function showClickMe() {
+    const clickMe = document.getElementById('click-me-text');
+    clickMe.style.left = (mouseX + 12) + 'px';
+    clickMe.style.top = (mouseY + 12) + 'px';
+    clickMe.style.opacity = 1;
+
     setTimeout(() => {
+      clickMe.style.opacity = 0;
+    }, 1000);
+  }
+
+  setTimeout(() => {
+    showClickMe();
+    setInterval(() => {
       showClickMe();
-      setInterval(() => {
-        showClickMe();
-      }, 5000);
-    }, 2000);
+    }, 5000);
+  }, 2000);
+</script>
 
-
-  </script>
 </body>
 </html>
