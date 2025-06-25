@@ -1,254 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Main</title>
-	<style>
-		/* Existing styles */
-		html, body {
-			margin: 0;
-			padding: 0;
-			overflow-x: hidden;
-			cursor: none;
-		}
-
-		#mouse-follower {
-			position: fixed;
-			display: none;
-			pointer-events: none;
-			width: 95px;
-			height: 48px;
-			z-index: 1000;
-			transition: transform 0.1s;
-		}
-
-		.background {
-			position: fixed;
-			width: 101%;
-			height: 101%;
-			top: -5px;
-			left: -5px;
-			background: url("../images/sky.png") center/cover no-repeat;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font: 900 10rem Arial, sans-serif;
-			color: #fff;
-			z-index: -2;
-			transition: transform 0.05s, background-position 0.05s;
-		}
-
-		.wave {
-			position: fixed;
-			bottom: -260px;
-			left: -110px;
-			width: 1700px;
-			height: 160vh;
-			object-fit: cover;
-			pointer-events: none;
-			transform: translateX(-50%);
-			transition: transform 0.05s;
-			z-index: -1;
-		}
-
-		#wave4 {
-			z-index: 1;
-		}
-
-		#title {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		.layer2 {
-			position: absolute;
-			top: 89vh;
-			left: 50px;
-			width: 1650px;
-			text-align: center;
-			z-index: 2;
-		}
-
-		#wave3_layer2 {
-			width: 100%;
-			pointer-events: none;
-			transition: transform 0.05s;
-		}
-
-		/* Styles from title.html */
-		#container {
-			position: relative;
-			border: 1px transparent black;
-			perspective: 800px;
-			display: inline-block;
-		}
-
-		.img-layer {
-			position: absolute;
-			top: 17.7%;
-			left: 17.7%;
-			width: 100vh;
-			height: auto;
-			transform-origin: center;
-			transition: transform 0.15s ease-out;
-			will-change: transform;
-		}
-
-		#shadowImg {
-			z-index: 0;
-		}
-
-		#mainImg {
-			z-index: 1;
-			position: relative;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --wave-width: 1700px;
+            --container-scale: 1.5;
+            --container-height-scale: 1.7;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            cursor: none;
+            height: 100%;
+        }
+        body {
+            height: 100vh;
+        }
+        #mouse-follower {
+            position: fixed;
+            display: none;
+            pointer-events: none;
+            width: 95px;
+            height: 48px;
+            z-index: 1000;
+            transition: transform 0.1s;
+            will-change: transform, left, top;
+        }
+        .background {
+            position: fixed;
+            width: 101vw;
+            height: 101vh;
+            top: -5px;
+            left: -5px;
+            background: url("../images/sky.png") center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: 900 10rem Arial, sans-serif;
+            color: #fff;
+            z-index: -2;
+            transition: transform 0.05s, background-position 0.05s;
+            will-change: transform, background-position;
+        }
+        .wave {
+            position: fixed;
+            bottom: -60px;
+            left: -110px;
+            width: 115vw;
+            height: 100vh;
+            object-fit: cover;
+            pointer-events: none;
+            transform: translateX(-50%);
+            transition: transform 0.05s;
+            z-index: -1;
+            will-change: transform;
+        }
+        #wave4 {
+            z-index: 1;
+        }
+        #title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .layer2 {
+            position: absolute;
+            top: 0;
+            left: 47px;
+            width: 1650px;
+            height: 10vh;
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+        #wave3_layer2 {
+            width: 100%;
+            pointer-events: none;
+            transition: transform 0.05s;
+            will-change: transform;
+        }
+        #container {
+            position: relative;
+            border: 1px transparent;
+            perspective: 800px;
+            display: inline-block;
+            /* Responsive sizing */
+            max-width: 90vw;
+            max-height: 70vh;
+        }
+        .img-layer {
+            position: absolute;
+            top: 17.7%;
+            left: 17.7%;
+            width: 100vh;
+            max-width: 100vw;
+            height: auto;
+            transform-origin: center;
+            transition: transform 0.15s ease-out;
+            will-change: transform;
+        }
+        #shadowImg {
+            z-index: 0;
+        }
+        #mainImg {
+            z-index: 1;
+            position: relative;
+        }
+        @media (max-width: 900px) {
+            .img-layer {
+                width: 60vw;
+                top: 10%;
+                left: 10%;
+            }
+            .layer2 {
+                width: 90vw;
+                left: 5vw;
+            }
+        }
+    </style>
 </head>
 <body>
-	<img id="mouse-follower" src="../images/mouse.png" alt="Custom Cursor">
+    <img id="mouse-follower" src="../images/mouse.png" aria-hidden="true">
 
-	<div class="layer2">
-		<img id="wave3_layer2" src="../images/wave3_layer2.gif" alt="Wave 3 Layer 2">
-	</div>
+    <div class="layer2" aria-hidden="true">
+        <img id="wave3_layer2" src="../images/beneath_bg.png" alt="Beneath Layer">
+    </div>
 
-	<!-- Integrated title.html content -->
-	<div id="title">
-		<div id="container">
-			<img id="shadowImg" class="img-layer" src="../images/shadow.png" alt="阴影">
-			<img id="mainImg" class="img-layer" src="../images/title.png" alt="主图">
-		</div>
-	</div>
+    <!-- Integrated title.html content -->
+    <div id="title" role="banner">
+        <div id="container">
+            <img id="shadowImg" class="img-layer" src="../images/shadow.png">
+            <img id="mainImg" class="img-layer" src="../images/title.png">
+        </div>
+    </div>
 
-	<div class="background"></div>
-	<img class="wave" id="wave1" src="../images/wave1.png" alt="Wave 1">
-	<img class="wave" id="wave2" src="../images/wave2.png" alt="Wave 2">
-	<img class="wave" id="wave3" src="../images/wave3.png" alt="Wave 3">
-	<img class="wave" id="wave4" src="../images/wave4.png" alt="Wave 4">
+    <div class="background" aria-hidden="true"></div>
+    <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
+    <img class="wave" id="wave2" src="../images/wave2.png" loading="lazy">
+    <img class="wave" id="wave3" src="../images/wave3.png" loading="lazy">
+    <img class="wave" id="wave4" src="../images/wave4.png" loading="lazy">
 
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			const follower = document.getElementById('mouse-follower');
-			const bg = document.querySelector('.background');
-			const waves = Array.from(document.querySelectorAll('.wave'));
-			const wave3Layer2 = document.getElementById('wave3_layer2');
-			const title = document.getElementById('title');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const follower = document.getElementById('mouse-follower');
+            const bg = document.querySelector('.background');
+            const waves = Array.from(document.querySelectorAll('.wave'));
+            const wave3Layer2 = document.getElementById('wave3_layer2');
 
-			let scrollY = 0, offsetX = 0, offsetY = 0, scaleY = 1;
-			const moveFactors = [0.005, 0.05, 0.1, 0.15];
-			const scrollFactors = [1, 1.3, 1.5, 1.7];
-			const BASE_SHIFT = -155;
+            let scrollY = 0, offsetX = 0, offsetY = 0, scaleY = 1;
+            const moveFactors = [0.005, 0.05, 0.1, 0.15];
+            const scrollFactors = [1, 1.3, 1.5, 1.7];
+            const BASE_SHIFT = -155;
 
-			function updateParallax() {
-				bg.style.transform = `translateY(${-scrollY}px)`;
-				bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
+            function updateParallax() {
+                bg.style.transform = `translateY(${-scrollY}px)`;
+                bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
 
-				waves.forEach((wave, i) => {
-					const tx = offsetX * moveFactors[i];
-					const ty = offsetY * moveFactors[i] - scrollY * scrollFactors[i];
-					wave.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
-					wave.style.transformOrigin = 'top';
-				});
+                waves.forEach((wave, i) => {
+                    const tx = offsetX * moveFactors[i];
+                    const ty = offsetY * moveFactors[i] - scrollY * scrollFactors[i];
+                    wave.style.transform = `translate(${tx}px, ${ty}px) scaleY(${scaleY})`;
+                    wave.style.transformOrigin = 'top';
+                });
 
-				const tx3 = offsetX * 0.15 + BASE_SHIFT;
-				const ty3 = offsetY * 0.15 - scrollY * 1.3;
-				wave3Layer2.style.transform = `translate(${tx3}px, ${ty3}px)`;
-			}
+                const tx3 = offsetX * 0.15 + BASE_SHIFT;
+                const ty3 = offsetY * 0.15 - scrollY * 1.3;
+                wave3Layer2.style.transform = `translate(${tx3}px, ${ty3}px)`;
+            }
 
-			document.addEventListener('mousemove', e => {
-				offsetX = e.clientX - window.innerWidth / 2;
-				offsetY = Math.min(e.clientY, 900) - window.innerHeight / 2;
-				scaleY = Math.max(0.8, Math.min(1, e.clientY / 900));
+            // Debounce mousemove for performance
+            let mouseMoveRAF = false;
+            let mouseEvent = null;
+            document.addEventListener('mousemove', e => {
+                mouseEvent = e;
+                if (!mouseMoveRAF) {
+                    mouseMoveRAF = true;
+                    requestAnimationFrame(() => {
+                        offsetX = mouseEvent.clientX - window.innerWidth / 2;
+                        offsetY = Math.min(mouseEvent.clientY, 900) - window.innerHeight / 2;
+                        scaleY = Math.max(0.8, Math.min(1, mouseEvent.clientY / 900));
 
-				follower.style.display = 'block';
-				follower.style.left = `${e.clientX - 24}px`;
-				follower.style.top = `${e.clientY - 24}px`;
+                        follower.style.display = 'block';
+                        follower.style.left = `${mouseEvent.clientX - 24}px`;
+                        follower.style.top = `${mouseEvent.clientY - 24}px`;
 
-				updateParallax();
-			});
+                        updateParallax();
+                        mouseMoveRAF = false;
+                    });
+                }
+            });
 
-			document.addEventListener('mousedown', () => {
-				follower.style.transform = 'scale(0.6)';
-			});
+            document.addEventListener('mousedown', () => {
+                follower.style.transform = 'scale(0.6)';
+            });
+            document.addEventListener('mouseup', () => {
+                follower.style.transform = '';
+            });
 
-			window.addEventListener('scroll', () => {
-				scrollY = window.scrollY;
-				updateParallax();
-			});
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
+                updateParallax();
+            });
 
-			updateParallax();
-		});
+            updateParallax();
+        });
 
-		// Script from title.html
-		(function () {
-			const container = document.getElementById('container');
-			const mainImg = document.getElementById('mainImg');
-			const shadowImg = document.getElementById('shadowImg');
+        (function () {
+            const container = document.getElementById('container');
+            const mainImg = document.getElementById('mainImg');
+            const shadowImg = document.getElementById('shadowImg');
 
-			const maxRotation = 15;
-			const maxScale = 1.1;
-			const shadowOffset = 10;
+            const maxRotation = 15;
+            const maxScale = 1.1;
+            const shadowOffset = 10;
 
-			let box = null;
-			let ticking = false;
-			let lastEvent = null;
+            let box = null;
+            let ticking = false;
+            let lastEvent = null;
 
-			function updateBox() {
-				box = container.getBoundingClientRect();
-			}
+            function updateBox() {
+                box = container.getBoundingClientRect();
+            }
 
-			function applyTransform(e) {
-				const centerX = box.left + box.width / 2;
-				const centerY = box.top + box.height / 2;
-				const dx = e.clientX - centerX;
-				const dy = e.clientY - centerY;
+            function applyTransform(e) {
+                const centerX = box.left + box.width / 2;
+                const centerY = box.top + box.height / 2;
+                const dx = e.clientX - centerX;
+                const dy = e.clientY - centerY;
 
-				const percentX = dx / (box.width / 2);
-				const percentY = dy / (box.height / 2);
+                const percentX = dx / (box.width / 2);
+                const percentY = dy / (box.height / 2);
 
-				const rotateX = (-percentY * maxRotation).toFixed(2);
-				const rotateY = (percentX * maxRotation).toFixed(2);
-				const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+                const rotateX = (-percentY * maxRotation).toFixed(2);
+                const rotateY = (percentX * maxRotation).toFixed(2);
+                const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
 
-				mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+                mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
 
-				const shadowScale = (scale * 1.07).toFixed(3);
-				const offsetX = (percentX * shadowOffset).toFixed(1);
-				const offsetY = (percentY * shadowOffset).toFixed(1);
-				shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+                const shadowScale = (scale * 1.07).toFixed(3);
+                const offsetX = (percentX * shadowOffset).toFixed(1);
+                const offsetY = (percentY * shadowOffset).toFixed(1);
+                shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
 
-				ticking = false;
-			}
+                ticking = false;
+            }
 
-			function onPointerMove(e) {
-				lastEvent = e;
-				if (!ticking) {
-					ticking = true;
-					requestAnimationFrame(() => applyTransform(lastEvent));
-				}
-			}
+            function onPointerMove(e) {
+                lastEvent = e;
+                if (!ticking) {
+                    ticking = true;
+                    requestAnimationFrame(() => applyTransform(lastEvent));
+                }
+            }
 
-			function resetTransform() {
-				mainImg.style.transform = '';
-				shadowImg.style.transform = '';
-				ticking = false;
-			}
+            function resetTransform() {
+                mainImg.style.transform = '';
+                shadowImg.style.transform = '';
+                ticking = false;
+            }
 
-			function syncContainerToImage() {
-				const rect = mainImg.getBoundingClientRect();
-				container.style.width = `${mainImg.offsetWidth * 1.5}px`;
-				container.style.height = `${mainImg.offsetHeight * 1.7}px`;
-				updateBox();
-			}
+            function syncContainerToImage() {
+                container.style.width = `${mainImg.offsetWidth * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--container-scale'))}px`;
+                container.style.height = `${mainImg.offsetHeight * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--container-height-scale'))}px`;
+                updateBox();
+            }
 
-			mainImg.addEventListener('load', syncContainerToImage);
-			window.addEventListener('resize', updateBox);
-			container.addEventListener('pointermove', onPointerMove);
-			container.addEventListener('pointerleave', resetTransform);
-			container.addEventListener('pointercancel', resetTransform);
-			container.addEventListener('pointerout', resetTransform);
-		})();
-	</script>
+            mainImg.addEventListener('load', syncContainerToImage);
+            window.addEventListener('resize', updateBox);
+
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('blur', resetTransform);
+
+            updateBox();
+        })();
+    </script>
 </body>
-
 </html>

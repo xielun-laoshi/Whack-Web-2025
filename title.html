@@ -1,114 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>stretching</title>
-  <style>
-    #container {
-      position: relative;
-      border: 1px transparent black;
-      perspective: 800px;
-      display: inline-block;
-    }
-    .img-layer {
-      position: absolute;
-      top: 17.7%;
-      left: 17.7%;
-      width: 100vh;
-      height: auto;
-      transform-origin: center;
-      transition: transform 0.15s ease-out;
-      will-change: transform;
-    }
-    #shadowImg {
-      z-index: 0;
-    }
-    #mainImg {
-      z-index: 1;
-      position: relative;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>GIF Demo Page</title>
 </head>
-<body style="margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: transparent;">
-  <div id="container">
-    <!-- Shadow image -->
-    <img id="shadowImg" class="img-layer" src="../images/shadow.png" alt="阴影">
-    <!-- Main image -->
-    <img id="mainImg" class="img-layer" src="../images/title.png" alt="主图">
+
+<body>
+    <img
+      src="/images/mask.gif"
+      alt="My local animation"
+      left="center"
+      top="center"
+      width=1462px
+      height=1300px
+    />
   </div>
 
-  <script>
-    (function () {
-      const container = document.getElementById('container');
-      const mainImg = document.getElementById('mainImg');
-      const shadowImg = document.getElementById('shadowImg');
-
-      const maxRotation = 15;
-      const maxScale = 1.1;
-      const shadowOffset = 10;
-
-      let box = null;
-      let ticking = false;
-      let lastEvent = null;
-
-      function updateBox() {
-        box = container.getBoundingClientRect();
-      }
-
-      function applyTransform(e) {
-        const centerX = box.left + box.width / 2;
-        const centerY = box.top + box.height / 2;
-        const dx = e.clientX - centerX;
-        const dy = e.clientY - centerY;
-
-        const percentX = dx / (box.width / 2);
-        const percentY = dy / (box.height / 2);
-
-        const rotateX = (-percentY * maxRotation).toFixed(2);
-        const rotateY = (percentX * maxRotation).toFixed(2);
-        const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
-
-        // Main image transform
-        mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
-
-        // Shadow image transform
-        const shadowScale = (scale * 1.05).toFixed(3);
-        const offsetX = (percentX * shadowOffset).toFixed(1);
-        const offsetY = (percentY * shadowOffset).toFixed(1);
-        shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
-
-        ticking = false;
-      }
-
-      function onPointerMove(e) {
-        lastEvent = e;
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(() => applyTransform(lastEvent));
-        }
-      }
-
-      function resetTransform() {
-        mainImg.style.transform = '';
-        shadowImg.style.transform = '';
-        ticking = false;
-      }
-
-      function syncContainerToImage() {
-        // Set the container's width and height to match the loaded image
-        const rect = mainImg.getBoundingClientRect();
-        container.style.width = `${mainImg.offsetWidth*1.5}px`;
-        container.style.height = `${mainImg.offsetHeight*1.5}px`;
-        updateBox();
-      }
-
-      mainImg.addEventListener('load', syncContainerToImage);
-      window.addEventListener('resize', updateBox);
-      container.addEventListener('pointermove', onPointerMove);
-      container.addEventListener('pointerleave', resetTransform);
-      container.addEventListener('pointercancel', resetTransform);
-      container.addEventListener('pointerout', resetTransform);
-    })();
-  </script>
 </body>
 </html>
