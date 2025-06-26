@@ -13,12 +13,14 @@
         html, body {
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
             cursor: none;
-            height: 100%;
+            height: auto;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+            overflow: hidden;
         }
         body {
-            height: 100vh;
+            min-height: 100%;
         }
         #mouse-follower {
             position: fixed;
@@ -69,7 +71,7 @@
         }
         .layer2 {
             position: absolute;
-            top: 0;
+            top: 80vh;
             left: 47px;
             width: 1650px;
             height: 10vh;
@@ -78,10 +80,14 @@
             pointer-events: none;
         }
         #wave3_layer2 {
-            width: 100%;
             pointer-events: none;
             transition: transform 0.05s;
             will-change: transform;
+            position:absolute; 
+            left:0; 
+            bottom:-100; 
+            width:235vh;
+            height: 110vh;
         }
         #container {
             position: relative;
@@ -91,6 +97,7 @@
             /* Responsive sizing */
             max-width: 90vw;
             max-height: 70vh;
+            z-index: 10;
         }
         .img-layer {
             position: absolute;
@@ -121,14 +128,14 @@
                 left: 5vw;
             }
         }
+        #bottom-group {
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
     <img id="mouse-follower" src="../images/mouse.png" aria-hidden="true">
 
-    <div class="layer2" aria-hidden="true">
-        <img id="wave3_layer2" src="../images/beneath_bg.png" alt="Beneath Layer">
-    </div>
 
     <!-- Integrated title.html content -->
     <div id="title" role="banner">
@@ -143,6 +150,10 @@
     <img class="wave" id="wave2" src="../images/wave2.png" loading="lazy">
     <img class="wave" id="wave3" src="../images/wave3.png" loading="lazy">
     <img class="wave" id="wave4" src="../images/wave4.png" loading="lazy">
+    
+    <div class="layer2" aria-hidden="true">
+        <img id="wave3_layer2" src="../images/beneath_bg.png" loading="lazy" aria-hidden="true">
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -151,10 +162,38 @@
             const waves = Array.from(document.querySelectorAll('.wave'));
             const wave3Layer2 = document.getElementById('wave3_layer2');
 
+            // --- bottom group setup ---
+            const bottomGroup = document.getElementById('bottom-group');
+            const bottoms = Array.from(document.querySelectorAll('.bottom'));
+            // Factors for bottom images, similar to waves
+            const bottomMoveFactors = [0.01, 0.03, 0.06, 0.09, 0.12];
+            const bottomScrollFactors = [1, 1.2, 1.4, 1.6, 1.8];
+
             let scrollY = 0, offsetX = 0, offsetY = 0, scaleY = 1;
             const moveFactors = [0.005, 0.05, 0.1, 0.15];
             const scrollFactors = [1, 1.3, 1.5, 1.7];
             const BASE_SHIFT = -155;
+
+            // Helper: show/hide bottom group for page3
+            function setPage(page) {
+                if (page === 3) {
+                    bottomGroup.style.display = 'block';
+                } else {
+                    bottomGroup.style.display = 'none';
+                }
+            }
+
+            // Show bottom group only after layer2 is scrolled up
+            function checkBottomGroupVisibility() {
+                const layer2 = document.querySelector('.layer2');
+                const rect = layer2.getBoundingClientRect();
+                // If the bottom of layer2 is above the top of the viewport, show bottom group
+                if (rect.bottom < 0) {
+                    bottomGroup.style.display = 'block';
+                } else {
+                    bottomGroup.style.display = 'none';
+                }
+            }
 
             function updateParallax() {
                 bg.style.transform = `translateY(${-scrollY}px)`;
@@ -170,6 +209,17 @@
                 const tx3 = offsetX * 0.15 + BASE_SHIFT;
                 const ty3 = offsetY * 0.15 - scrollY * 1.3;
                 wave3Layer2.style.transform = `translate(${tx3}px, ${ty3}px)`;
+
+                // --- bottom group parallax ---
+                //bottoms.forEach((bottom, i) => {
+                  //  const tx = offsetX * bottomMoveFactors[i];
+                    //const ty = offsetY * bottomMoveFactors[i] - scrollY * bottomScrollFactors[i] * 0.5;
+                    //bottom.style.transform = `translate(${tx}px, ${ty}px)`;
+                //});
+
+                // Check if bottom group should be visible
+                //checkBottomGroupVisibility();
+            // --- end bottom group parallax ---
             }
 
             // Debounce mousemove for performance
@@ -278,5 +328,14 @@
             updateBox();
         })();
     </script>
+</div>
+
+<div id="bottom-group" style="position:absolute; left:0; bottom:0; width:100vw; height:40vh; pointer-events:none; z-index:1;">
+    <img class="bottom" id="bottom1" src="../images/bottom5.png" style="position:absolute; left:-10px; bottom:-100; width:200vh;" loading="lazy" aria-hidden="true">
+    <img class="bottom" id="bottom2" src="../images/bottom4.png" style="position:absolute; left:-20px; bottom:-10px; width:210vh;" loading="lazy" aria-hidden="true">
+    <img class="bottom" id="bottom3" src="../images/bottom3.png" style="position:absolute; left:-50px; bottom:-20px; width:215vh;" loading="lazy" aria-hidden="true">
+    <img class="bottom" id="bottom4" src="../images/bottom2.png" style="position:absolute; left:-60px; bottom:-30px; width:220vh;" loading="lazy" aria-hidden="true">
+    <img class="bottom" id="bottom5" src="../images/bottom1.png" style="position:absolute; left:-87px; bottom:-50px; width:225vh;" loading="lazy" aria-hidden="true">
+</div>
 </body>
 </html>
