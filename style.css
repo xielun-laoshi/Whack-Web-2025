@@ -4,24 +4,35 @@
 }
 
 body{
-    background: #ffffff;
+    background: #91C8E4;
     min-height: 100vh;
     padding: 0;
     margin: 0;
 }
 
 .nav{
+
+border: 10px solid;
+border-color: #4682A9;
+background-color: #4682A9;
+border-radius: 100px;
+height: 10px;
+
+
 position: fixed;
 padding: 2em;
 width: 100%;
 text-align: center;
 z-index: 100000;
-color: #fff;
+color: black;
+
+
 mix-blend-mode: difference;
 font-family: "Neue Montreal";
 font-size: 1rem;
 display: flex;
 justify-content: space-between;
+
 }
 
 .gallery{
@@ -80,3 +91,4 @@ li:nth-child(6) {
     background: url("./images/img-6.jpg") no-repeat 50% 50%;
     background-size: cover;
 }
+
