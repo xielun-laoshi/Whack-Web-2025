@@ -63,18 +63,20 @@
             z-index: -1;
             will-change: transform;
         }
-        #wave4 {
-            z-index: 1;
-        }
         #title {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100vw;
-            position: relative;
-            z-index: 2;
-            top:-30px;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
         }
+
         #container {
             position: relative;
             perspective: 800px;
@@ -106,7 +108,7 @@
 <body>
     <img id="mouse-follower" src="../images/mouse.png" aria-hidden="true">
     <div class="scroll-container">
-        <section class="page">
+        <section class="page page1">
             <!-- Background and waves from main.html -->
             <div class="background" aria-hidden="true"></div>
             <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
@@ -121,8 +123,8 @@
                 </div>
             </div>
         </section>
-        <section class="page">Page 2</section>
-        <section class="page">Page 3</section>
+        <section class="page page2">Page 2</section>
+        <section class="page page3">Page 3</section>
     </div>
 
     <script>
@@ -246,6 +248,28 @@
             window.addEventListener('blur', resetTransform);
 
             updateBox();
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const vh = window.innerHeight;
+                const title = document.getElementById('title');
+
+                if (scrollY < vh) {
+                    // Page 1
+                    title.style.opacity = '1';
+                    title.style.transform = 'translate(-50%, -50%)';
+                } else if (scrollY >= vh && scrollY < 2 * vh) {
+                    // Fade to 0.5 on Page 2
+                    const progress = (scrollY - vh) / vh;
+                    title.style.opacity = `${1 - 0.5 * progress}`;
+                    title.style.transform = 'translate(-50%, -50%)';
+                } else {
+                    // After Page 2, let it scroll away
+                    title.style.opacity = '0.5';
+                    title.style.transform = 'translate(-50%, -100vh)'; // move it far up
+                }
+            });
+
         });
     </script>
 </body>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mouse Trail Drag Only</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .s-hero {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f1f0f9;
+      cursor: none;
+      color: #0c0b0e;
+      font-family: "Fira Sans", sans-serif;
+    }
+
+    .s-hero .s__title {
+      position: absolute;
+      top: 2vw;
+      left: 2vw;
+      margin: 0;
+      padding: 0;
+      font-size: 1.25vw;
+    }
+
+    .s-hero .s__catcher {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      font-weight: 700;
+      font-size: 13vw;
+      letter-spacing: -0.025em;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .s-hero .s__burger {
+      position: absolute;
+      top: 2vw;
+      right: 2vw;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      width: 56px;
+      height: 48px;
+    }
+
+    .s-hero .s__burger__line {
+      margin: 5px 0;
+      width: 100%;
+      height: 2px;
+      background: #0c0b0e;
+    }
+
+    .s-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0c0b0e;
+      clip-path: inset(100%);
+      color: #f1f0f9;
+      pointer-events: none;
+    }
+
+    .s-scene .s__title {
+      position: absolute;
+      top: 2vw;
+      right: 2vw;
+      left: 2vw;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      font-weight: 700;
+      font-size: 13vw;
+      letter-spacing: -0.025em;
+      line-height: 0.9;
+    }
+
+    .s-scene .s__title__line:nth-child(2) {
+      margin-left: auto;
+    }
+
+    .s-scene .s__word {
+      --max-scale: 3;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      font-family: "Climate Crisis", sans-serif;
+      font-size: 20vw;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    @keyframes char-scale {
+      0% {
+        scale: 1 0.1;
+      }
+      50% {
+        scale: 1 var(--max-scale);
+      }
+      100% {
+        scale: 1 0.1;
+      }
+    }
+
+    .s-scene .s__word__char {
+      animation: char-scale 1.25s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      transform-origin: 50% 86.5%;
+    }
+
+    .s-scene .s__word__char:nth-child(1) {
+      color: #fe6319;
+    }
+
+    .s-scene .s__word__char:nth-child(2) {
+      color: #ff68a8;
+      animation-delay: 0.25s;
+    }
+
+    .s-scene .s__word__char:nth-child(3) {
+      color: #009800;
+      animation-delay: 0.5s;
+    }
+
+    .cursor {
+      position: fixed;
+      top: -1.5vw;
+      left: -1.5vw;
+      z-index: 2;
+      width: 3vw;
+      height: 3vw;
+      background: #88f901;
+      border-radius: 50%;
+      transform: translate3d(var(--x), var(--y), 0);
+      pointer-events: none;
+    }
+  </style>
+
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100..900&family=Climate+Crisis&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="s-hero">
+    <h1 class="s__title">
+      100 Day Challenge<br />
+      by Suz Sirunyan<br />
+      Day 88/100
+    </h1>
+    <div class="s__catcher">Underneath It all</div>
+    <div class="s__burger">
+      <div class="s__burger__line"></div>
+      <div class="s__burger__line"></div>
+      <div class="s__burger__line"></div>
+    </div>
+  </div>
+
+  <div class="s-scene js-scene">
+    <div class="s__title">
+      <div class="s__title__line">We Are All</div>
+      <div class="s__title__line">A Little Bit</div>
+    </div>
+    <div class="s__word js-word">
+      <div class="s__word__char">M</div>
+      <div class="s__word__char">A</div>
+      <div class="s__word__char">D</div>
+    </div>
+  </div>
+
+  <div class="cursor js-cursor"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    const scene = document.querySelector('.js-scene');
+    const cursor = document.querySelector('.js-cursor');
+    const word = document.querySelector('.js-word');
+
+    const mouse = {
+      x: 0,
+      y: 0,
+      smoothX: 0,
+      smoothY: 0,
+      diff: 0,
+      smoothDiff: 0,
+      a: 0
+    };
+
+    let isMouseDown = false;
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const particles = [];
+
+    function onMouseMove(e) {
+      mouse.x = e.pageX;
+      mouse.y = e.pageY;
+    }
+
+    function onResize() {
+      viewport.width = window.innerWidth;
+      viewport.height = window.innerHeight;
+
+      const wordHeight = word.clientHeight;
+      const maxScale = viewport.height / (wordHeight * 0.75);
+      word.style.setProperty('--max-scale', maxScale);
+    }
+
+    function emitParticle() {
+      if (!isMouseDown || mouse.diff <= 0.01) return;
+
+      const x = mouse.smoothX;
+      const y = mouse.smoothY;
+      const size = mouse.diff * 0.2;
+
+      const particle = new Particle(x, y, size);
+      particles.push(particle);
+    }
+
+    function drawPath() {
+      let d = '';
+
+      particles.forEach((particle, i) => {
+        const p1 = particle.position();
+        const p2 = (particles[i + 1] || particle).position();
+
+        if (i === 0) {
+          d += `M ${p1.x} ${p1.y} `;
+        } else {
+          d += `Q ${p1.x} ${p1.y} ${(p1.x + p2.x) / 2} ${(p1.y + p2.y) / 2} `;
+        }
+      });
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p1 = particles[i].position(1);
+        const p2 = (particles[i - 1] || particles[0]).position(1);
+        d += `Q ${p1.x} ${p1.y} ${(p1.x + p2.x) / 2} ${(p1.y + p2.y) / 2} `;
+      }
+
+      scene.style.clipPath = `path('${d}')`;
+    }
+
+    function render() {
+      mouse.smoothX += (mouse.x - mouse.smoothX) * 0.1;
+      mouse.smoothY += (mouse.y - mouse.smoothY) * 0.1;
+
+      const dx = mouse.x - mouse.smoothX;
+      const dy = mouse.y - mouse.smoothY;
+
+      mouse.diff = Math.hypot(dx, dy);
+      mouse.smoothDiff += (mouse.diff - mouse.smoothDiff) * 0.1;
+
+      if (mouse.diff > 0.1) {
+        mouse.a = Math.atan2(dy, dx);
+      }
+
+      emitParticle();
+
+      cursor.style.setProperty('--x', `${mouse.smoothX}px`);
+      cursor.style.setProperty('--y', `${mouse.smoothY}px`);
+
+      drawPath();
+
+      requestAnimationFrame(render);
+    }
+
+    class Particle {
+      constructor(x, y, size) {
+        this.size = size;
+        this.x = x;
+        this.y = y;
+        this.p = 0;
+
+        const angle = mouse.a + Math.PI / 2;
+        const dist = Math.max(viewport.width * 0.0075, mouse.smoothDiff);
+
+        this.offsetX = dist * Math.cos(angle);
+        this.offsetY = dist * Math.sin(angle);
+
+        const tl = gsap.timeline();
+        tl.to(this, { p: 1, duration: 2, ease: 'power1.inOut' });
+        tl.to(this, { p: 0, duration: 4, ease: 'power4.in' }, 3);
+        tl.call(() => this.kill());
+      }
+
+      position(direction = -1) {
+        return {
+          x: this.x + this.offsetX * direction * this.p,
+          y: this.y + this.offsetY * direction * this.p
+        };
+      }
+
+      kill() {
+        const index = particles.indexOf(this);
+        if (index > -1) particles.splice(index, 1);
+      }
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousedown', () => { isMouseDown = true; });
+    window.addEventListener('mouseup', () => { isMouseDown = false; });
+    window.addEventListener('resize', onResize);
+
+    onResize();
+    window.addEventListener('load', render);
+  </script>
+</body>
+</html>
