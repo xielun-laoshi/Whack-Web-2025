@@ -103,6 +103,18 @@
             z-index: 1;
             position: relative;
         }
+        #wave3_layer2 {
+            position: absolute;
+            top: 85vh;
+            left: -140px;
+            width: 125vw;
+            height: 150vh;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 2; /* higher than wave4 */
+            transition: transform 0.05s;
+            will-change: transform;
+        }
     </style>
 </head>
 <body>
@@ -115,6 +127,8 @@
             <img class="wave" id="wave2" src="../images/wave2.png" loading="lazy">
             <img class="wave" id="wave3" src="../images/wave3.png" loading="lazy">
             <img class="wave" id="wave4" src="../images/wave4.png" loading="lazy">
+
+            <img id="wave3_layer2" src="../images/wave3_layer2.gif" loading="lazy" aria-hidden="true">
             <!-- Title from main.html -->
             <div id="title" role="banner">
                 <div id="container">
@@ -131,7 +145,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             const follower = document.getElementById('mouse-follower');
             const bg = document.querySelector('.background');
-            const waves = Array.from(document.querySelectorAll('.wave'));
+            const waves = [
+    ...document.querySelectorAll('.wave'),
+    document.getElementById('wave3_layer2')
+];
 
             // Mouse follower logic
             let targetX = window.innerWidth / 2;
@@ -163,7 +180,7 @@
 
             // Parallax effect for background and waves
             let offsetX = 0, offsetY = 0;
-            const moveFactors = [0.005, 0.05, 0.1, 0.15];
+            const moveFactors = [0.005, 0.05, 0.1, 0.15, 0.2];
 
             let parallaxRAF = false;
             let lastMouseEvent = null;
