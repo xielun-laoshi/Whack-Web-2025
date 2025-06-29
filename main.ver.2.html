@@ -42,7 +42,7 @@
             height: 101vh;
             top: -5px;
             left: -5px;
-            background: url("../images/sky.png") center/cover no-repeat;
+            background: url("../images/sky.gif") center/cover no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -103,6 +103,18 @@
             z-index: 1;
             position: relative;
         }
+        /*#wave3_layer2 {
+            position: absolute;
+            top: 85vh;
+            left: -140px;
+            width: 125vw;
+            height: 150vh;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 2; /* higher than wave4 
+            transition: transform 0.05s;
+            will-change: transform;
+        } */
     </style>
 </head>
 <body>
@@ -112,9 +124,10 @@
             <!-- Background and waves from main.html -->
             <div class="background" aria-hidden="true"></div>
             <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
-            <img class="wave" id="wave2" src="../images/wave2.png" loading="lazy">
-            <img class="wave" id="wave3" src="../images/wave3.png" loading="lazy">
-            <img class="wave" id="wave4" src="../images/wave4.png" loading="lazy">
+            <img class="wave" id="wave2" src="../images/wave2.gif" loading="lazy">
+            <img class="wave" id="wave3" src="../images/wave3.gif" loading="lazy">
+            <img class="wave" id="wave4" src="../images/wave4.gif" loading="lazy">
+
             <!-- Title from main.html -->
             <div id="title" role="banner">
                 <div id="container">
@@ -128,149 +141,109 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const follower = document.getElementById('mouse-follower');
-            const bg = document.querySelector('.background');
-            const waves = Array.from(document.querySelectorAll('.wave'));
+document.addEventListener('DOMContentLoaded', () => {
+    const follower = document.getElementById('mouse-follower');
+    const bg = document.querySelector('.background');
+    const waves = [...document.querySelectorAll('.wave')];
+    const container = document.getElementById('container');
+    const mainImg = document.getElementById('mainImg');
+    const shadowImg = document.getElementById('shadowImg');
+    const title = document.getElementById('title');
+    const moveFactors = [0.005, 0.05, 0.1, 0.15, 0.2];
+    let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
+    let currentX = targetX, currentY = targetY;
+    let offsetX = 0, offsetY = 0;
+    let box = null;
+    let lastPointer = {x: targetX, y: targetY};
+    let needsUpdate = false;
 
-            // Mouse follower logic
-            let targetX = window.innerWidth / 2;
-            let targetY = window.innerHeight / 2;
-            let currentX = targetX;
-            let currentY = targetY;
+    function updateBox() { box = container.getBoundingClientRect(); }
+    mainImg.addEventListener('load', updateBox);
+    window.addEventListener('resize', () => { requestAnimationFrame(updateBox); });
 
-            document.addEventListener('mousemove', e => {
-                targetX = e.clientX - 51;
-                targetY = e.clientY - 24;
-                follower.style.display = 'block';
+    // Unified pointermove handler
+    function onPointerMove(e) {
+        lastPointer.x = e.clientX;
+        lastPointer.y = e.clientY;
+        targetX = e.clientX - 51;
+        targetY = e.clientY - 24;
+        follower.style.display = 'block';
+        needsUpdate = true;
+    }
+    window.addEventListener('pointermove', onPointerMove, {passive: true});
+
+    // Mouse follower and parallax/3D effect in one RAF loop
+    function animate() {
+        // Mouse follower
+        currentX += (targetX - currentX) * 0.1;
+        currentY += (targetY - currentY) * 0.1;
+        follower.style.left = `${currentX}px`;
+        follower.style.top = `${currentY}px`;
+
+        if (needsUpdate && box) {
+            // Parallax
+            offsetX = lastPointer.x - window.innerWidth / 2;
+            offsetY = lastPointer.y - window.innerHeight / 2;
+            bg.style.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
+            waves.forEach((wave, i) => {
+                const tx = offsetX * moveFactors[i];
+                const ty = offsetY * moveFactors[i];
+                wave.style.transform = `translate(${tx}px, ${ty}px)`;
             });
 
-            function animateFollower() {
-                currentX += (targetX - currentX) * 0.1;
-                currentY += (targetY - currentY) * 0.1;
-                follower.style.left = `${currentX}px`;
-                follower.style.top = `${currentY}px`;
-                requestAnimationFrame(animateFollower);
-            }
-            animateFollower();
+            // 3D Title
+            const centerX = box.left + box.width / 2;
+            const centerY = box.top + box.height / 2;
+            const dx = lastPointer.x - centerX;
+            const dy = lastPointer.y - centerY;
+            const percentX = dx / (box.width / 2);
+            const percentY = dy / (box.height / 2);
+            const maxRotation = 15, maxScale = 1.1, shadowOffset = 10;
+            const rotateX = (-percentY * maxRotation).toFixed(2);
+            const rotateY = (percentX * maxRotation).toFixed(2);
+            const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
+            mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+            const shadowScale = (scale * 1.07).toFixed(3);
+            const offsetX2 = (percentX * shadowOffset).toFixed(1);
+            const offsetY2 = (percentY * shadowOffset).toFixed(1);
+            shadowImg.style.transform = `translate(${offsetX2}px, ${offsetY2}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
+            needsUpdate = false;
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
 
-            document.addEventListener('mousedown', () => {
-                follower.style.transform = 'scale(0.4)';
-            });
-            document.addEventListener('mouseup', () => {
-                follower.style.transform = '';
-            });
+    document.addEventListener('mousedown', () => { follower.style.transform = 'scale(0.4)'; });
+    document.addEventListener('mouseup', () => { follower.style.transform = ''; });
 
-            // Parallax effect for background and waves
-            let offsetX = 0, offsetY = 0;
-            const moveFactors = [0.005, 0.05, 0.1, 0.15];
+    // Reset 3D transform on blur
+    window.addEventListener('blur', () => {
+        mainImg.style.transform = '';
+        shadowImg.style.transform = '';
+    });
 
-            let parallaxRAF = false;
-            let lastMouseEvent = null;
+    // Scroll fade effect (use scroll-container if possible)
+    const scrollContainer = document.querySelector('.scroll-container');
+    function onScroll() {
+        const scrollY = scrollContainer.scrollTop;
+        const vh = window.innerHeight;
+        if (scrollY < vh) {
+            title.style.opacity = '1';
+            title.style.transform = 'translate(-50%, -50%)';
+        } else if (scrollY >= vh && scrollY < 2 * vh) {
+            const progress = (scrollY - vh) / vh;
+            title.style.opacity = `${1 - 0.5 * progress}`;
+            title.style.transform = 'translate(-50%, -50%)';
+        } else {
+            title.style.opacity = '0.5';
+            title.style.transform = 'translate(-50%, -100vh)';
+        }
+    }
+    scrollContainer.addEventListener('scroll', onScroll, {passive: true});
+    onScroll();
 
-            document.addEventListener('mousemove', e => {
-                lastMouseEvent = e;
-                if (!parallaxRAF) {
-                    parallaxRAF = true;
-                    requestAnimationFrame(updateParallax);
-                }
-            });
-
-            function updateParallax() {
-                if (!lastMouseEvent) return;
-                offsetX = lastMouseEvent.clientX - window.innerWidth / 2;
-                offsetY = lastMouseEvent.clientY - window.innerHeight / 2;
-
-                bg.style.backgroundPosition = `${-offsetX * 0.005}px ${-offsetY * 0.005}px`;
-                waves.forEach((wave, i) => {
-                    const tx = offsetX * moveFactors[i];
-                    const ty = offsetY * moveFactors[i];
-                    wave.style.transform = `translate(${tx}px, ${ty}px)`;
-                });
-                parallaxRAF = false;
-            }
-
-            // Title 3D effect
-            const container = document.getElementById('container');
-            const mainImg = document.getElementById('mainImg');
-            const shadowImg = document.getElementById('shadowImg');
-            const maxRotation = 15;
-            const maxScale = 1.1;
-            const shadowOffset = 10;
-            let box = null;
-            let ticking = false;
-            let lastEvent = null;
-
-            function updateBox() {
-                box = container.getBoundingClientRect();
-            }
-
-            function applyTransform(e) {
-                const centerX = box.left + box.width / 2;
-                const centerY = box.top + box.height / 2;
-                const dx = e.clientX - centerX;
-                const dy = e.clientY - centerY;
-
-                const percentX = dx / (box.width / 2);
-                const percentY = dy / (box.height / 2);
-
-                const rotateX = (-percentY * maxRotation).toFixed(2);
-                const rotateY = (percentX * maxRotation).toFixed(2);
-                const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
-
-                mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
-
-                const shadowScale = (scale * 1.07).toFixed(3);
-                const offsetX = (percentX * shadowOffset).toFixed(1);
-                const offsetY = (percentY * shadowOffset).toFixed(1);
-                shadowImg.style.transform = `translate(${offsetX}px, ${offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
-
-                ticking = false;
-            }
-
-            function onPointerMove(e) {
-                lastEvent = e;
-                if (!ticking) {
-                    ticking = true;
-                    requestAnimationFrame(() => applyTransform(lastEvent));
-                }
-            }
-
-            function resetTransform() {
-                mainImg.style.transform = '';
-                shadowImg.style.transform = '';
-                ticking = false;
-            }
-
-            mainImg.addEventListener('load', updateBox);
-            window.addEventListener('resize', updateBox);
-            window.addEventListener('pointermove', onPointerMove);
-            window.addEventListener('blur', resetTransform);
-
-            updateBox();
-
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                const vh = window.innerHeight;
-                const title = document.getElementById('title');
-
-                if (scrollY < vh) {
-                    // Page 1
-                    title.style.opacity = '1';
-                    title.style.transform = 'translate(-50%, -50%)';
-                } else if (scrollY >= vh && scrollY < 2 * vh) {
-                    // Fade to 0.5 on Page 2
-                    const progress = (scrollY - vh) / vh;
-                    title.style.opacity = `${1 - 0.5 * progress}`;
-                    title.style.transform = 'translate(-50%, -50%)';
-                } else {
-                    // After Page 2, let it scroll away
-                    title.style.opacity = '0.5';
-                    title.style.transform = 'translate(-50%, -100vh)'; // move it far up
-                }
-            });
-
-        });
-    </script>
+    updateBox();
+});
+</script>
 </body>
 </html>
