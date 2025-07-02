@@ -31,19 +31,72 @@
 
     main {
       position: relative;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
+    }
+
+    #whale {
+      position: fixed;
+      bottom: -2.5vh;
+      right: -1vw;
+      width: 15vw;
+      height: auto;
+      z-index: 10;
+    }
+
+    #placeholder-text {
+      position: fixed;
+      bottom: 2vh;
+      width: 100vw;
+      text-align: center;
+      color: white;
+      font-size: 1.2vw;
+      font-family: Arial, sans-serif;
+      z-index: 5;
+    }
+
+    #sub {
+      position: fixed;
+      bottom: 25vh;
+      width: 80vw;
+      text-align: center;
+      color: white;
+      font-size: 2.4vw;
+      font-family: 'Pixelify Sans', sans-serif;
+      z-index: 5;
+    }
+
+    #container {
+      position: absolute;
+      left: 48%;
+      top: 2vh; /* Adjust this value for your preferred vertical position */
+      transform: translateX(-50%);
+      border: 1px black;
+      perspective: 80vw;
       display: flex;
-      top: -120px;
-      justify-content: center;
-      align-items: center;
+      width: 60vw;
+      height: 60vw;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .img-layer {
+      position: absolute;
+      top: 17.7%;
+      left: 17.7%;
+      width: 65vw;
+      max-width: 100%;
+      height: auto;
+      transform-origin: center;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
     }
 
     #click-me-text {
       position: fixed;
       font-family: 'Pixelify Sans', sans-serif;
       color: white;
-      font-size: 16px;
+      font-size: 1.6vw;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.5s ease-in-out;
@@ -279,32 +332,38 @@
   window.onclick = function (event) {
     const whale = document.createElement('img');
     const whaleShadow = document.createElement('img');
-    const size = Math.random() * 220 + 50;
+    // Use a size relative to viewport width (between 6vw and 18vw)
+    const size = Math.random() * 12 + 6; // vw
 
     whale.src = '../images/whale.gif';
     whale.classList.add('whale');
-    whale.style.width = size + 'px';
-    whale.style.height = size + 'px';
+    whale.style.width = size + 'vw';
+    whale.style.height = 'auto';
 
     whaleShadow.src = '../images/whaleshadow.png';
     whaleShadow.classList.add('whale-shadow');
-    whaleShadow.style.width = size + 'px';
-    whaleShadow.style.height = size + 'px';
+    whaleShadow.style.width = size + 'vw';
+    whaleShadow.style.height = 'auto';
     whaleShadow.style.position = 'absolute';
     whaleShadow.style.zIndex = -2;
 
-    const maxLeft = window.innerWidth - size;
-    const maxTop = window.innerHeight - size;
+    // Calculate maxLeft and maxTop in vw/vh
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const pxSize = vw * (size / 100);
 
-    const x = Math.min(event.clientX - size / 2, maxLeft);
-    const y = Math.min(event.clientY - size / 2, maxTop);
+    const maxLeft = vw - pxSize;
+    const maxTop = vh - pxSize;
 
-    whale.style.left = x + 'px';
-    whale.style.top = y + 'px';
+    const x = Math.min(event.clientX - pxSize / 2, maxLeft);
+    const y = Math.min(event.clientY - pxSize / 2, maxTop);
+
+    whale.style.left = (x / vw * 100) + 'vw';
+    whale.style.top = (y / vh * 100) + 'vh';
     whale.style.transformOrigin = 'center center';
 
-    whaleShadow.style.left = x + 'px';
-    whaleShadow.style.top = y + 'px';
+    whaleShadow.style.left = (x / vw * 100) + 'vw';
+    whaleShadow.style.top = (y / vh * 100) + 'vh';
     whaleShadow.style.transformOrigin = 'center center';
 
     document.body.appendChild(whaleShadow);
