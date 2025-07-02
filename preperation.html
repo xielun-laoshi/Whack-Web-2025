@@ -44,47 +44,36 @@
       z-index: 10;
     }
 
-    #placeholder-text {
-      position: fixed;
-      bottom: 2vh;
-      width: 100vw;
-      text-align: center;
-      color: white;
-      font-size: 1.2vw;
-      font-family: Arial, sans-serif;
-      z-index: 5;
-    }
-
     #sub {
       position: fixed;
       bottom: 25vh;
       width: 80vw;
       text-align: center;
       color: white;
-      font-size: 2.4vw;
+      font-size: 24px;
       font-family: 'Pixelify Sans', sans-serif;
       z-index: 5;
     }
 
     #container {
       position: absolute;
-      left: 48%;
-      top: 2vh; /* Adjust this value for your preferred vertical position */
-      transform: translateX(-50%);
+      left: 62%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       border: 1px black;
       perspective: 80vw;
       display: flex;
-      width: 60vw;
-      height: 60vw;
+      width: 55vw;
+      height: 55vw;
       max-width: 90vw;
       max-height: 90vh;
     }
 
     .img-layer {
       position: absolute;
-      top: 17.7%;
-      left: 17.7%;
-      width: 65vw;
+      top: 0;
+      left: 0;
+      width: 60vw;
       max-width: 100%;
       height: auto;
       transform-origin: center;
@@ -103,16 +92,6 @@
       z-index: 999;
     }
 
-
-    #whale {
-      position: fixed;
-      bottom: -25px;
-      right: -10px;
-      width: 170px;
-      height: auto;
-      z-index: 10;
-    }
-
     #placeholder-text {
       position: fixed;
       bottom: 10px;
@@ -124,33 +103,8 @@
       z-index: 5;
     }
 
-    #sub {
-      position: fixed;
-      bottom: 257px;
-      width: 80%;
-      text-align: center;
-      color: white;
-      font-size: 24px;
-      font-family: 'Pixelify Sans', sans-serif;
-      z-index: 5;
-    }
-
-    #container {
-      position: relative;
-      border: 1px transparent black;
-      perspective: 800px;
-      display: inline-block;
-    }
-
-    .img-layer {
-      position: absolute;
-      top: 17.7%;
-      left: 17.7%;
-      width: 100vh;
-      height: auto;
-      transform-origin: center;
-      transition: transform 0.15s ease-out;
-      will-change: transform;
+    #mc_embed_shell {
+      bottom: 15vh !important;
     }
   </style>
 </head>
