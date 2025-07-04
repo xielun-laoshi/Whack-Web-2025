@@ -14,16 +14,32 @@
             position: fixed;
             display: none;
             pointer-events: none;
-            width: 16vh;
-            height: 8vh;
+            width: 3.5vh;
+            height: 3.5vh;
+            border-radius: 50%;
+            background: #ffffff;
             z-index: 1000;
-            transition: transform 0.1s;
+            transition: transform 0.1s, background 0.2s;
+            will-change: transform, left, top;
+        }
+        #shadow-follower {
+            position: fixed;
+            display: none;
+            pointer-events: none;
+            width: 3.8vh;
+            height: 3.8vh;
+            border-radius: 50%;
+            background: #fb6222;
+            z-index: 999;
+            transition: transform 0.11s, background 0.2s;
             will-change: transform, left, top;
         }
         .scroll-container {
             height: 100vh;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
         }
         .page {
             height: 100vh;
@@ -53,7 +69,7 @@
         .wave {
             position: absolute;
             bottom: -55px;
-            left: -8vw;
+            left: -7.5vw;
             width: 115vw;
             height: 120vh;
             object-fit: cover;
@@ -64,7 +80,7 @@
             will-change: transform;
         }
         #title {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -109,18 +125,6 @@
             z-index: 1;
             position: relative;
         }
-        /*#wave3_layer2 {
-            position: absolute;
-            top: 85vh;
-            left: -140px;
-            width: 125vw;
-            height: 150vh;
-            object-fit: cover;
-            pointer-events: none;
-            z-index: 2; /* higher than wave4 
-            transition: transform 0.05s;
-            will-change: transform;
-        } */
 
         @media (max-width: 700px) {
             #container {
@@ -137,7 +141,8 @@
     </style>
 </head>
 <body>
-    <img id="mouse-follower" src="../images/mouse.png" aria-hidden="true">
+    <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
+    <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
     <div class="scroll-container">
         <section class="page page1">
             <!-- Background and waves from main.html -->
@@ -150,8 +155,8 @@
             <!-- Title from main.html -->
             <div id="title" role="banner">
                 <div id="container">
-                    <img id="shadowImg" class="img-layer" src="../images/shadow.png">
-                    <img id="mainImg" class="img-layer" src="../images/title.png">
+                    <img id="shadowImg" class="img-layer" src="../images/shadow.png" loading="lazy">
+                    <img id="mainImg" class="img-layer" src="../images/title.png" loading="lazy">
                 </div>
             </div>
         </section>
@@ -162,6 +167,7 @@
     <script>
 document.addEventListener('DOMContentLoaded', () => {
     const follower = document.getElementById('mouse-follower');
+    const shadowFollower = document.getElementById('shadow-follower');
     const bg = document.querySelector('.background');
     const waves = [...document.querySelectorAll('.wave')];
     const container = document.getElementById('container');
@@ -171,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const moveFactors = [0.005, 0.05, 0.1, 0.15, 0.2];
     let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
     let currentX = targetX, currentY = targetY;
+    let orangeX = window.innerWidth / 2, orangeY = window.innerHeight / 2;
     let offsetX = 0, offsetY = 0;
     let box = null;
     let lastPointer = {x: targetX, y: targetY};
@@ -184,9 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function onPointerMove(e) {
         lastPointer.x = e.clientX;
         lastPointer.y = e.clientY;
-        targetX = e.clientX - 51;
-        targetY = e.clientY - 24;
+        targetX = e.clientX - 10;
+        targetY = e.clientY - 10;
         follower.style.display = 'block';
+        shadowFollower.style.display = 'block';
         needsUpdate = true;
     }
     window.addEventListener('pointermove', onPointerMove, {passive: true});
@@ -198,6 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentY += (targetY - currentY) * 0.1;
         follower.style.left = `${currentX}px`;
         follower.style.top = `${currentY}px`;
+
+        // Orange follower (more laggy)
+        orangeX += (targetX - orangeX) * 0.07;
+        orangeY += (targetY - orangeY) * 0.07;
+        shadowFollower.style.left = `${orangeX}px`;
+        shadowFollower.style.top = `${orangeY}px`;
 
         if (needsUpdate && box) {
             // Parallax
@@ -232,8 +246,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animate();
 
-    document.addEventListener('mousedown', () => { follower.style.transform = 'scale(0.4)'; });
-    document.addEventListener('mouseup', () => { follower.style.transform = ''; });
+    document.addEventListener('mousedown', () => { 
+        follower.style.transform = 'scale(0.4)'; 
+        shadowFollower.style.transform = 'scale(0.4)';
+    });
+    document.addEventListener('mouseup', () => { 
+        follower.style.transform = ''; 
+        shadowFollower.style.transform = '';
+    });
 
     // Reset 3D transform on blur
     window.addEventListener('blur', () => {
