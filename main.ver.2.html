@@ -170,6 +170,24 @@
             transition: transform 0.08s ease-out;
             will-change: transform;
         }
+        .beneath-images {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .beneath-img {
+            position: absolute;
+            bottom: -75px;
+            left: -10vw;
+            width: 120vw;
+            height: 120vh;
+            transition: transform 0.08s ease-out;
+            will-change: transform;
+        }
 
         @media (max-width: 700px) {
             #container { width: 85vw; max-width: 60vh; }
@@ -199,7 +217,14 @@
                 </div>
             </div>
         </section>
-        <section class="page page2">Page 2</section>
+        <section class="page page2">
+            <div class="beneath-images">
+                <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 3;">
+                <img class="beneath-img" id="beneath2" src="../images/Beneath2.gif" loading="lazy" style="z-index: 2;">
+                <img class="beneath-img" id="beneath3" src="../images/Beneath3.gif" loading="lazy" style="z-index: 1;">
+                <img class="beneath-img" id="beneath4" src="../images/Beneath4.png" loading="lazy" style="z-index: 0;">
+            </div>
+        </section>
         <section class="page page3">
             <div class="bottom-images">
                 <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
@@ -279,6 +304,22 @@
                         const factor = moveFactors[moveFactors.length - 1 - i];
                         const tx = offsetX * factor;
                         const ty = offsetY * factor;
+                        img.style.transform = `translate(${tx}px, ${ty}px)`;
+                    }
+                });
+
+                // Animate beneath images in page2
+                const beneathImgs = [
+                    document.getElementById('beneath1'),
+                    document.getElementById('beneath2'),
+                    document.getElementById('beneath3'),
+                    document.getElementById('beneath4')
+                ];
+                beneathImgs.forEach((img, i) => {
+                    if (img) {
+                        const fac = moveFactors[moveFactors.length - 1 - i];
+                        const tx = offsetX * fac;
+                        const ty = offsetY * fac;
                         img.style.transform = `translate(${tx}px, ${ty}px)`;
                     }
                 });
