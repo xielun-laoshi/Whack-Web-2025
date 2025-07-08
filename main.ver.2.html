@@ -152,6 +152,25 @@
         #shadowImg { z-index: 0; }
         #mainImg { z-index: 1; position: relative; }
 
+        .bottom-images {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bottom-img {
+            position: absolute;
+            bottom: -75px;
+            left: -10vw;
+            width: 120vw;
+            height: 120vh;
+            transition: transform 0.08s ease-out;
+            will-change: transform;
+        }
+
         @media (max-width: 700px) {
             #container { width: 85vw; max-width: 60vh; }
         }
@@ -181,7 +200,15 @@
             </div>
         </section>
         <section class="page page2">Page 2</section>
-        <section class="page page3">Page 3</section>
+        <section class="page page3">
+            <div class="bottom-images">
+                <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
+                <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
+                <img class="bottom-img" id="bottom3" src="../images/bottom3.png" loading="lazy" style="z-index: 2;">
+                <img class="bottom-img" id="bottom2" src="../images/bottom2.png" loading="lazy" style="z-index: 3;">
+                <img class="bottom-img" id="bottom1" src="../images/bottom1.png" loading="lazy" style="z-index: 4;">
+            </div>
+        </section>
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -224,7 +251,7 @@
             follower.style.left = `${currentX}px`;
             follower.style.top = `${currentY}px`;
 
-            const shadowDamping = 0.06;
+            const shadowDamping = 0.09;
             orangeX += (targetX - orangeX) * shadowDamping;
             orangeY += (targetY - orangeY) * shadowDamping;
             shadowFollower.style.left = `${orangeX}px`;
@@ -238,6 +265,22 @@
                     const tx = offsetX * moveFactors[i];
                     const ty = offsetY * moveFactors[i];
                     wave.style.transform = `translate(${tx}px, ${ty}px)`;
+                });
+
+                const bottomImgs = [
+                    document.getElementById('bottom1'),
+                    document.getElementById('bottom2'),
+                    document.getElementById('bottom3'),
+                    document.getElementById('bottom4'),
+                    document.getElementById('bottom5')
+                ];
+                bottomImgs.forEach((img, i) => {
+                    if (img) {
+                        const factor = moveFactors[moveFactors.length - 1 - i];
+                        const tx = offsetX * factor;
+                        const ty = offsetY * factor;
+                        img.style.transform = `translate(${tx}px, ${ty}px)`;
+                    }
                 });
 
                 const centerX = box.left + box.width / 2;
