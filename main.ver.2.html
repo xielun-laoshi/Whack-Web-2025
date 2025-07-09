@@ -264,6 +264,23 @@
         mainImg.addEventListener('load', updateBox);
         window.addEventListener('resize', () => { requestAnimationFrame(updateBox); });
 
+        // Cache bottom and beneath images once
+        const bottomImgs = [
+            document.getElementById('bottom1'),
+            document.getElementById('bottom2'),
+            document.getElementById('bottom3'),
+            document.getElementById('bottom4'),
+            document.getElementById('bottom5')
+        ];
+        const beneathImgs = [
+            document.getElementById('beneath1'),
+            document.getElementById('beneath2'),
+            document.getElementById('beneath3'),
+            document.getElementById('beneath4')
+        ];
+
+        // Throttle pointermove to animation frame
+        let pointerMoveQueued = false;
         function onPointerMove(e) {
             lastPointer.x = e.clientX;
             lastPointer.y = e.clientY;
@@ -273,7 +290,16 @@
             shadowFollower.style.display = 'block';
             needsUpdate = true;
         }
-        window.addEventListener('pointermove', onPointerMove, {passive: true});
+        function pointerMoveHandler(e) {
+            if (!pointerMoveQueued) {
+                pointerMoveQueued = true;
+                requestAnimationFrame(() => {
+                    onPointerMove(e);
+                    pointerMoveQueued = false;
+                });
+            }
+        }
+        window.addEventListener('pointermove', pointerMoveHandler, {passive: true});
 
         function animate() {
             const damping = 0.12;
@@ -295,38 +321,33 @@
                 waves.forEach((wave, i) => {
                     const tx = offsetX * moveFactors[i];
                     const ty = offsetY * moveFactors[i];
-                    wave.style.transform = `translate(${tx}px, ${ty}px)`;
+                    const newTransform = `translate(${tx}px, ${ty}px)`;
+                    if (wave.style.transform !== newTransform) {
+                        wave.style.transform = newTransform;
+                    }
                 });
 
-                const bottomImgs = [
-                    document.getElementById('bottom1'),
-                    document.getElementById('bottom2'),
-                    document.getElementById('bottom3'),
-                    document.getElementById('bottom4'),
-                    document.getElementById('bottom5')
-                ];
                 bottomImgs.forEach((img, i) => {
                     if (img) {
                         const factor = moveFactors[moveFactors.length - 1 - i];
                         const tx = offsetX * factor;
                         const ty = offsetY * factor;
-                        img.style.transform = `translate(${tx}px, ${ty}px)`;
+                        const newTransform = `translate(${tx}px, ${ty}px)`;
+                        if (img.style.transform !== newTransform) {
+                            img.style.transform = newTransform;
+                        }
                     }
                 });
 
-                // Animate beneath images in page2
-                const beneathImgs = [
-                    document.getElementById('beneath1'),
-                    document.getElementById('beneath2'),
-                    document.getElementById('beneath3'),
-                    document.getElementById('beneath4')
-                ];
                 beneathImgs.forEach((img, i) => {
                     if (img) {
                         const fac = moveFactors[moveFactors.length - 1 - i];
                         const tx = offsetX * fac;
                         const ty = offsetY * fac;
-                        img.style.transform = `translate(${tx}px, ${ty}px)`;
+                        const newTransform = `translate(${tx}px, ${ty}px)`;
+                        if (img.style.transform !== newTransform) {
+                            img.style.transform = newTransform;
+                        }
                     }
                 });
 
