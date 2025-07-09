@@ -205,7 +205,7 @@
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: transparent; display: flex; justify-content: center; align-items: center;
         z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.5s;">
-        <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;">
+        <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;" data-duration="1785">
     </div>
     <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
     <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
@@ -241,7 +241,7 @@
             </div>
         </section>
     </div>
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const follower = document.getElementById('mouse-follower');
         const shadowFollower = document.getElementById('shadow-follower');
@@ -264,7 +264,6 @@
         mainImg.addEventListener('load', updateBox);
         window.addEventListener('resize', () => { requestAnimationFrame(updateBox); });
 
-        // Cache bottom and beneath images once
         const bottomImgs = [
             document.getElementById('bottom1'),
             document.getElementById('bottom2'),
@@ -279,7 +278,6 @@
             document.getElementById('beneath4')
         ];
 
-        // Throttle pointermove to animation frame
         let pointerMoveQueued = false;
         function onPointerMove(e) {
             lastPointer.x = e.clientX;
@@ -387,6 +385,55 @@
         });
 
         const scrollContainer = document.querySelector('.scroll-container');
+        const loaderGif = document.getElementById('loader-gif');
+        const loaderGifImg = loaderGif ? loaderGif.querySelector('img') : null;
+        const loaderGifDuration = loaderGifImg ? parseInt(loaderGifImg.dataset.duration) || 1200 : 1200;
+
+        function showLoaderGif() {
+            if (loaderGif && loaderGifImg) {
+                // Force reload GIF by resetting src
+                const src = loaderGifImg.src;
+                loaderGifImg.src = '';
+                loaderGifImg.src = src;
+                loaderGif.style.opacity = '1';
+                loaderGif.style.pointerEvents = 'auto';
+            }
+        }
+
+        function hideLoaderGif() {
+            if (loaderGif) {
+                loaderGif.style.opacity = '0';
+                loaderGif.style.pointerEvents = 'none';
+            }
+        }
+
+        // --- Delay scroll for GIF duration after mouse wheel, show loader.gif immediately ---
+        let pendingScroll = 0;
+        let isDelayingScroll = false;
+        const scrollDelay = 500; // 0.5s scroll delay
+
+        scrollContainer.addEventListener('wheel', function(e) {
+            if (!isDelayingScroll) {
+                e.preventDefault();
+                pendingScroll = e.deltaY;
+                isDelayingScroll = true;
+
+                showLoaderGif();
+
+                setTimeout(() => {
+                    hideLoaderGif();
+                }, loaderGifDuration); // Hide loader after 1200ms (or data-duration)
+
+                setTimeout(() => {
+                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
+                    isDelayingScroll = false;
+                }, scrollDelay); // Scroll after 500ms
+            } else {
+                e.preventDefault();
+                pendingScroll += e.deltaY;
+            }
+        }, { passive: false });
+
         let ticking = false;
         function onScroll() {
             if (!ticking) {
@@ -411,32 +458,25 @@
         }
         scrollContainer.addEventListener('scroll', onScroll, {passive: true});
         onScroll();
-
         updateBox();
     });
-    
+
     window.addEventListener('load', () => {
         const loader = document.getElementById('loader-wrapper');
         const loaderGif = document.getElementById('loader-gif');
 
         if (loader) {
-            // Delay gif appearance until just before loader-wrapper fades
             setTimeout(() => {
                 if (loaderGif) {
                     loaderGif.style.opacity = '1';
                     loaderGif.style.pointerEvents = 'auto';
                 }
-            }, 500); // start gif fade-in at 0.5s
+            }, 500);
 
-            // Fade out loader-wrapper at 1s
             setTimeout(() => {
                 loader.style.opacity = '0';
-
-                // After fade-out (0.5s), remove loader-wrapper
                 setTimeout(() => {
                     loader.remove();
-
-                    // Keep gif for 1s, then hide it
                     setTimeout(() => {
                         if (loaderGif) {
                             loaderGif.style.opacity = '0';
@@ -445,11 +485,11 @@
                         document.body.classList.remove('loading-bg');
                     }, 120);
                 }, 500);
-            }, 1000); // delay before starting to fade loader
+            }, 1000);
         } else {
             document.body.classList.remove('loading-bg');
         }
     });
-    </script>
+</script>
 </body>
 </html>
