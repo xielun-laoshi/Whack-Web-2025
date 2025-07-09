@@ -201,6 +201,12 @@
     <div id="loader-wrapper">
         <div class="loader"></div>
     </div>
+    <div id="loader-gif" style="
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: transparent; display: flex; justify-content: center; align-items: center;
+        z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.5s;">
+        <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;">
+    </div>
     <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
     <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
     <div class="scroll-container">
@@ -387,13 +393,40 @@
 
         updateBox();
     });
-
+    
     window.addEventListener('load', () => {
         const loader = document.getElementById('loader-wrapper');
+        const loaderGif = document.getElementById('loader-gif');
+
         if (loader) {
-            loader.style.opacity = '0';
-            loader.style.transition = 'opacity 0.5s ease';
-            setTimeout(() => loader.remove(), 500);
+            // Delay gif appearance until just before loader-wrapper fades
+            setTimeout(() => {
+                if (loaderGif) {
+                    loaderGif.style.opacity = '1';
+                    loaderGif.style.pointerEvents = 'auto';
+                }
+            }, 500); // start gif fade-in at 0.5s
+
+            // Fade out loader-wrapper at 1s
+            setTimeout(() => {
+                loader.style.opacity = '0';
+
+                // After fade-out (0.5s), remove loader-wrapper
+                setTimeout(() => {
+                    loader.remove();
+
+                    // Keep gif for 1s, then hide it
+                    setTimeout(() => {
+                        if (loaderGif) {
+                            loaderGif.style.opacity = '0';
+                            loaderGif.style.pointerEvents = 'none';
+                        }
+                        document.body.classList.remove('loading-bg');
+                    }, 120);
+                }, 500);
+            }, 1000); // delay before starting to fade loader
+        } else {
+            document.body.classList.remove('loading-bg');
         }
     });
     </script>
