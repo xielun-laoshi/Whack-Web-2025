@@ -237,7 +237,7 @@
                 <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
                 <img class="bottom-img" id="bottom3" src="../images/bottom3.png" loading="lazy" style="z-index: 2;">
                 <img class="bottom-img" id="bottom2" src="../images/bottom2.png" loading="lazy" style="z-index: 3;">
-                <img class="bottom-img" id="bottom1" src="../images/bottom1.png" loading="lazy" style="z-index: 4;">
+                <img class="bottom-img" id="bottom1" src="../images/bottom1.gif" loading="lazy" style="z-index: 4;">
             </div>
         </section>
     </div>
@@ -246,7 +246,7 @@
         const follower = document.getElementById('mouse-follower');
         const shadowFollower = document.getElementById('shadow-follower');
         const bg = document.querySelector('.background');
-        const waves = [...document.querySelectorAll('.wave')];
+        const waves = Array.from(document.querySelectorAll('.wave'));
         const container = document.getElementById('container');
         const mainImg = document.getElementById('mainImg');
         const shadowImg = document.getElementById('shadowImg');
@@ -279,13 +279,15 @@
         ];
 
         let pointerMoveQueued = false;
+        const followerStyle = follower.style;
+        const shadowFollowerStyle = shadowFollower.style;
         function onPointerMove(e) {
             lastPointer.x = e.clientX;
             lastPointer.y = e.clientY;
             targetX = e.clientX - 10;
             targetY = e.clientY - 10;
-            follower.style.display = 'block';
-            shadowFollower.style.display = 'block';
+            followerStyle.display = 'block';
+            shadowFollowerStyle.display = 'block';
             needsUpdate = true;
         }
         function pointerMoveHandler(e) {
@@ -300,17 +302,16 @@
         window.addEventListener('pointermove', pointerMoveHandler, {passive: true});
 
         function animate() {
-            const damping = 0.12;
+            const damping = 0.12, shadowDamping = 0.09;
             currentX += (targetX - currentX) * damping;
             currentY += (targetY - currentY) * damping;
-            follower.style.left = `${currentX}px`;
-            follower.style.top = `${currentY}px`;
-
-            const shadowDamping = 0.09;
             orangeX += (targetX - orangeX) * shadowDamping;
             orangeY += (targetY - orangeY) * shadowDamping;
-            shadowFollower.style.left = `${orangeX}px`;
-            shadowFollower.style.top = `${orangeY}px`;
+
+            followerStyle.left = `${currentX}px`;
+            followerStyle.top = `${currentY}px`;
+            shadowFollowerStyle.left = `${orangeX}px`;
+            shadowFollowerStyle.top = `${orangeY}px`;
 
             if (needsUpdate && box) {
                 const offsetX = lastPointer.x - window.innerWidth / 2;
@@ -391,17 +392,19 @@
 
         function showLoaderGif() {
             if (loaderGif && loaderGifImg) {
-                // Force reload GIF by resetting src
-                const src = loaderGifImg.src;
-                loaderGifImg.src = '';
-                loaderGifImg.src = src;
+                // Only reload GIF if not visible
+                if (loaderGif.style.opacity !== '1') {
+                    const src = loaderGifImg.src;
+                    loaderGifImg.src = '';
+                    loaderGifImg.src = src;
+                }
                 loaderGif.style.opacity = '1';
                 loaderGif.style.pointerEvents = 'auto';
             }
         }
 
         function hideLoaderGif() {
-            if (loaderGif) {
+            if (loaderGif && loaderGif.style.opacity !== '0') {
                 loaderGif.style.opacity = '0';
                 loaderGif.style.pointerEvents = 'none';
             }
@@ -410,27 +413,39 @@
         // --- Delay scroll for GIF duration after mouse wheel, show loader.gif immediately ---
         let pendingScroll = 0;
         let isDelayingScroll = false;
+        let scrollTimeoutId = null; // Add this line
         const scrollDelay = 500; // 0.5s scroll delay
 
         scrollContainer.addEventListener('wheel', function(e) {
-            if (!isDelayingScroll) {
-                e.preventDefault();
-                pendingScroll = e.deltaY;
-                isDelayingScroll = true;
+            e.preventDefault(); // Always prevent default to avoid native scroll
+            pendingScroll += e.deltaY;
 
+            if (!isDelayingScroll) {
+                isDelayingScroll = true;
                 showLoaderGif();
 
-                setTimeout(() => {
-                    hideLoaderGif();
-                }, loaderGifDuration); // Hide loader after 1200ms (or data-duration)
+                setTimeout(hideLoaderGif, loaderGifDuration);
 
-                setTimeout(() => {
+                // Clear any previous timeout to avoid multiple scrolls
+                if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
+
+                scrollTimeoutId = setTimeout(() => {
                     scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
+                    pendingScroll = 0;
                     isDelayingScroll = false;
-                }, scrollDelay); // Scroll after 500ms
+                    scrollTimeoutId = null;
+                }, scrollDelay);
             } else {
-                e.preventDefault();
-                pendingScroll += e.deltaY;
+                // If already delaying, reset the timeout to extend the delay window
+                if (scrollTimeoutId) {
+                    clearTimeout(scrollTimeoutId);
+                    scrollTimeoutId = setTimeout(() => {
+                        scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
+                        pendingScroll = 0;
+                        isDelayingScroll = false;
+                        scrollTimeoutId = null;
+                    }, scrollDelay);
+                }
             }
         }, { passive: false });
 
