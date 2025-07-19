@@ -1,246 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>improved main page</title>
-    <style>
-        #loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #222;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
+  <meta charset="UTF-8" />
+  <title>improved main page</title>
+  <style>
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
 
-        .loader {
-            width: 60px;
-            aspect-ratio: 1;
-            background:
-                linear-gradient(90deg,#ffffff 50%,#2758e2 0) top/100% 50% no-repeat,
-                linear-gradient(90deg,#3abef9 50%,#fb6222 0);
-            -webkit-mask:linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
-            mask: linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
-            animation: l18 2s infinite; 
-        }
+    .loader {
+      width: 60px;
+      aspect-ratio: 1;
+      background:
+        linear-gradient(90deg, #ffffff 50%, #2758e2 0) top/100% 50% no-repeat,
+        linear-gradient(90deg, #3abef9 50%, #fb6222 0);
+      -webkit-mask: linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
+      mask: linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
+      animation: l18 2s infinite;
+    }
 
-        @keyframes l18 {
-            0%   {-webkit-mask-position:0    0   }
-            25%  {-webkit-mask-position:100% 0   }
-            50%  {-webkit-mask-position:100% 100%}
-            75%  {-webkit-mask-position:0    100%}
-            100% {-webkit-mask-position:0    0   }
-        }
+    @keyframes l18 {
+      0%   { -webkit-mask-position: 0 0 }
+      25%  { -webkit-mask-position: 100% 0 }
+      50%  { -webkit-mask-position: 100% 100% }
+      75%  { -webkit-mask-position: 0 100% }
+      100% { -webkit-mask-position: 0 0 }
+    }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            scroll-behavior: smooth;
-            overflow: hidden;
-        }
+    html, body {
+      height: 100%;
+      margin: 0;
+      scroll-behavior: smooth;
+      overflow: hidden;
+    }
 
-        #mouse-follower, #shadow-follower {
-            position: fixed;
-            display: none;
-            pointer-events: none;
-            border-radius: 50%;
-            z-index: 1000;
-            transition: transform 0.1s, background 0.2s;
-            will-change: transform, left, top;
-        }
-        #mouse-follower {
-            width: 3.5vh;
-            height: 3.5vh;
-            background: #ffffff;
-        }
-        #shadow-follower {
-            width: 3.8vh;
-            height: 3.8vh;
-            background: #fb6222;
-            z-index: 999;
-        }
+    #mouse-follower, #shadow-follower {
+      position: fixed;
+      display: none;
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: 1000;
+      transition: transform 0.1s, background 0.2s;
+      will-change: transform, left, top;
+    }
 
-        .scroll-container {
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
+    #mouse-follower {
+      width: 3.5vh;
+      height: 3.5vh;
+      background: #ffffff;
+    }
 
-        .page {
-            height: 100vh;
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            justify-content: center;
-            align-items: center;        
-        }
+    #shadow-follower {
+      width: 3.8vh;
+      height: 3.8vh;
+      background: #fb6222;
+      z-index: 999;
+    }
 
-        .background {
-            position: absolute;
-            width: 101vw;
-            height: 101vh;
-            top: -5px;
-            left: -5px;
-            background: url("../images/sky.gif") center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: -2;
-            transition: transform 0.08s ease-out, background-position 0.08s ease-out;
-            will-change: transform, background-position;
-        }
-        .wave {
-            position: absolute;
-            bottom: -55px;
-            left: -7.5vw;
-            width: 115vw;
-            height: 120vh;
-            object-fit: cover;
-            pointer-events: none;
-            transform: translateX(-50%);
-            transition: transform 0.08s ease-out;
-            z-index: -1;
-            will-change: transform;
-        }
-        #title {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            pointer-events: none;
-        }
+    .scroll-container {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
 
-        #container {
-            position: relative;
-            perspective: 800px;
-            justify-content: center;
-            align-items: center;
-            display: inline-block;
-            max-width: 90vw;
-            max-height: 70vh;
-            z-index: 10;
-            width: 60vw;
-            max-width: 100vh;
-            min-width: 220px;
-        }
-        .img-layer {
-            position: absolute;
-            width: 100vh;
-            max-width: 100vw;
-            height: auto;
-            transform-origin: center;
-            transition: transform 0.15s ease-out;
-            will-change: transform;
-            width: 100%;
-            height: auto;
-            max-width: 100vw;
-        }
-        #shadowImg { z-index: 0; }
-        #mainImg { z-index: 1; position: relative; }
+    .page {
+      height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .bottom-images {
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .bottom-img {
-            position: absolute;
-            bottom: -75px;
-            left: -10vw;
-            width: 120vw;
-            height: 120vh;
-            transition: transform 0.08s ease-out;
-            will-change: transform;
-        }
-        .beneath-images {
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .beneath-img {
-            position: absolute;
-            bottom: -75px;
-            left: -10vw;
-            width: 120vw;
-            height: 120vh;
-            transition: transform 0.08s ease-out;
-            will-change: transform;
-        }
+    .background {
+      position: absolute;
+      width: 101vw;
+      height: 101vh;
+      top: -5px;
+      left: -5px;
+      background: url("../images/sky.gif") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: -2;
+      transition: transform 0.08s ease-out, background-position 0.08s ease-out;
+      will-change: transform, background-position;
+    }
 
-        @media (max-width: 700px) {
-            #container { width: 85vw; max-width: 60vh; }
-        }
-        @media (max-width: 450px) {
-            #container { width: 98vw; max-width: 40vh; }
-        }
-    </style>
+    .wave, .bottom-img, .beneath-img {
+      position: absolute;
+      bottom: -75px;
+      left: -10vw;
+      width: 120vw;
+      height: 120vh;
+      object-fit: cover;
+      pointer-events: none;
+      transform: translateX(-50%);
+      transition: transform 0.08s ease-out;
+      will-change: transform;
+      z-index: -1;
+    }
+
+    #title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+    }
+
+    #container {
+      position: relative;
+      perspective: 800px;
+      justify-content: center;
+      align-items: center;
+      display: inline-block;
+      max-width: 90vw;
+      max-height: 70vh;
+      z-index: 10;
+      width: 60vw;
+      min-width: 220px;
+    }
+
+    .img-layer {
+      position: absolute;
+      width: 100%;
+      max-width: 100vw;
+      height: auto;
+      transform-origin: center;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+
+    #shadowImg { z-index: 0; }
+    #mainImg { z-index: 1; position: relative; }
+
+    .bottom-images, .beneath-images {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @media (max-width: 700px) {
+      #container { width: 85vw; max-width: 60vh; }
+    }
+
+    @media (max-width: 450px) {
+      #container { width: 98vw; max-width: 40vh; }
+    }
+
+    #loader-gif {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+  </style>
 </head>
 <body>
-    <div id="loader-wrapper">
-        <div class="loader"></div>
-    </div>
-    <div id="loader-gif" style="
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: transparent; display: flex; justify-content: center; align-items: center;
-        z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.5s;">
-        <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;" data-duration="1785">
-    </div>
-    <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
-    <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
-    <div class="scroll-container">
-        <section class="page page1">
-            <div class="background" aria-hidden="true"></div>
-            <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
-            <img class="wave" id="wave2" src="../images/wave2.gif" loading="lazy">
-            <img class="wave" id="wave3" src="../images/wave3.gif" loading="lazy">
-            <img class="wave" id="wave4" src="../images/wave4.gif" loading="lazy">
-            <div id="title" role="banner">
-                <div id="container">
-                    <img id="shadowImg" class="img-layer" src="../images/shadow.png" loading="lazy">
-                    <img id="mainImg" class="img-layer" src="../images/title.png" loading="lazy">
-                </div>
-            </div>
-        </section>
-        <section class="page page2">
-            <div class="beneath-images">
-                <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 3;">
-                <img class="beneath-img" id="beneath2" src="../images/Beneath2.gif" loading="lazy" style="z-index: 2;">
-                <img class="beneath-img" id="beneath3" src="../images/Beneath3.gif" loading="lazy" style="z-index: 1;">
-                <img class="beneath-img" id="beneath4" src="../images/Beneath4.png" loading="lazy" style="z-index: 0;">
-            </div>
-        </section>
-        <section class="page page3">
-            <div class="bottom-images">
-                <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
-                <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
-                <img class="bottom-img" id="bottom3" src="../images/bottom3.png" loading="lazy" style="z-index: 2;">
-                <img class="bottom-img" id="bottom2" src="../images/bottom2.gif" loading="lazy" style="z-index: 3;">
-                <img class="bottom-img" id="bottom1" src="../images/bottom1.gif" loading="lazy" style="z-index: 4;">
-            </div>
-        </section>
-    </div>
+  <div id="loader-wrapper"><div class="loader"></div></div>
+  <div id="loader-gif">
+    <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;" data-duration="1785">
+  </div>
+  <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
+  <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
+
+  <div class="scroll-container">
+    <section class="page page1">
+      <div class="background" aria-hidden="true"></div>
+      <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
+      <img class="wave" id="wave2" src="../images/wave2.gif" loading="lazy">
+      <img class="wave" id="wave3" src="../images/wave3.gif" loading="lazy">
+      <img class="wave" id="wave4" src="../images/wave4.gif" loading="lazy">
+      <div id="title" role="banner">
+        <div id="container">
+          <img id="shadowImg" class="img-layer" src="../images/shadow.png" loading="lazy">
+          <img id="mainImg" class="img-layer" src="../images/title.png" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section class="page page2">
+      <div class="beneath-images">
+        <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 3;">
+        <img class="beneath-img" id="beneath2" src="../images/Beneath2.gif" loading="lazy" style="z-index: 2;">
+        <img class="beneath-img" id="beneath3" src="../images/Beneath3.gif" loading="lazy" style="z-index: 1;">
+        <img class="beneath-img" id="beneath4" src="../images/Beneath4.png" loading="lazy" style="z-index: 0;">
+      </div>
+    </section>
+
+    <section class="page page3">
+      <div class="bottom-images">
+        <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
+        <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
+        <img class="bottom-img" id="bottom3" src="../images/bottom3.png" loading="lazy" style="z-index: 2;">
+        <img class="bottom-img" id="bottom2" src="../images/bottom2.gif" loading="lazy" style="z-index: 3;">
+        <img class="bottom-img" id="bottom1" src="../images/bottom1.gif" loading="lazy" style="z-index: 4;">
+      </div>
+    </section>
+  </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const follower = document.getElementById('mouse-follower');
