@@ -231,6 +231,13 @@
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
 
+        // Page scroll variables
+        const vh = window.innerHeight;
+        const totalPages = 3;
+        let currentPage = 0;
+        let isScrolling = false;
+        let scrollCooldown = false;
+
         // Cache bottom and beneath images with their styles
         const bottomImgs = [];
         const beneathImgs = [];
@@ -296,8 +303,8 @@
                 // Bottom images parallax
                 bottomImgs.forEach((imgObj, i) => {
                     const factor = moveFactors[moveFactors.length - 1 - i];
-                    const tx = offsetX * factor * 0.9;
-                    const ty = offsetY * factor * 0.9;
+                    const tx = offsetX * factor * 0.75;
+                    const ty = offsetY * factor * 0.75;
                     imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
                 });
 
@@ -342,7 +349,7 @@
         });
 
         // Loader GIF management
-        const loaderGifDuration = parseInt(loaderGifImg?.dataset.duration) || 1200;
+        const loaderGifDuration = parseInt(loaderGifImg?.dataset.duration) || 1785;
         let currentGifSrc = '';
 
         function showLoaderGif() {
@@ -365,43 +372,82 @@
             }
         }
 
-        // Optimized scroll handling
-        let pendingScroll = 0;
-        let isDelayingScroll = false;
-        let scrollTimeoutId = null;
-        const scrollDelay = 500;
+        // Get current page based on scroll position
+        function getCurrentPage() {
+            const scrollTop = scrollContainer.scrollTop;
+            return Math.round(scrollTop / vh);
+        }
 
-        scrollContainer.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            pendingScroll += e.deltaY;
+        // Scroll to specific page
+        function scrollToPage(pageIndex, showLoader = true) {
+            if (pageIndex < 0 || pageIndex >= totalPages || isScrolling) return;
+            
+            isScrolling = true;
+            currentPage = pageIndex;
 
-            if (!isDelayingScroll) {
-                isDelayingScroll = true;
+            if (showLoader) {
                 showLoaderGif();
                 setTimeout(hideLoaderGif, loaderGifDuration);
+            }
 
-                if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
+            scrollContainer.scrollTo({
+                top: pageIndex * vh,
+                behavior: 'smooth'
+            });
 
-                scrollTimeoutId = setTimeout(() => {
-                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
-                    pendingScroll = 0;
-                    isDelayingScroll = false;
-                    scrollTimeoutId = null;
-                }, scrollDelay);
-            } else if (scrollTimeoutId) {
-                clearTimeout(scrollTimeoutId);
-                scrollTimeoutId = setTimeout(() => {
-                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
-                    pendingScroll = 0;
-                    isDelayingScroll = false;
-                    scrollTimeoutId = null;
-                }, scrollDelay);
+            // Reset scrolling flag after animation completes
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
+        }
+
+        // Improved scroll handling with page limiting and mandatory animation
+        scrollContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            // Prevent rapid scrolling during cooldown or ongoing scroll
+            if (scrollCooldown || isScrolling) return;
+
+            // Set cooldown to prevent rapid scroll events
+            scrollCooldown = true;
+            setTimeout(() => {
+                scrollCooldown = false;
+            }, 100);
+
+            // Determine scroll direction
+            const scrollDirection = e.deltaY > 0 ? 1 : -1;
+            const targetPage = Math.max(0, Math.min(totalPages - 1, currentPage + scrollDirection));
+
+            // Only scroll if we're moving to a different page
+            if (targetPage !== currentPage) {
+                // Always show loading animation before scrolling
+                showLoaderGif();
+                
+                // Wait for animation to be visible before scrolling
+                setTimeout(() => {
+                    scrollToPage(targetPage, false); // Don't show loader again since we already showed it
+                }, 200); // Small delay to ensure loader is visible
+                
+                // Hide loader after its duration
+                setTimeout(hideLoaderGif, loaderGifDuration + 200);
             }
         }, { passive: false });
 
-        // Optimized scroll position tracking
+        // Update current page on scroll (for manual scrolling or programmatic scrolling)
+        let scrollUpdateTimeout;
+        scrollContainer.addEventListener('scroll', () => {
+            // Debounce the page update
+            clearTimeout(scrollUpdateTimeout);
+            scrollUpdateTimeout = setTimeout(() => {
+                const newPage = getCurrentPage();
+                if (newPage !== currentPage && !isScrolling) {
+                    currentPage = newPage;
+                }
+            }, 100);
+        }, { passive: true });
+
+        // Optimized scroll position tracking for visual effects
         let scrollTicking = false;
-        const vh = window.innerHeight;
         
         function onScroll() {
             if (scrollTicking) return;
@@ -429,6 +475,9 @@
         scrollContainer.addEventListener('scroll', onScroll, {passive: true});
         onScroll();
         updateBox();
+
+        // Initialize current page
+        currentPage = getCurrentPage();
     });
 
     // Optimized window load handler
