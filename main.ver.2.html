@@ -43,29 +43,6 @@
       overflow: hidden;
     }
 
-    #mouse-follower, #shadow-follower {
-      position: fixed;
-      display: none;
-      pointer-events: none;
-      border-radius: 50%;
-      z-index: 1000;
-      transition: transform 0.1s, background 0.2s;
-      will-change: transform, left, top;
-    }
-
-    #mouse-follower {
-      width: 3.5vh;
-      height: 3.5vh;
-      background: #ffffff;
-    }
-
-    #shadow-follower {
-      width: 3.8vh;
-      height: 3.8vh;
-      background: #fb6222;
-      z-index: 999;
-    }
-
     .scroll-container {
       height: 100vh;
       overflow-y: scroll;
@@ -96,20 +73,18 @@
       align-items: center;
       justify-content: center;
       z-index: -2;
-      transition: transform 0.08s ease-out, background-position 0.08s ease-out;
-      will-change: transform, background-position;
+      will-change: background-position;
     }
 
     .wave, .bottom-img, .beneath-img {
       position: absolute;
-      bottom: -75px;
+      bottom: -72px;
       left: -10vw;
       width: 120vw;
       height: 120vh;
       object-fit: cover;
       pointer-events: none;
       transform: translateX(-50%);
-      transition: transform 0.08s ease-out;
       will-change: transform;
       z-index: -1;
     }
@@ -147,7 +122,6 @@
       max-width: 100vw;
       height: auto;
       transform-origin: center;
-      transition: transform 0.15s ease-out;
       will-change: transform;
     }
 
@@ -194,8 +168,6 @@
   <div id="loader-gif">
     <img src="../images/Loader.gif" alt="Loading..." style="width: 100vw; height: 100vh;" data-duration="1785">
   </div>
-  <div id="shadow-follower" aria-hidden="true" loading="lazy"></div>
-  <div id="mouse-follower" aria-hidden="true" loading="lazy"></div>
 
   <div class="scroll-container">
     <section class="page page1">
@@ -233,190 +205,181 @@
   </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const follower = document.getElementById('mouse-follower');
-        const shadowFollower = document.getElementById('shadow-follower');
+        // Cache DOM elements
         const bg = document.querySelector('.background');
-        const waves = Array.from(document.querySelectorAll('.wave'));
+        const waves = document.querySelectorAll('.wave');
         const container = document.getElementById('container');
         const mainImg = document.getElementById('mainImg');
         const shadowImg = document.getElementById('shadowImg');
         const title = document.getElementById('title');
+        const scrollContainer = document.querySelector('.scroll-container');
+        const loaderGif = document.getElementById('loader-gif');
+        const loaderGifImg = loaderGif?.querySelector('img');
+        
+        // Cache styles for performance
+        const bgStyle = bg.style;
+        const mainImgStyle = mainImg.style;
+        const shadowImgStyle = shadowImg.style;
+        const titleStyle = title.style;
+        const loaderGifStyle = loaderGif?.style;
+
+        // Movement and animation variables
         const moveFactors = [0.005, 0.05, 0.1, 0.15, 0.2];
-
-        let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
-        let currentX = targetX, currentY = targetY;
-        let orangeX = targetX, orangeY = targetY;
+        const centerX = window.innerWidth * 0.5;
+        const centerY = window.innerHeight * 0.5;
         let box = null;
-        let lastPointer = {x: targetX, y: targetY};
-        let needsUpdate = false;
+        let lastX = centerX, lastY = centerY;
+        let isAnimating = true;
 
-        function updateBox() { box = container.getBoundingClientRect(); }
+        // Cache bottom and beneath images with their styles
+        const bottomImgs = [];
+        const beneathImgs = [];
+        
+        for (let i = 1; i <= 5; i++) {
+            const img = document.getElementById(`bottom${i}`);
+            if (img) bottomImgs.push({el: img, style: img.style});
+        }
+        
+        for (let i = 1; i <= 4; i++) {
+            const img = document.getElementById(`beneath${i}`);
+            if (img) beneathImgs.push({el: img, style: img.style});
+        }
+
+        // Optimized box update
+        function updateBox() { 
+            box = container.getBoundingClientRect(); 
+        }
+        
         mainImg.addEventListener('load', updateBox);
-        window.addEventListener('resize', () => { requestAnimationFrame(updateBox); });
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateBox, 16);
+        });
 
-        const bottomImgs = [
-            document.getElementById('bottom1'),
-            document.getElementById('bottom2'),
-            document.getElementById('bottom3'),
-            document.getElementById('bottom4'),
-            document.getElementById('bottom5')
-        ];
-        const beneathImgs = [
-            document.getElementById('beneath1'),
-            document.getElementById('beneath2'),
-            document.getElementById('beneath3'),
-            document.getElementById('beneath4')
-        ];
-
+        // Throttled pointer movement for parallax effects
         let pointerMoveQueued = false;
-        const followerStyle = follower.style;
-        const shadowFollowerStyle = shadowFollower.style;
         function onPointerMove(e) {
-            lastPointer.x = e.clientX;
-            lastPointer.y = e.clientY;
-            targetX = e.clientX - 10;
-            targetY = e.clientY - 10;
-            followerStyle.display = 'block';
-            shadowFollowerStyle.display = 'block';
-            needsUpdate = true;
+            if (pointerMoveQueued) return;
+            pointerMoveQueued = true;
+            
+            requestAnimationFrame(() => {
+                const clientX = e.clientX;
+                const clientY = e.clientY;
+                lastX = clientX;
+                lastY = clientY;
+                pointerMoveQueued = false;
+            });
         }
-        function pointerMoveHandler(e) {
-            if (!pointerMoveQueued) {
-                pointerMoveQueued = true;
-                requestAnimationFrame(() => {
-                    onPointerMove(e);
-                    pointerMoveQueued = false;
-                });
-            }
-        }
-        window.addEventListener('pointermove', pointerMoveHandler, {passive: true});
+        
+        window.addEventListener('pointermove', onPointerMove, {passive: true});
 
+        // Optimized animation loop
         function animate() {
-            const damping = 0.12, shadowDamping = 0.09;
-            currentX += (targetX - currentX) * damping;
-            currentY += (targetY - currentY) * damping;
-            orangeX += (targetX - orangeX) * shadowDamping;
-            orangeY += (targetY - orangeY) * shadowDamping;
+            if (!isAnimating) return;
 
-            followerStyle.left = `${currentX}px`;
-            followerStyle.top = `${currentY}px`;
-            shadowFollowerStyle.left = `${orangeX}px`;
-            shadowFollowerStyle.top = `${orangeY}px`;
-
-            if (needsUpdate && box) {
-                const offsetX = lastPointer.x - window.innerWidth / 2;
-                const offsetY = lastPointer.y - window.innerHeight / 2;
-                bg.style.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
+            // Update parallax effects
+            if (box) {
+                const offsetX = lastX - centerX;
+                const offsetY = lastY - centerY;
+                
+                // Background parallax
+                bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
+                
+                // Wave parallax
                 waves.forEach((wave, i) => {
                     const tx = offsetX * moveFactors[i];
                     const ty = offsetY * moveFactors[i];
-                    const newTransform = `translate(${tx}px, ${ty}px)`;
-                    if (wave.style.transform !== newTransform) {
-                        wave.style.transform = newTransform;
-                    }
+                    wave.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
                 });
 
-                bottomImgs.forEach((img, i) => {
-                    if (img) {
-                        const factor = moveFactors[moveFactors.length - 1 - i];
-                        const tx = offsetX * factor;
-                        const ty = offsetY * factor;
-                        const newTransform = `translate(${tx}px, ${ty}px)`;
-                        if (img.style.transform !== newTransform) {
-                            img.style.transform = newTransform;
-                        }
-                    }
+                // Bottom images parallax
+                bottomImgs.forEach((imgObj, i) => {
+                    const factor = moveFactors[moveFactors.length - 1 - i];
+                    const tx = offsetX * factor * 0.9;
+                    const ty = offsetY * factor * 0.9;
+                    imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
                 });
 
-                beneathImgs.forEach((img, i) => {
-                    if (img) {
-                        const fac = moveFactors[moveFactors.length - 1 - i];
-                        const tx = offsetX * fac;
-                        const ty = offsetY * fac;
-                        const newTransform = `translate(${tx}px, ${ty}px)`;
-                        if (img.style.transform !== newTransform) {
-                            img.style.transform = newTransform;
-                        }
-                    }
+                // Beneath images parallax
+                beneathImgs.forEach((imgObj, i) => {
+                    const factor = moveFactors[moveFactors.length - 1 - i];
+                    const tx = offsetX * factor * 1.1;
+                    const ty = offsetY * factor * 1.1;
+                    imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
                 });
 
-                const centerX = box.left + box.width / 2;
-                const centerY = box.top + box.height / 2;
-                const dx = lastPointer.x - centerX;
-                const dy = lastPointer.y - centerY;
-                const percentX = dx / (box.width / 2);
-                const percentY = dy / (box.height / 2);
-                const maxRotation = 15, maxScale = 1.1, shadowOffset = 10;
-                const rotateX = (-percentY * maxRotation).toFixed(2);
-                const rotateY = (percentX * maxRotation).toFixed(2);
-                const scale = (1 + ((Math.abs(percentX) + Math.abs(percentY)) / 2) * (maxScale - 1)).toFixed(3);
-                mainImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
-                const shadowScale = (scale * 1.07).toFixed(3);
-                const offsetX2 = (percentX * shadowOffset).toFixed(1);
-                const offsetY2 = (percentY * shadowOffset).toFixed(1);
-                shadowImg.style.transform = `translate(${offsetX2}px, ${offsetY2}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${shadowScale})`;
-                needsUpdate = false;
+                // 3D tilt effect
+                const centerBx = box.left + box.width * 0.5;
+                const centerBy = box.top + box.height * 0.5;
+                const dx = lastX - centerBx;
+                const dy = lastY - centerBy;
+                const percentX = dx / (box.width * 0.5);
+                const percentY = dy / (box.height * 0.5);
+                
+                const rotateX = (-percentY * 15);
+                const rotateY = (percentX * 15);
+                const scale = 1 + ((Math.abs(percentX) + Math.abs(percentY)) * 0.5) * 0.1;
+                
+                mainImgStyle.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, 1)`;
+                
+                const shadowScale = scale * 1.07;
+                const offsetX2 = percentX * 10;
+                const offsetY2 = percentY * 10;
+                shadowImgStyle.transform = `translate3d(${offsetX2}px, ${offsetY2}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${shadowScale}, ${shadowScale}, 1)`;
             }
+            
             requestAnimationFrame(animate);
         }
-        animate();
+        
+        // Start animation
+        requestAnimationFrame(animate);
 
-        document.addEventListener('mousedown', () => {
-            follower.style.transform = 'scale(0.4)';
-            shadowFollower.style.transform = 'scale(0.4)';
-        });
-        document.addEventListener('mouseup', () => {
-            follower.style.transform = '';
-            shadowFollower.style.transform = '';
-        });
-
+        // Reset on blur
         window.addEventListener('blur', () => {
-            mainImg.style.transform = '';
-            shadowImg.style.transform = '';
+            mainImgStyle.transform = '';
+            shadowImgStyle.transform = '';
         });
 
-        const scrollContainer = document.querySelector('.scroll-container');
-        const loaderGif = document.getElementById('loader-gif');
-        const loaderGifImg = loaderGif ? loaderGif.querySelector('img') : null;
-        const loaderGifDuration = loaderGifImg ? parseInt(loaderGifImg.dataset.duration) || 1200 : 1200;
+        // Loader GIF management
+        const loaderGifDuration = parseInt(loaderGifImg?.dataset.duration) || 1200;
+        let currentGifSrc = '';
 
         function showLoaderGif() {
-            if (loaderGif && loaderGifImg) {
-                // Only reload GIF if not visible
-                if (loaderGif.style.opacity !== '1') {
-                    const src = loaderGifImg.src;
-                    loaderGifImg.src = '';
-                    loaderGifImg.src = src;
-                }
-                loaderGif.style.opacity = '1';
-                loaderGif.style.pointerEvents = 'auto';
+            if (!loaderGif || !loaderGifImg) return;
+            
+            if (loaderGifStyle.opacity !== '1') {
+                // Refresh GIF by changing src
+                if (!currentGifSrc) currentGifSrc = loaderGifImg.src;
+                loaderGifImg.src = currentGifSrc + '?t=' + Date.now();
+                
+                loaderGifStyle.opacity = '1';
+                loaderGifStyle.pointerEvents = 'auto';
             }
         }
 
         function hideLoaderGif() {
-            if (loaderGif && loaderGif.style.opacity !== '0') {
-                loaderGif.style.opacity = '0';
-                loaderGif.style.pointerEvents = 'none';
+            if (loaderGif && loaderGifStyle.opacity !== '0') {
+                loaderGifStyle.opacity = '0';
+                loaderGifStyle.pointerEvents = 'none';
             }
         }
 
-        // --- Delay scroll for GIF duration after mouse wheel, show loader.gif immediately ---
+        // Optimized scroll handling
         let pendingScroll = 0;
         let isDelayingScroll = false;
-        let scrollTimeoutId = null; // Add this line
-        const scrollDelay = 500; // 0.5s scroll delay
+        let scrollTimeoutId = null;
+        const scrollDelay = 500;
 
-        scrollContainer.addEventListener('wheel', function(e) {
-            e.preventDefault(); // Always prevent default to avoid native scroll
+        scrollContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
             pendingScroll += e.deltaY;
 
             if (!isDelayingScroll) {
                 isDelayingScroll = true;
                 showLoaderGif();
-
                 setTimeout(hideLoaderGif, loaderGifDuration);
 
-                // Clear any previous timeout to avoid multiple scrolls
                 if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
 
                 scrollTimeoutId = setTimeout(() => {
@@ -425,75 +388,83 @@
                     isDelayingScroll = false;
                     scrollTimeoutId = null;
                 }, scrollDelay);
-            } else {
-                // If already delaying, reset the timeout to extend the delay window
-                if (scrollTimeoutId) {
-                    clearTimeout(scrollTimeoutId);
-                    scrollTimeoutId = setTimeout(() => {
-                        scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
-                        pendingScroll = 0;
-                        isDelayingScroll = false;
-                        scrollTimeoutId = null;
-                    }, scrollDelay);
-                }
+            } else if (scrollTimeoutId) {
+                clearTimeout(scrollTimeoutId);
+                scrollTimeoutId = setTimeout(() => {
+                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
+                    pendingScroll = 0;
+                    isDelayingScroll = false;
+                    scrollTimeoutId = null;
+                }, scrollDelay);
             }
         }, { passive: false });
 
-        let ticking = false;
+        // Optimized scroll position tracking
+        let scrollTicking = false;
+        const vh = window.innerHeight;
+        
         function onScroll() {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    const scrollY = scrollContainer.scrollTop;
-                    const vh = window.innerHeight;
-                    if (scrollY < vh) {
-                        title.style.opacity = '1';
-                        title.style.transform = 'translate(-50%, -50%)';
-                    } else if (scrollY < 2 * vh) {
-                        const progress = (scrollY - vh) / vh;
-                        title.style.opacity = `${1 - 0.5 * progress}`;
-                        title.style.transform = 'translate(-50%, -50%)';
-                    } else {
-                        title.style.opacity = '0.5';
-                        title.style.transform = 'translate(-50%, -100vh)';
-                    }
-                    ticking = false;
-                });
-                ticking = true;
-            }
+            if (scrollTicking) return;
+            scrollTicking = true;
+            
+            requestAnimationFrame(() => {
+                const scrollY = scrollContainer.scrollTop;
+                
+                if (scrollY < vh) {
+                    titleStyle.opacity = '1';
+                    titleStyle.transform = 'translate(-50%, -50%)';
+                } else if (scrollY < vh * 2) {
+                    const progress = (scrollY - vh) / vh;
+                    titleStyle.opacity = 1 - 0.5 * progress;
+                    titleStyle.transform = 'translate(-50%, -50%)';
+                } else {
+                    titleStyle.opacity = '0.5';
+                    titleStyle.transform = 'translate(-50%, -100vh)';
+                }
+                
+                scrollTicking = false;
+            });
         }
+        
         scrollContainer.addEventListener('scroll', onScroll, {passive: true});
         onScroll();
         updateBox();
     });
 
+    // Optimized window load handler
     window.addEventListener('load', () => {
         const loader = document.getElementById('loader-wrapper');
         const loaderGif = document.getElementById('loader-gif');
 
-        if (loader) {
-            setTimeout(() => {
-                if (loaderGif) {
-                    loaderGif.style.opacity = '1';
-                    loaderGif.style.pointerEvents = 'auto';
-                }
-            }, 500);
-
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.remove();
-                    setTimeout(() => {
-                        if (loaderGif) {
-                            loaderGif.style.opacity = '0';
-                            loaderGif.style.pointerEvents = 'none';
-                        }
-                        document.body.classList.remove('loading-bg');
-                    }, 120);
-                }, 500);
-            }, 1000);
-        } else {
+        if (!loader) {
             document.body.classList.remove('loading-bg');
+            return;
         }
+
+        // Show loader GIF after 500ms
+        const showGifTimer = setTimeout(() => {
+            if (loaderGif) {
+                loaderGif.style.opacity = '1';
+                loaderGif.style.pointerEvents = 'auto';
+            }
+        }, 500);
+
+        // Hide main loader after 1000ms
+        const hideLoaderTimer = setTimeout(() => {
+            loader.style.opacity = '0';
+            
+            const removeLoaderTimer = setTimeout(() => {
+                loader.remove();
+                
+                const finalCleanupTimer = setTimeout(() => {
+                    if (loaderGif) {
+                        loaderGif.style.opacity = '0';
+                        loaderGif.style.pointerEvents = 'none';
+                    }
+                    document.body.classList.remove('loading-bg');
+                }, 120);
+            }, 500);
+        }, 1000);
     });
 </script>
 </body>
