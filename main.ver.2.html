@@ -78,7 +78,7 @@
 
     .wave, .bottom-img, .beneath-img {
       position: absolute;
-      bottom: -72px;
+      bottom: -75px;
       left: -10vw;
       width: 120vw;
       height: 120vh;
@@ -187,10 +187,16 @@
 
     <section class="page page2">
       <div class="beneath-images">
-        <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 3;">
-        <img class="beneath-img" id="beneath2" src="../images/Beneath2.gif" loading="lazy" style="z-index: 2;">
-        <img class="beneath-img" id="beneath3" src="../images/Beneath3.gif" loading="lazy" style="z-index: 1;">
-        <img class="beneath-img" id="beneath4" src="../images/Beneath4.png" loading="lazy" style="z-index: 0;">
+        <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 5;">
+        <img class="beneath-img" id="beneath2" src="../images/Light.png" loading="lazy" 
+        style="z-index: 4; width: 40vw; left: 10vw; top: 10vh; opacity: 0.5;">
+        <img class="beneath-img" id="beneath3" src="../images/Beneath2.gif" loading="lazy" style="z-index: 3;">
+        <img class="beneath-img" id="beneath4" src="../images/Beneath3.gif" loading="lazy" style="z-index: 2;">
+        <img class="beneath-img" id="beneath5" src="../images/Light2.png" loading="lazy" 
+        style="z-index: 2; width: 40vw; left: 70vw; top: 10vh; opacity: 0.7;">
+        <img class="beneath-img" id="beneath6" src="../images/Light3.png" loading="lazy" 
+        style="z-index: 1; width: 20vw; left: 50vw; top: 10vh; opacity: 0.6;">
+        <img class="beneath-img" id="beneath7" src="../images/Beneath4.png" loading="lazy" style="z-index: 0;">
       </div>
     </section>
 
@@ -225,7 +231,7 @@
         const loaderGifStyle = loaderGif?.style;
 
         // Movement and animation variables
-        const moveFactors = [0.005, 0.05, 0.1, 0.15, 0.2];
+        const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
         const centerX = window.innerWidth * 0.5;
         const centerY = window.innerHeight * 0.5;
         let box = null;
@@ -241,7 +247,7 @@
             if (img) bottomImgs.push({el: img, style: img.style});
         }
         
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 7; i++) {
             const img = document.getElementById(`beneath${i}`);
             if (img) beneathImgs.push({el: img, style: img.style});
         }
@@ -289,8 +295,8 @@
                 
                 // Wave parallax
                 waves.forEach((wave, i) => {
-                    const tx = offsetX * moveFactors[i];
-                    const ty = offsetY * moveFactors[i];
+                    const tx = offsetX * (moveFactors[i]+0.05);
+                    const ty = offsetY * (moveFactors[i]+0.05);
                     wave.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
                 });
 
