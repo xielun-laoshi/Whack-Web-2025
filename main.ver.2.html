@@ -36,6 +36,26 @@
       100% { -webkit-mask-position: 0 0 }
     }
 
+    @font-face {
+      font-family: 'MinecraftRegular';
+      src: url('../font/MinecraftRegular.otf') format('opentype');
+    }
+
+    .minecraft-text {
+      font-family: 'MinecraftRegular', monospace;
+      font-size: 30px;
+      width: 50%;
+      height: auto;
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #ffffff;
+      z-index: 10;
+      pointer-events: none;
+    }
+
     html, body {
       height: 100%;
       margin: 0;
@@ -186,6 +206,26 @@
     </section>
 
     <section class="page page2">
+      <div id="about" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
+        <div id="about-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
+          <img id="aboutShadow" class="img-layer" src="../images/about shadow.png" loading="lazy" style="z-index:0;">
+          <img id="aboutMain" class="img-layer" src="../images/about.png" loading="lazy" style="z-index:1; position:relative;">
+        </div>
+      </div>
+
+      <p class="minecraft-text">
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+        The quick fox jump over the lazy dogs.
+      </p>
+
       <div class="beneath-images">
         <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 5;">
         <img class="beneath-img" id="beneath2" src="../images/Light.png" loading="lazy" 
@@ -222,6 +262,9 @@
         const scrollContainer = document.querySelector('.scroll-container');
         const loaderGif = document.getElementById('loader-gif');
         const loaderGifImg = loaderGif?.querySelector('img');
+        const aboutContainer = document.getElementById('about-container');
+        const aboutMain = document.getElementById('aboutMain');
+        const aboutShadow = document.getElementById('aboutShadow');
         
         // Cache styles for performance
         const bgStyle = bg.style;
@@ -232,9 +275,10 @@
 
         // Movement and animation variables
         const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
-        const centerX = window.innerWidth * 0.5;
-        const centerY = window.innerHeight * 0.5;
+  let centerX = window.innerWidth * 0.5;
+  let centerY = window.innerHeight * 0.5;
         let box = null;
+        let aboutbox = null;
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
 
@@ -256,42 +300,78 @@
         function updateBox() { 
             box = container.getBoundingClientRect(); 
         }
-        
+
+        function updateAboutBox() {
+            // keep same naming as the outer-scope variable (aboutbox)
+            if (aboutContainer) aboutbox = aboutContainer.getBoundingClientRect();
+        }
+
+        if (aboutMain) aboutMain.addEventListener('load', updateAboutBox);
+        window.addEventListener('resize', () => setTimeout(updateAboutBox, 16));
+                  
         mainImg.addEventListener('load', updateBox);
         let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(updateBox, 16);
-        });
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        updateBox();
+        // refresh viewport center used for pointer math
+        centerX = window.innerWidth * 0.5;
+        centerY = window.innerHeight * 0.5;
+        // also update about box when resizing
+        updateAboutBox();
+      }, 16);
+    });
 
-        // Throttled pointer movement for parallax effects
-        let pointerMoveQueued = false;
-        function onPointerMove(e) {
-            if (pointerMoveQueued) return;
-            pointerMoveQueued = true;
-            
-            requestAnimationFrame(() => {
-                const clientX = e.clientX;
-                const clientY = e.clientY;
-                lastX = clientX;
-                lastY = clientY;
-                pointerMoveQueued = false;
-            });
-        }
-        
-        window.addEventListener('pointermove', onPointerMove, {passive: true});
+    // Throttled pointer movement for parallax effects
+    // add a tiny early-out to ignore duplicate pointer events
+    let pointerMoveQueued = false;
+    let lastPointerEventX = null;
+    let lastPointerEventY = null;
+    function onPointerMove(e) {
+      // ignore identical consecutive events (common on some touchpads)
+      if (e.clientX === lastPointerEventX && e.clientY === lastPointerEventY) return;
+      lastPointerEventX = e.clientX;
+      lastPointerEventY = e.clientY;
 
-        // Optimized animation loop
-        function animate() {
-            if (!isAnimating) return;
+      if (pointerMoveQueued) return;
+      pointerMoveQueued = true;
 
-            // Update parallax effects
-            if (box) {
+      requestAnimationFrame(() => {
+        // apply the most recently seen pointer coordinates
+        lastX = lastPointerEventX;
+        lastY = lastPointerEventY;
+        pointerMoveQueued = false;
+      });
+    }
+
+    window.addEventListener('pointermove', onPointerMove, {passive: true});
+
+    // Optimized animation loop
+    // add a light FPS cap to reduce CPU on idle/fast-noticeable updates
+    const TARGET_FPS = 30; // conservative target preserves smoothness
+    const FRAME_INTERVAL = 1000 / TARGET_FPS;
+    let lastFrameTime = performance.now();
+
+    function animate(now) {
+      if (!isAnimating) return;
+      if (!now) now = performance.now();
+      const elapsed = now - lastFrameTime;
+      if (elapsed < FRAME_INTERVAL) {
+        // skip this frame but keep the loop alive
+        requestAnimationFrame(animate);
+        return;
+      }
+      // account for any drift
+      lastFrameTime = now - (elapsed % FRAME_INTERVAL);
+
+      // Update parallax effects
+      if (box) {
                 const offsetX = lastX - centerX;
                 const offsetY = lastY - centerY;
                 
-                // Background parallax
-                bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors}px`;
+                // Background parallax (use numeric factors for both axes)
+                bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
                 
                 // Wave parallax
                 waves.forEach((wave, i) => {
@@ -334,9 +414,39 @@
                 const offsetX2 = percentX * 10;
                 const offsetY2 = percentY * 10;
                 shadowImgStyle.transform = `translate3d(${offsetX2}px, ${offsetY2}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${shadowScale}, ${shadowScale}, 1)`;
+
+        // About section 3D tilt effect (calculate relative to viewport center)
+        if (aboutbox) {
+          // Compute deviation from viewport center (neutral point)
+          const vdx = lastX - centerX;
+          const vdy = lastY - centerY;
+
+          // Normalize by half viewport size so values are roughly in [-1,1]
+          const halfW = window.innerWidth * 0.5 || 1;
+          const halfH = window.innerHeight * 0.5 || 1;
+          let apercentX = vdx / halfW;
+          let apercentY = vdy / halfH;
+
+          // Clamp to avoid extreme flips
+          apercentX = Math.max(-1, Math.min(1, apercentX));
+          apercentY = Math.max(-1, Math.min(1, apercentY));
+
+          // Reduce strength slightly so the about tilt is subtler
+          const strength = 0.6;
+          const arotateX = (-apercentY * 15 * strength);
+          const arotateY = (apercentX * 15 * strength);
+          const ascale = 1 + ((Math.abs(apercentX) + Math.abs(apercentY)) * 0.5) * 0.05;
+
+          aboutMain.style.transform = `rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale}, ${ascale}, 1)`;
+
+          const ashadowScale = ascale * 1.07;
+          const aoffsetX2 = apercentX * 8;
+          const aoffsetY2 = apercentY * 8;
+          aboutShadow.style.transform = `translate3d(${aoffsetX2}px, ${aoffsetY2}px, 0) rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ashadowScale}, ${ashadowScale}, 1)`;
+        }
             }
             
-            requestAnimationFrame(animate);
+      requestAnimationFrame(animate);
         }
         
         // Start animation
@@ -379,36 +489,57 @@
         const scrollDelay = 500;
 
 
-        scrollContainer.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            pendingScroll += e.deltaY;
+    // Improved wheel/touchpad handling: one page per gesture
+    (function installWheelPager(){
+      const pages = document.querySelectorAll('.page');
+      const pageCount = pages.length;
+      const scrollLockDuration = 700; // ms - lock while smooth scroll animates
 
+      scrollContainer.addEventListener('wheel', (e) => {
+        // We control the scroll behavior here
+        e.preventDefault();
 
-            if (!isDelayingScroll) {
-                isDelayingScroll = true;
-                showLoaderGif();
-                setTimeout(hideLoaderGif, loaderGifDuration);
+        // Ignore tiny/no movement
+        if (!e.deltaY) return;
 
+        // If a scroll is already in progress, ignore further wheel events
+        if (isDelayingScroll) return;
 
-                if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
+        // Determine direction: 1 = down, -1 = up
+        const direction = e.deltaY > 0 ? 1 : -1;
 
+        // Determine current page and clamp target
+        const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
+        let targetPage = currentPage + direction;
+        if (targetPage < 0) targetPage = 0;
+        if (targetPage > pageCount - 1) targetPage = pageCount - 1;
 
-                scrollTimeoutId = setTimeout(() => {
-                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
-                    pendingScroll = 0;
-                    isDelayingScroll = false;
-                    scrollTimeoutId = null;
-                }, scrollDelay);
-            } else if (scrollTimeoutId) {
-                clearTimeout(scrollTimeoutId);
-                scrollTimeoutId = setTimeout(() => {
-                    scrollContainer.scrollBy({ top: pendingScroll, behavior: 'smooth' });
-                    pendingScroll = 0;
-                    isDelayingScroll = false;
-                    scrollTimeoutId = null;
-                }, scrollDelay);
-            }
-        }, { passive: false });
+        // If no page change, do nothing
+        if (targetPage === currentPage) return;
+
+        isDelayingScroll = true;
+
+        // Show animation/loader first, then start smooth scroll on the next frame
+        showLoaderGif();
+        // ensure the CSS transition for the loader starts before scrolling
+        requestAnimationFrame(() => {
+          // small timeout to give the browser a chance to paint the loader
+          setTimeout(() => {
+            scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' });
+            // hide loader after estimated duration but keep lock until scroll completes
+            setTimeout(() => {
+              hideLoaderGif();
+            }, Math.min(loaderGifDuration, 600));
+          }, 30);
+        });
+
+        // release lock after estimated scroll duration
+        setTimeout(() => {
+          isDelayingScroll = false;
+        }, scrollLockDuration);
+
+      }, { passive: false });
+    })();
 
         // Optimized scroll position tracking
         let scrollTicking = false;
@@ -437,9 +568,11 @@
             });
         }
         
-        scrollContainer.addEventListener('scroll', onScroll, {passive: true});
-        onScroll();
-        updateBox();
+  scrollContainer.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+  updateBox();
+  // initialize about bounding box so the about tilt works immediately
+  updateAboutBox();
     });
 
     // Optimized window load handler
