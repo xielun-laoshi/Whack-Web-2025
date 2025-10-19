@@ -295,36 +295,48 @@
     /* Page 3 panels (right-side) */
     .page3-panel {
       position: absolute;
-      left: 60%;
+      left: 55%;
       top: 50%;
       transform: translateY(-50%) translateX(24px);
       opacity: 0;
       transition: transform 360ms cubic-bezier(.2,.8,.2,1), opacity 360ms ease;
       color: #fff;
+      font-size: 1.5em;
       font-family: 'MinecraftRegular', monospace;
-      font-size: 2em;
       z-index: 40;
-      max-width: 27vw;
+      max-width: 33vw;
       min-width: 200px;
       background: transparent;
       text-align: left;
       pointer-events: none;
-      user-select: none;
-      touch-action: pan-y;            /* allow vertical gestures */
-      -ms-touch-action: pan-y;
-      overscroll-behavior: contain;   /* prevent scroll chaining */
     }
     .page3-panel.show {
       transform: translateY(-50%) translateX(0);
       opacity: 1;
-      pointer-events: none;
+      pointer-events: auto;
     }
     /* Responsive fallback: panels full width on narrow screens */
     @media (max-width: 700px) {
       .page3-panel { left: 50%; transform: translate(-50%, 16px); top: auto; bottom: 8vh; max-width: 90vw; }
       .page3-panel.show { transform: translate(-50%, 0); }
     }
-  </style>
+  
+/* --- Panel card and non-blocking scroll (injected) --- */
+.page3-panel .card {
+  background: transparent;
+  backdrop-filter: blur(6px);
+  border: transparent;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  line-height: 1.45;
+}
+.page3-panel {
+  overflow: visible;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: auto;
+}
+/* --- end injected --- */
+</style>
 </head>
 <body>
   <div id="loader-wrapper"><div class="loader"></div></div>
@@ -379,31 +391,32 @@
       </div>
     </section>
 
-    <section class="page page3" style="background-color: #1c6a96; pointer-events: auto; position: relative;">
-      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center">
+    <section class="page page3" style="background-color: #1c6a96;">
+      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
-              <div class="page3-buttons" style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 1.6em; align-items: flex-start; z-index: 30; pointer-events: auto !important;">
-                <a class="offset" role="button" href="#" data-target="panel-what" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">What?</a>
-                <a class="offset" role="button" href="#" data-target="panel-who" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">Who?</a>
-                <a class="offset" role="button" href="#" data-target="panel-when" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">When?</a>
-                <a class="offset" role="button" href="#" data-target="panel-where" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">Where?</a>
-                <a class="offset" role="button" href="#" data-target="panel-why" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">Why?</a>
-                <a class="offset" role="button" href="#" data-target="panel-team" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">Do I need a team to participate?</a>
-                <a class="offset" role="button" href="#" data-target="panel-size" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:flex-start; text-decoration:none;">How many team members can I have?</a>
-              </div>
-              <div id="panel-what" class="page3-panel">A 24-hour hackathon where you can meet new people, and work to innovate and create a new project, product, or tool.</div>
-              <div id="panel-who" class="page3-panel" >Any undergraduate student at any college or university! Both first-timers and experienced hackers are welcome! We have something for everyone!</div>
-              <div id="panel-when" class="page3-panel" >Nov 22-23, 2025</div>
-              <div id="panel-where" class="page3-panel" >Wellesley College Campus, TBD (For students from other institutions, there will be signs to direct you to where you need to be!)</div>
-              <div id="panel-why" class="page3-panel">Beyond the learning opportunities and mentorship workshops, WHACK is also a great place to meet other hackers from different backgrounds! Not to mention, we’ll also have awesome swag, prizes, and a few other surprises for our attendees! </div>
-              <div id="panel-team" class="page3-panel">You are not required to have a team to register or participate, however, we highly encourage you to meet new people and connect with each other here at the hackathon! </div>
-              <div id="panel-size" class="page3-panel">Teams may have up to 4 members.</div>
+          <!-- Left-side vertical button list: left 25%, vertically centered -->
+          <div class="page3-buttons" style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
+            <a data-panel="panel-what" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">What?</a>
+            <a data-panel="panel-who" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Who?</a>
+            <a data-panel="panel-when" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">When?</a>
+            <a data-panel="panel-where" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Where?</a>
+            <a data-panel="panel-why" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Why?</a>
+            <a data-panel="panel-team" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Do I need a team to participate?</a>
+            <a data-panel="panel-size" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">How many team members can I have?</a>
           </div>
+            <div class="page3-panel" id="panel-what"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley Hackathon is a 24-hour hackathon where you can meet new people, and work to innovate and create a new project, product, or tool.</div></div>
+            <div class="page3-panel" id="panel-who"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Any undergraduate student at any college or university! Both first-timers and experienced hackers are welcome! We have something for everyone!</div></div>
+            <div class="page3-panel" id="panel-when"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Nov 22-23, 2025</div></div>
+            <div class="page3-panel" id="panel-where"  role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley College Campus, Lulu Chow Wang Campus Center, Tishman Commons (For students from other institutions, there will be signs to direct you to where you need to be!)</div></div>
+            <div class="page3-panel" id="panel-why"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Beyond the learning opportunities and mentorship workshops, WHACK is also a great place to meet other hackers from different backgrounds! Not to mention, we’ll also have awesome swag, prizes, and a few other surprises for our attendees!</div></div>
+            <div class="page3-panel" id="panel-team"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">You are not required to have a team to register or participate, however, we highly encourage you to meet new people and connect with each other here at the hackathon!</div></div>
+            <div class="page3-panel" id="panel-size"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Teams may have up to 4 members.</div></div>
+
         </div>
       </div>
     </section>
 
-    <section class="page page4" style="background-color: #000000; pointer-events: none;">
+    <section class="page page4">
       <div class="bottom-images">
     <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
     <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
@@ -602,10 +615,8 @@
           if (shadowImgStyle) shadowImgStyle.transform = '';
         });
 
-  // Loader GIF management
-  const loaderGifDuration = parseInt(loaderGifImg && loaderGifImg.dataset && loaderGifImg.dataset.duration) || 1100;
-  // Shared small helper to wait for the GIF fraction - hoisted so it's not recreated per-handler
-  const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
+        // Loader GIF management
+        const loaderGifDuration = parseInt(loaderGifImg && loaderGifImg.dataset && loaderGifImg.dataset.duration) || 1100;
         let currentGifSrc = '';
 
         function showLoaderGif() {
@@ -632,65 +643,12 @@
           const pageCount = pages.length;
           const scrollLockDuration = 700;
           let isDelayingScroll = false;
-          // Removed: previously forwarded 'wheel' events from .page3-panel to the window.
-          // Panels should not intercept or forward scroll/pointer gestures. Keeping panels non-interactive.
-          window.addEventListener('wheel', (e) => {
-            if (!e || isDelayingScroll) return;
-            e.preventDefault();
-            e.stopPropagation();
-            if (!e.deltaY) return;
-            const direction = e.deltaY > 0 ? 1 : -1;
-            // Hide any open panels when scrolling
-            const openPanels = document.querySelectorAll('.page3-panel.show');
-            openPanels.forEach(panel => {
-              panel.classList.remove('show');
-              panel.setAttribute('aria-hidden', 'true');
-            });
-            const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
-            let targetPage = currentPage + direction;
-            if (targetPage < 0) targetPage = 0;
-            if (targetPage > pageCount - 1) targetPage = pageCount - 1;
-            if (targetPage === currentPage) return;
-              isDelayingScroll = true;
-              showLoaderGif();
-              (async () => {
-                try {
-                  const maxGifWait = 950;
-                  const fraction = 0.45;
-                  const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
-                  console.debug('wheel pager', { currentPage, targetPage, pageCount, scrollTop: scrollContainer.scrollTop, innerHeight: window.innerHeight, gifWait });
-                  await waitForGif(gifWait);
-                  try {
-                    scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' });
-                  } catch(e) {
-                    scrollContainer.scrollTop = targetPage * window.innerHeight;
-                  }
-                  console.debug('wheel pager scrolled to', targetPage);
-                } catch (err) {
-                  console.error('wheel pager error', err);
-                } finally {
-                  setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
-                  setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
-                }
-              })();
-          }, { passive: false, capture: true });
-
-          // Keyboard navigation: ArrowDown/ArrowUp, PageDown/PageUp, Space
-          window.addEventListener('keydown', (e) => {
+          scrollContainer.addEventListener('wheel', (e) => {
             if (!e) return;
-            const key = e.key;
-            const forwardKeys = ['ArrowDown', 'PageDown', ' '];
-            const backKeys = ['ArrowUp', 'PageUp'];
-            if (!forwardKeys.includes(key) && !backKeys.includes(key)) return;
             e.preventDefault();
+            if (!e.deltaY) return;
             if (isDelayingScroll) return;
-            // Hide any open panels when using keyboard navigation
-            const openPanels = document.querySelectorAll('.page3-panel.show');
-            openPanels.forEach(panel => {
-              panel.classList.remove('show');
-              panel.setAttribute('aria-hidden', 'true');
-            });
-            const direction = forwardKeys.includes(key) ? 1 : -1;
+            const direction = e.deltaY > 0 ? 1 : -1;
             const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
             let targetPage = currentPage + direction;
             if (targetPage < 0) targetPage = 0;
@@ -698,27 +656,17 @@
             if (targetPage === currentPage) return;
             isDelayingScroll = true;
             showLoaderGif();
+            const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
             (async () => {
-              try {
-                const maxGifWait = 950;
-                const fraction = 0.45;
-                const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
-                console.debug('key pager', { currentPage, targetPage, pageCount, scrollTop: scrollContainer.scrollTop, innerHeight: window.innerHeight, gifWait });
-                await waitForGif(gifWait);
-                try {
-                  scrollContainer.scrollTo({ top: targetPage * window.innerHeight +1, behavior: 'smooth' });
-                } catch(e) {
-                  scrollContainer.scrollTop = targetPage * window.innerHeight;
-                }
-                console.debug('key pager scrolled to', targetPage);
-              } catch (err) {
-                console.error('key pager error', err);
-              } finally {
-                setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
-                setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
-              }
+              const maxGifWait = 950;
+              const fraction = 0.45;
+              const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
+              await waitForGif(gifWait);
+              try { scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' }); } catch(e) { scrollContainer.scrollTop = targetPage * window.innerHeight; }
+              setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
+              setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
             })();
-          }, { passive: false, capture: true });
+          }, { passive: false });
         })();
 
         // Optimized scroll position tracking
@@ -744,34 +692,7 @@
         onScroll();
         updateBox();
         updateAboutBox();
-
-        // Page 3: toggle panels for each button
-        (function installPage3Panels(){
-          const page3 = document.querySelector('.page.page3');
-          if (!page3) return;
-          const buttons = page3.querySelectorAll('.page3-buttons a[data-target]');
-          const panels = Array.from(page3.querySelectorAll('.page3-panel'));
-
-          function hideAllPanels() {
-            panels.forEach(p => { p.classList.remove('show'); p.setAttribute('aria-hidden', 'true'); });
-          }
-
-          buttons.forEach(btn => {
-            const targetId = btn.getAttribute('data-target');
-            const panel = targetId ? document.getElementById(targetId) : null;
-            btn.addEventListener('click', (ev) => {
-              ev.preventDefault();
-              if (!panel) return;
-              const isShown = panel.classList.contains('show');
-              hideAllPanels();
-              if (!isShown) {
-                panel.classList.add('show');
-                panel.setAttribute('aria-hidden', 'false');
-              }
-            });
-          });
-        })();
-      }); 
+      });
 
       // Optimized window load handler
       window.addEventListener('load', () => {
@@ -802,5 +723,79 @@
     }
   })();
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const page3 = document.querySelector('.page3');
+  if (!page3) return;
+
+  const btns = Array.from(page3.querySelectorAll('.page3-buttons a[data-panel], .page3-buttons [data-panel]'));
+  const panels = new Map();
+  Array.from(page3.querySelectorAll('.page3-panel[id]')).forEach(p => panels.set(p.id, p));
+
+  let openId = null;
+
+  function showPanel(id, btn) {
+    if (openId && panels.get(openId)) {
+      hidePanel(openId);
+      if (openId === id) return;
+    }
+    const panel = panels.get(id);
+    if (!panel) return;
+    panel.classList.add('show');
+    panel.setAttribute('aria-hidden', 'false');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+    openId = id;
+  }
+
+  function hidePanel(id) {
+    const panel = panels.get(id);
+    if (!panel) return;
+    panel.classList.remove('show');
+    panel.setAttribute('aria-hidden', 'true');
+    btns.forEach(b => {
+      if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
+    });
+    if (openId === id) openId = null;
+  }
+
+  btns.forEach(btn => {
+    if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = btn.getAttribute('data-panel');
+      if (!id) return;
+      if (openId === id) {
+        hidePanel(id);
+      } else {
+        showPanel(id, btn);
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openId) hidePanel(openId);
+  });
+
+  page3.addEventListener('pointerdown', (e) => {
+    if (!openId) return;
+    const panel = panels.get(openId);
+    if (panel && !panel.contains(e.target)) hidePanel(openId);
+  });
+
+  const scrollContainer = document.querySelector('.scroll-container');
+  if (scrollContainer) {
+    let lastPage = 0;
+    scrollContainer.addEventListener('scroll', () => {
+      const current = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
+      if (current !== lastPage) {
+        if (openId) hidePanel(openId);
+        lastPage = current;
+      }
+    }, { passive: true });
+  }
+});
+</script>
+
 </body>
 </html>
