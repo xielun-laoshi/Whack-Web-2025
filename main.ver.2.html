@@ -440,12 +440,32 @@
     </section>
 
     <section class="page page5" style="background-color: #1570bf;">
-      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
-        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
-          <p>
-            Whether you're a coding newbie or a seasoned hacker, Wellesley Hackathon offers an inclusive environment where everyone can learn, create, and have fun together. Join us for a weekend of innovation, collaboration, and unforgettable experiences!
+      <div style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); z-index: 1; width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-start; pointer-events: none;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align: center; max-width: 80%;">
+          <p>(Rooms are TBD, and the schedule might change.)
           </p>
         </div>
+      </div>
+      <div style="position: absolute; top: 33%; left: 50%; transform: translateX(-50%); z-index: 1; width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-start; pointer-events: none;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align: left; max-width: 80%;">
+          <p>
+            Pre-WHACK<br>
+            11/5 Wednesday Virtual Event 1: Info Session<br>
+            Welcome to WHACK! This is an introduction to who we are, what we do, and why you should join. Note: There will be a Q&amp;A session at the end.<br><br>
+
+            11/12 Thursday Virtual Event 2: Discord Game Night!<br>
+            Come join other WHACK participants for some games! Meet new people and have fun!<br><br>
+
+            11/21 Friday In-Person Event 3: Meet &amp; Greet!<br>
+            Relax and idea prep, meet your (potential) teammates in-person! (Highly suggested for those who haven’t joined a team)
+          </p>
+        </div>
+      </div>
+      <div id="timeline" role="banner" style="top:13%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:20vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
+          <div id="timeline-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
+            <img id="timelineShadow" class="img-layer" src="../images/timeline shadow.png" loading="lazy" style="z-index:0;">
+              <img id="timelineMain" class="img-layer" src="../images/timeline.png" loading="lazy" style="z-index:1; position:relative;">
+          </div>
       </div>
     </section>
 
@@ -518,6 +538,10 @@
   const sponsorsContainer = document.getElementById('sponsors-container');
   const sponsorsMain = document.getElementById('sponsorsMain');
   const sponsorsShadow = document.getElementById('sponsorsShadow');
+  // Timeline elements (mirror of sponsors)
+  const timelineContainer = document.getElementById('timeline-container');
+  const timelineMain = document.getElementById('timelineMain');
+  const timelineShadow = document.getElementById('timelineShadow');
 
         if (!scrollContainer) return; // nothing to do if core container missing
 
@@ -535,6 +559,7 @@
   let box = null;
   let aboutbox = null;
   let sponsorsbox = null;
+  let timelinebox = null;
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
 
@@ -567,9 +592,14 @@
           if (sponsorsContainer && sponsorsContainer.getBoundingClientRect) sponsorsbox = sponsorsContainer.getBoundingClientRect();
         }
 
+        function updateTimelineBox() {
+          if (timelineContainer && timelineContainer.getBoundingClientRect) timelinebox = timelineContainer.getBoundingClientRect();
+        }
+
   if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
   if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
-  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); }, 16));
+  if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', updateTimelineBox);
+  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateTimelineBox(); }, 16));
 
         if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
         let resizeTimeout;
@@ -581,6 +611,7 @@
             centerY = window.innerHeight * 0.5;
             updateAboutBox();
             updateSponsorsBox();
+            updateTimelineBox();
           }, 16);
         });
 
@@ -698,6 +729,23 @@
                 if (sponsorsMain && sponsorsMain.style) sponsorsMain.style.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
                 if (sponsorsShadow && sponsorsShadow.style) sponsorsShadow.style.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
               }
+              // Timeline: apply same tilt/parallax behavior if present
+              if (timelinebox) {
+                const tdx = lastX - centerX;
+                const tdy = lastY - centerY;
+                const thalfW = window.innerWidth * 0.5 || 1;
+                const thalfH = window.innerHeight * 0.5 || 1;
+                let tpercentX = tdx / thalfW;
+                let tpercentY = tdy / thalfH;
+                tpercentX = Math.max(-1, Math.min(1, tpercentX));
+                tpercentY = Math.max(-1, Math.min(1, tpercentY));
+                const tstrength = 0.6;
+                const trotateX = (-tpercentY * 15 * tstrength);
+                const trotateY = (tpercentX * 15 * tstrength);
+                const tscale = 1 + ((Math.abs(tpercentX) + Math.abs(tpercentY)) * 0.5) * 0.05;
+                if (timelineMain && timelineMain.style) timelineMain.style.transform = `rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale}, ${tscale}, 1)`;
+                if (timelineShadow && timelineShadow.style) timelineShadow.style.transform = `translate3d(${tpercentX * 8}px, ${tpercentY * 8}px, 0) rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale * 1.07}, ${tscale * 1.07}, 1)`;
+              }
             } catch (innerErr) {
               // swallow individual frame errors to avoid killing the loop
               console.error('frame error', innerErr);
@@ -758,7 +806,7 @@
             const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
             (async () => {
               const maxGifWait = 950;
-              const fraction = 0.45;
+              const fraction = 0.4;
               const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
               await waitForGif(gifWait);
               try { scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' }); } catch(e) { scrollContainer.scrollTop = targetPage * window.innerHeight; }
