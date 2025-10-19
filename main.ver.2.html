@@ -116,7 +116,7 @@
 
     #title {
       position: absolute;
-      top: 50%;
+      top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
@@ -126,6 +126,92 @@
       align-items: center;
       transition: opacity 0.4s ease, transform 0.4s ease;
       pointer-events: none;
+    }
+
+    button {
+      background: none;
+      border: 3px solid;
+      font: inherit;
+      line-height: 1.5;
+      margin: 0.5em;
+      padding: 0.7em 2.5em;
+      color: var(--color);
+      transition: 0.25s;
+      position: absolute;
+      top: 80%;
+      left: 50%;
+      transform: translateX(-50%);
+      transform-origin: center;
+      box-sizing: border-box;
+      z-index: 20;
+    }
+
+    button:hover,
+    button:focus {
+      border-color: var(--hover);
+      color: #fff;
+    }
+
+    /* Style anchors inside .buttons to look and act like the original button element */
+    .buttons a {
+      background: none;
+      border: 3px solid;
+      font: inherit;
+      line-height: 1.5;
+      margin: 0.5em;
+      padding: 0.3em 2em;
+      color: var(--color);
+      transition: 0.25s;
+      position: absolute;
+      top: 80%;
+      left: 50%;
+      transform: translateX(-50%);
+      transform-origin: center;
+      box-sizing: border-box;
+      z-index: 20;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      font-family: 'MinecraftRegular', monospace;
+      font-size: 1.9em;
+    }
+
+    .buttons a:hover,
+    .buttons a:focus {
+      border-color: var(--hover);
+      color: #fff;
+      outline: none;
+    }
+
+    /* Deadline label on lower-right of page 1 */
+    .deadline-label {
+      position: absolute;
+      right: 2vw;
+      bottom: 2vh;
+      font-size: smaller;
+      color: #fff;
+      font-family: 'MinecraftRegular', monospace;
+      font-size: 1em;
+      z-index: 25;
+      pointer-events: none;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .offset {  
+      --color: #fb6222;
+      --hover: #fb6222; /* hue-shifted version of the base color */
+
+      box-shadow: 
+        0.3em 0.3em 0 0 var(--color),
+        inset 0.3em 0.3em 0 0 var(--color);
+
+    }
+    .offset:hover,
+    .offset:focus {
+      box-shadow: 
+        0 0 0 0 var(--hover),
+        inset 6em 3.5em 0 0 var(--hover);
     }
 
     #container {
@@ -208,6 +294,11 @@
           <img id="mainImg" class="img-layer" src="../images/title.png" loading="eager" fetchpriority="high" importance="high">
         </div>
       </div>
+      <div class="buttons">
+        <!-- Use an anchor so it opens the registration form in a new tab; preserve button styling and accessibility -->
+        <a class="offset" href="https://forms.gle/LBRGVTyU59hJLcfJ7" target="_blank" rel="noopener noreferrer" role="button">Register!</a>
+      </div>
+      <div class="deadline-label" aria-hidden="true">Application Deadline is Nov 22 @ 11:00am</div>
     </section>
 
     <section class="page page2">
@@ -219,16 +310,7 @@
       </div>
 
       <p class="minecraft-text">
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
-        The quick fox jump over the lazy dogs.
+        The Wellesley Hackathon is an annual event that brings together students from more than 50 colleges and universities who are passionate about coding to spend an immersive weekend collaborating on projects!
       </p>
 
       <div class="beneath-images">
