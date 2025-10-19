@@ -437,6 +437,13 @@
           </p>
         </div>
       </div>
+      <!-- Speakers block: mirrors about/about shadow structure -->
+      <div id="speakers" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:12; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
+        <div id="speakers-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
+          <img id="speakersShadow" class="img-layer" src="../images/speakers shadow.png" loading="lazy" style="z-index:5;">
+          <img id="speakersMain" class="img-layer" src="../images/speakers.png" loading="lazy" style="z-index:6; position:relative;">
+        </div>
+      </div>
     </section>
 
     <section class="page page5" style="background-color: #1570bf;">
@@ -538,6 +545,10 @@
   const sponsorsContainer = document.getElementById('sponsors-container');
   const sponsorsMain = document.getElementById('sponsorsMain');
   const sponsorsShadow = document.getElementById('sponsorsShadow');
+  // Speakers elements (mirror of sponsors/about)
+  const speakersContainer = document.getElementById('speakers-container');
+  const speakersMain = document.getElementById('speakersMain');
+  const speakersShadow = document.getElementById('speakersShadow');
   // Timeline elements (mirror of sponsors)
   const timelineContainer = document.getElementById('timeline-container');
   const timelineMain = document.getElementById('timelineMain');
@@ -559,6 +570,7 @@
   let box = null;
   let aboutbox = null;
   let sponsorsbox = null;
+  let speakersbox = null;
   let timelinebox = null;
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
@@ -592,14 +604,19 @@
           if (sponsorsContainer && sponsorsContainer.getBoundingClientRect) sponsorsbox = sponsorsContainer.getBoundingClientRect();
         }
 
+        function updateSpeakersBox() {
+          if (speakersContainer && speakersContainer.getBoundingClientRect) speakersbox = speakersContainer.getBoundingClientRect();
+        }
+
         function updateTimelineBox() {
           if (timelineContainer && timelineContainer.getBoundingClientRect) timelinebox = timelineContainer.getBoundingClientRect();
         }
 
   if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
   if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
+  if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', updateSpeakersBox);
   if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', updateTimelineBox);
-  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateTimelineBox(); }, 16));
+  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateSpeakersBox(); updateTimelineBox(); }, 16));
 
         if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
         let resizeTimeout;
@@ -611,6 +628,7 @@
             centerY = window.innerHeight * 0.5;
             updateAboutBox();
             updateSponsorsBox();
+            updateSpeakersBox();
             updateTimelineBox();
           }, 16);
         });
@@ -729,6 +747,23 @@
                 if (sponsorsMain && sponsorsMain.style) sponsorsMain.style.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
                 if (sponsorsShadow && sponsorsShadow.style) sponsorsShadow.style.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
               }
+                // Speakers: apply same tilt/parallax behavior if present
+                if (speakersbox) {
+                  const spdx = lastX - centerX;
+                  const spdy = lastY - centerY;
+                  const sphalfW = window.innerWidth * 0.5 || 1;
+                  const sphalfH = window.innerHeight * 0.5 || 1;
+                  let spercentX2 = spdx / sphalfW;
+                  let spercentY2 = spdy / sphalfH;
+                  spercentX2 = Math.max(-1, Math.min(1, spercentX2));
+                  spercentY2 = Math.max(-1, Math.min(1, spercentY2));
+                  const sstrength2 = 0.6;
+                  const srotateX2 = (-spercentY2 * 15 * sstrength2);
+                  const srotateY2 = (spercentX2 * 15 * sstrength2);
+                  const sscale2 = 1 + ((Math.abs(spercentX2) + Math.abs(spercentY2)) * 0.5) * 0.05;
+                  if (speakersMain && speakersMain.style) speakersMain.style.transform = `rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2}, ${sscale2}, 1)`;
+                  if (speakersShadow && speakersShadow.style) speakersShadow.style.transform = `translate3d(${spercentX2 * 8}px, ${spercentY2 * 8}px, 0) rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2 * 1.07}, ${sscale2 * 1.07}, 1)`;
+                }
               // Timeline: apply same tilt/parallax behavior if present
               if (timelinebox) {
                 const tdx = lastX - centerX;
@@ -839,6 +874,9 @@
         onScroll();
         updateBox();
         updateAboutBox();
+        updateSponsorsBox();
+        updateSpeakersBox();
+        updateTimelineBox();
       });
 
       // Optimized window load handler
