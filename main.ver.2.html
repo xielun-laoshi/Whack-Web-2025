@@ -272,8 +272,8 @@
       pointer-events: none;
       transition: opacity 0.5s;
     }
-    /* Page 3 specific button overrides to match .offset/button look */
-    .page3-buttons a {
+
+    .page6-buttons a {
       background: none;
       border: 3px solid;
       color: var(--color, #fb6222);
@@ -286,14 +286,14 @@
       -webkit-font-smoothing: antialiased;
       cursor: pointer;
     }
-    .page3-buttons a:hover,
-    .page3-buttons a:focus {
+    .page6-buttons a:hover,
+    .page6-buttons a:focus {
       border-color: var(--hover, #fb6222);
       color: #fff;
       outline: none;
     }
-    /* Page 3 panels (right-side) */
-    .page3-panel {
+
+    .page6-panel {
       position: absolute;
       left: 55%;
       top: 50%;
@@ -310,19 +310,19 @@
       text-align: left;
       pointer-events: none;
     }
-    .page3-panel.show {
+    .page6-panel.show {
       transform: translateY(-50%) translateX(0);
       opacity: 1;
       pointer-events: auto;
     }
     /* Responsive fallback: panels full width on narrow screens */
     @media (max-width: 700px) {
-      .page3-panel { left: 50%; transform: translate(-50%, 16px); top: auto; bottom: 8vh; max-width: 90vw; }
-      .page3-panel.show { transform: translate(-50%, 0); }
+      .page6-panel { left: 50%; transform: translate(-50%, 16px); top: auto; bottom: 8vh; max-width: 90vw; }
+      .page6-panel.show { transform: translate(-50%, 0); }
     }
   
 /* --- Panel card and non-blocking scroll (injected) --- */
-.page3-panel .card {
+.page6-panel .card {
   background: transparent;
   backdrop-filter: blur(6px);
   border: transparent;
@@ -330,7 +330,7 @@
   padding: 1rem 1.1rem;
   line-height: 1.45;
 }
-.page3-panel {
+.page6-panel {
   overflow: visible;
   touch-action: pan-y;
   -webkit-overflow-scrolling: auto;
@@ -391,11 +391,50 @@
       </div>
     </section>
 
-    <section class="page page3" style="background-color: #1c6a96;">
+    <section class="page page3" style="background-color: #3572ef;">
+      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
+          
+          <!-- Left-side vertical button list -->
+          <div class="page6-buttons" 
+              style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%);
+                      display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
+            <a data-panel="panel-track1" class="offset" role="button" href="#" 
+              style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em;
+                      display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
+              Track 1
+            </a >
+            <a data-panel="panel-track2" class="offset" role="button" href="#" 
+              style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em;
+                      display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
+              Track 2
+            </a >
+          </div>
+
+          <!-- Panels for each track -->
+          <div class="page6-panel" id="panel-track1" role="dialog" aria-modal="false" aria-hidden="true">
+            <div class="card">
+              <strong>Deep Dive (Technical Innovation) </strong><br>
+              Ambitious technical projects that explore cutting-edge technologies, complex algorithms, or innovative hardware solutions.
+            </div>
+          </div>
+
+          <div class="page6-panel" id="panel-track2" role="dialog" aria-modal="false" aria-hidden="true">
+            <div class="card">
+              <strong>Make Waves (Social impact)</strong><br>
+              Community-focused solutions that create positive ripple effects—from social impact apps to tools that bring people together.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="page page6" style="background-color: #1c6a96;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
           <!-- Left-side vertical button list: left 25%, vertically centered -->
-          <div class="page3-buttons" style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
+          <div class="page6-buttons" style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
             <a data-panel="panel-what" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">What?</a>
             <a data-panel="panel-who" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Who?</a>
             <a data-panel="panel-when" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">When?</a>
@@ -404,19 +443,19 @@
             <a data-panel="panel-team" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Do I need a team to participate?</a>
             <a data-panel="panel-size" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">How many team members can I have?</a>
           </div>
-            <div class="page3-panel" id="panel-what"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley Hackathon is a 24-hour hackathon where you can meet new people, and work to innovate and create a new project, product, or tool.</div></div>
-            <div class="page3-panel" id="panel-who"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Any undergraduate student at any college or university! Both first-timers and experienced hackers are welcome! We have something for everyone!</div></div>
-            <div class="page3-panel" id="panel-when"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Nov 22-23, 2025</div></div>
-            <div class="page3-panel" id="panel-where"  role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley College Campus, Lulu Chow Wang Campus Center, Tishman Commons (For students from other institutions, there will be signs to direct you to where you need to be!)</div></div>
-            <div class="page3-panel" id="panel-why"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Beyond the learning opportunities and mentorship workshops, WHACK is also a great place to meet other hackers from different backgrounds! Not to mention, we’ll also have awesome swag, prizes, and a few other surprises for our attendees!</div></div>
-            <div class="page3-panel" id="panel-team"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">You are not required to have a team to register or participate, however, we highly encourage you to meet new people and connect with each other here at the hackathon!</div></div>
-            <div class="page3-panel" id="panel-size"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Teams may have up to 4 members.</div></div>
+            <div class="page6-panel" id="panel-what"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley Hackathon is a 24-hour hackathon where you can meet new people, and work to innovate and create a new project, product, or tool.</div></div>
+            <div class="page6-panel" id="panel-who"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Any undergraduate student at any college or university! Both first-timers and experienced hackers are welcome! We have something for everyone!</div></div>
+            <div class="page6-panel" id="panel-when"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Nov 22-23, 2025</div></div>
+            <div class="page6-panel" id="panel-where"  role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Wellesley College Campus, Lulu Chow Wang Campus Center, Tishman Commons (For students from other institutions, there will be signs to direct you to where you need to be!)</div></div>
+            <div class="page6-panel" id="panel-why"    role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Beyond the learning opportunities and mentorship workshops, WHACK is also a great place to meet other hackers from different backgrounds! Not to mention, we’ll also have awesome swag, prizes, and a few other surprises for our attendees!</div></div>
+            <div class="page6-panel" id="panel-team"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">You are not required to have a team to register or participate, however, we highly encourage you to meet new people and connect with each other here at the hackathon!</div></div>
+            <div class="page6-panel" id="panel-size"   role="dialog" aria-modal="false" aria-hidden="true"><div class="card">Teams may have up to 4 members.</div></div>
 
         </div>
       </div>
     </section>
 
-    <section class="page page4">
+    <section class="page page7">
       <div class="bottom-images">
     <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
     <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
@@ -726,62 +765,70 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const page3 = document.querySelector('.page3');
-  if (!page3) return;
+  function initPanels(sectionSelector) {
+    const section = document.querySelector(sectionSelector);
+    if (!section) return;
 
-  const btns = Array.from(page3.querySelectorAll('.page3-buttons a[data-panel], .page3-buttons [data-panel]'));
-  const panels = new Map();
-  Array.from(page3.querySelectorAll('.page3-panel[id]')).forEach(p => panels.set(p.id, p));
+    const btns = Array.from(section.querySelectorAll('.page6-buttons [data-panel]'));
+    const panels = new Map();
+    section.querySelectorAll('.page6-panel[id]').forEach(p => panels.set(p.id, p));
 
-  let openId = null;
+    let openId = null;
 
-  function showPanel(id, btn) {
-    if (openId && panels.get(openId)) {
-      hidePanel(openId);
-      if (openId === id) return;
+    function showPanel(id, btn) {
+      if (openId && panels.get(openId)) {
+        hidePanel(openId);
+        if (openId === id) return;
+      }
+      const panel = panels.get(id);
+      if (!panel) return;
+      panel.classList.add('show');
+      panel.setAttribute('aria-hidden', 'false');
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+      openId = id;
     }
-    const panel = panels.get(id);
-    if (!panel) return;
-    panel.classList.add('show');
-    panel.setAttribute('aria-hidden', 'false');
-    if (btn) btn.setAttribute('aria-expanded', 'true');
-    openId = id;
-  }
 
-  function hidePanel(id) {
-    const panel = panels.get(id);
-    if (!panel) return;
-    panel.classList.remove('show');
-    panel.setAttribute('aria-hidden', 'true');
-    btns.forEach(b => {
-      if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
+    function hidePanel(id) {
+      const panel = panels.get(id);
+      if (!panel) return;
+      panel.classList.remove('show');
+      panel.setAttribute('aria-hidden', 'true');
+      btns.forEach(b => {
+        if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
+      });
+      if (openId === id) openId = null;
+    }
+
+    btns.forEach(btn => {
+      if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+      if (!btn.hasAttribute('role')) btn.setAttribute('role', 'button');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = btn.getAttribute('data-panel');
+        if (!id) return;
+        if (openId === id) hidePanel(id);
+        else showPanel(id, btn);
+      });
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+      btn.tabIndex = 0;
     });
-    if (openId === id) openId = null;
-  }
 
-  btns.forEach(btn => {
-    if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const id = btn.getAttribute('data-panel');
-      if (!id) return;
-      if (openId === id) {
-        hidePanel(id);
-      } else {
-        showPanel(id, btn);
+    section.addEventListener('pointerdown', (e) => {
+      if (!openId) return;
+      const panel = panels.get(openId);
+      if (panel && !panel.contains(e.target) && !btns.includes(e.target)) {
+        hidePanel(openId);
       }
     });
-  });
+  }
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && openId) hidePanel(openId);
-  });
-
-  page3.addEventListener('pointerdown', (e) => {
-    if (!openId) return;
-    const panel = panels.get(openId);
-    if (panel && !panel.contains(e.target)) hidePanel(openId);
-  });
+  initPanels('.page3');
+  initPanels('.page6');
 
   const scrollContainer = document.querySelector('.scroll-container');
   if (scrollContainer) {
@@ -789,7 +836,13 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollContainer.addEventListener('scroll', () => {
       const current = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
       if (current !== lastPage) {
-        if (openId) hidePanel(openId);
+        document.querySelectorAll('.page6-panel.show').forEach(p => {
+          p.classList.remove('show');
+          p.setAttribute('aria-hidden', 'true');
+        });
+        document.querySelectorAll('.page6-buttons [data-panel][aria-expanded="true"]').forEach(b => {
+          b.setAttribute('aria-expanded', 'false');
+        });
         lastPage = current;
       }
     }, { passive: true });
