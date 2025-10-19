@@ -183,7 +183,6 @@
       outline: none;
     }
 
-    /* Deadline label on lower-right of page 1 */
     .deadline-label {
       position: absolute;
       right: 2vw;
@@ -430,6 +429,26 @@
       </div>
     </section>
 
+    <section class="page page4" style="background-color: #1b6ed3;">
+      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
+          <p>
+            Whether you're a coding newbie or a seasoned hacker, Wellesley Hackathon offers an inclusive environment where everyone can learn, create, and have fun together. Join us for a weekend of innovation, collaboration, and unforgettable experiences!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page page5" style="background-color: #1570bf;">
+      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
+          <p>
+            Whether you're a coding newbie or a seasoned hacker, Wellesley Hackathon offers an inclusive environment where everyone can learn, create, and have fun together. Join us for a weekend of innovation, collaboration, and unforgettable experiences!
+          </p>
+        </div>
+      </div>
+    </section>
+
     <section class="page page6" style="background-color: #1c6a96;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
@@ -463,6 +482,18 @@
     <img class="bottom-img" id="bottom2" src="../images/bottom2.gif" loading="lazy" style="z-index: 3;">
     <img class="bottom-img" id="bottom1" src="../images/bottom1.gif" loading="lazy" style="z-index: 4;">
       </div>
+      <!-- Sponsors block: mirrors about/about shadow structure -->
+      <div id="sponsors" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
+        <div id="sponsors-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
+          <img id="sponsorsShadow" class="img-layer" src="../images/sponsors shadow.png" loading="lazy" style="z-index:5;">
+          <img id="sponsorsMain" class="img-layer" src="../images/sponsors.png" loading="lazy" style="z-index:6; position:relative;">
+        </div>
+      </div>
+      <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
+        <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
+          <p>
+            Coming up soon! If you are interested in sponsoring Wellesley Hackathon, please reach out to us at <a href="mailto:sponsors@wellesleyhacks.org">sponsors@wellesleyhacks.org</a>.
+          </p>
     </section>
   </div>
 <script>
@@ -480,9 +511,13 @@
         const scrollContainer = document.querySelector('.scroll-container');
         const loaderGif = document.getElementById('loader-gif');
         const loaderGifImg = loaderGif && loaderGif.querySelector('img');
-        const aboutContainer = document.getElementById('about-container');
-        const aboutMain = document.getElementById('aboutMain');
-        const aboutShadow = document.getElementById('aboutShadow');
+  const aboutContainer = document.getElementById('about-container');
+  const aboutMain = document.getElementById('aboutMain');
+  const aboutShadow = document.getElementById('aboutShadow');
+  // Sponsors elements (mirror of about)
+  const sponsorsContainer = document.getElementById('sponsors-container');
+  const sponsorsMain = document.getElementById('sponsorsMain');
+  const sponsorsShadow = document.getElementById('sponsorsShadow');
 
         if (!scrollContainer) return; // nothing to do if core container missing
 
@@ -495,10 +530,11 @@
 
         // Movement and animation variables
         const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
-        let centerX = window.innerWidth * 0.5;
-        let centerY = window.innerHeight * 0.5;
-        let box = null;
-        let aboutbox = null;
+  let centerX = window.innerWidth * 0.5;
+  let centerY = window.innerHeight * 0.5;
+  let box = null;
+  let aboutbox = null;
+  let sponsorsbox = null;
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
 
@@ -527,8 +563,13 @@
           if (aboutContainer && aboutContainer.getBoundingClientRect) aboutbox = aboutContainer.getBoundingClientRect();
         }
 
-        if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
-        window.addEventListener('resize', () => setTimeout(updateAboutBox, 16));
+        function updateSponsorsBox() {
+          if (sponsorsContainer && sponsorsContainer.getBoundingClientRect) sponsorsbox = sponsorsContainer.getBoundingClientRect();
+        }
+
+  if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
+  if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
+  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); }, 16));
 
         if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
         let resizeTimeout;
@@ -539,6 +580,7 @@
             centerX = window.innerWidth * 0.5;
             centerY = window.innerHeight * 0.5;
             updateAboutBox();
+            updateSponsorsBox();
           }, 16);
         });
 
@@ -637,6 +679,24 @@
                 const ascale = 1 + ((Math.abs(apercentX) + Math.abs(apercentY)) * 0.5) * 0.05;
                 if (aboutMain && aboutMain.style) aboutMain.style.transform = `rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale}, ${ascale}, 1)`;
                 if (aboutShadow && aboutShadow.style) aboutShadow.style.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale * 1.07}, ${ascale * 1.07}, 1)`;
+              }
+
+              // Sponsors: apply same tilt/parallax behavior if present
+              if (sponsorsbox) {
+                const sdx = lastX - centerX;
+                const sdy = lastY - centerY;
+                const shalfW = window.innerWidth * 0.5 || 1;
+                const shalfH = window.innerHeight * 0.5 || 1;
+                let spercentX = sdx / shalfW;
+                let spercentY = sdy / shalfH;
+                spercentX = Math.max(-1, Math.min(1, spercentX));
+                spercentY = Math.max(-1, Math.min(1, spercentY));
+                const sstrength = 0.6;
+                const srotateX = (-spercentY * 15 * sstrength);
+                const srotateY = (spercentX * 15 * sstrength);
+                const sscale = 1 + ((Math.abs(spercentX) + Math.abs(spercentY)) * 0.5) * 0.05;
+                if (sponsorsMain && sponsorsMain.style) sponsorsMain.style.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
+                if (sponsorsShadow && sponsorsShadow.style) sponsorsShadow.style.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
               }
             } catch (innerErr) {
               // swallow individual frame errors to avoid killing the loop
