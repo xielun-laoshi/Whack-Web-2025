@@ -565,8 +565,11 @@
 
         // Movement and animation variables
         const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
-  let centerX = window.innerWidth * 0.5;
+    let centerX = window.innerWidth * 0.5;
   let centerY = window.innerHeight * 0.5;
+    // cached viewport halves to avoid repeated division per-frame
+    let halfWindowWidth = window.innerWidth * 0.5;
+    let halfWindowHeight = window.innerHeight * 0.5;
   let box = null;
   let aboutbox = null;
   let sponsorsbox = null;
@@ -619,19 +622,23 @@
   window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateSpeakersBox(); updateTimelineBox(); }, 16));
 
         if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
+        // Consolidated resize handler: update cached sizes and boxes
         let resizeTimeout;
-        window.addEventListener('resize', () => {
+        function handleResize() {
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
             updateBox();
             centerX = window.innerWidth * 0.5;
             centerY = window.innerHeight * 0.5;
+            halfWindowWidth = window.innerWidth * 0.5;
+            halfWindowHeight = window.innerHeight * 0.5;
             updateAboutBox();
             updateSponsorsBox();
             updateSpeakersBox();
             updateTimelineBox();
-          }, 16);
-        });
+          }, 32);
+        }
+        window.addEventListener('resize', handleResize, {passive: true});
 
         // Throttled pointer movement for parallax effects
         let pointerMoveQueued = false;
@@ -674,14 +681,16 @@
               const offsetY = lastY - centerY;
               if (bgStyle && bgStyle.backgroundPosition !== undefined) bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
 
-              for (let i = 0; i < waves.length; i++) {
+              // waves
+              for (let i = 0, wl = waves.length; i < wl; i++) {
                 const ws = waveStyles[i];
-                const tx = offsetX * (moveFactors[i] + 0.05);
-                const ty = offsetY * (moveFactors[i] + 0.05);
+                const factor = moveFactors[i] + 0.05;
+                const tx = offsetX * factor;
+                const ty = offsetY * factor;
                 if (ws) ws.transform = `translate3d(${tx}px, ${ty}px, 0)`;
               }
 
-              for (let i = 0; i < bottomImgs.length; i++) {
+              for (let i = 0, bl = bottomImgs.length; i < bl; i++) {
                 const imgObj = bottomImgs[i];
                 const factor = moveFactors[moveFactors.length - 1 - i] || 0.05;
                 const tx = offsetX * factor * 0.75;
@@ -689,7 +698,7 @@
                 if (imgObj.style) imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
               }
 
-              for (let i = 0; i < beneathImgs.length; i++) {
+              for (let i = 0, bl2 = beneathImgs.length; i < bl2; i++) {
                 const imgObj = beneathImgs[i];
                 const factor = moveFactors[moveFactors.length - 1 - i] || 0.02;
                 const tx = offsetX * factor * 1.1;
@@ -716,8 +725,8 @@
               if (aboutbox) {
                 const vdx = lastX - centerX;
                 const vdy = lastY - centerY;
-                const halfW = window.innerWidth * 0.5 || 1;
-                const halfH = window.innerHeight * 0.5 || 1;
+                const halfW = halfWindowWidth || 1;
+                const halfH = halfWindowHeight || 1;
                 let apercentX = vdx / halfW;
                 let apercentY = vdy / halfH;
                 apercentX = Math.max(-1, Math.min(1, apercentX));
@@ -734,8 +743,8 @@
               if (sponsorsbox) {
                 const sdx = lastX - centerX;
                 const sdy = lastY - centerY;
-                const shalfW = window.innerWidth * 0.5 || 1;
-                const shalfH = window.innerHeight * 0.5 || 1;
+                const shalfW = halfWindowWidth || 1;
+                const shalfH = halfWindowHeight || 1;
                 let spercentX = sdx / shalfW;
                 let spercentY = sdy / shalfH;
                 spercentX = Math.max(-1, Math.min(1, spercentX));
@@ -751,8 +760,8 @@
                 if (speakersbox) {
                   const spdx = lastX - centerX;
                   const spdy = lastY - centerY;
-                  const sphalfW = window.innerWidth * 0.5 || 1;
-                  const sphalfH = window.innerHeight * 0.5 || 1;
+                  const sphalfW = halfWindowWidth || 1;
+                  const sphalfH = halfWindowHeight || 1;
                   let spercentX2 = spdx / sphalfW;
                   let spercentY2 = spdy / sphalfH;
                   spercentX2 = Math.max(-1, Math.min(1, spercentX2));
@@ -768,8 +777,8 @@
               if (timelinebox) {
                 const tdx = lastX - centerX;
                 const tdy = lastY - centerY;
-                const thalfW = window.innerWidth * 0.5 || 1;
-                const thalfH = window.innerHeight * 0.5 || 1;
+                const thalfW = halfWindowWidth || 1;
+                const thalfH = halfWindowHeight || 1;
                 let tpercentX = tdx / thalfW;
                 let tpercentY = tdy / thalfH;
                 tpercentX = Math.max(-1, Math.min(1, tpercentX));
