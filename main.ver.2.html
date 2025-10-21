@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>improved main page</title>
+  <title>WHACK 2025 - Registration Open Now!</title>
   <!-- Preload critical assets to improve LCP and responsiveness -->
   <link rel="preload" href="../font/MinecraftRegular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="../images/title.png" as="image" fetchpriority="high">
@@ -632,11 +632,13 @@
             centerY = window.innerHeight * 0.5;
             halfWindowWidth = window.innerWidth * 0.5;
             halfWindowHeight = window.innerHeight * 0.5;
+            // keep viewport-height cached for scroll calculations
+            cachedVh = window.innerHeight;
             updateAboutBox();
             updateSponsorsBox();
             updateSpeakersBox();
             updateTimelineBox();
-          }, 32);
+          }, 64); // slightly higher debounce to reduce thrash
         }
         window.addEventListener('resize', handleResize, {passive: true});
 
@@ -834,29 +836,33 @@
           const pageCount = pages.length;
           const scrollLockDuration = 700;
           let isDelayingScroll = false;
-          scrollContainer.addEventListener('wheel', (e) => {
-            if (!e) return;
-            e.preventDefault();
-            if (!e.deltaY) return;
+
+          // small helper shared across wheel events to avoid re-allocating async functions
+          function handlePageScroll(direction) {
             if (isDelayingScroll) return;
-            const direction = e.deltaY > 0 ? 1 : -1;
-            const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
+            const currentPage = Math.round(scrollContainer.scrollTop / cachedVh || 0);
             let targetPage = currentPage + direction;
             if (targetPage < 0) targetPage = 0;
             if (targetPage > pageCount - 1) targetPage = pageCount - 1;
             if (targetPage === currentPage) return;
             isDelayingScroll = true;
             showLoaderGif();
-            const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
-            (async () => {
-              const maxGifWait = 950;
-              const fraction = 0.4;
-              const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
-              await waitForGif(gifWait);
-              try { scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' }); } catch(e) { scrollContainer.scrollTop = targetPage * window.innerHeight; }
+            const maxGifWait = 950;
+            const fraction = 0.4;
+            const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
+            setTimeout(() => {
+              try { scrollContainer.scrollTo({ top: targetPage * cachedVh, behavior: 'smooth' }); } catch(e) { scrollContainer.scrollTop = targetPage * cachedVh; }
               setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
               setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
-            })();
+            }, gifWait);
+          }
+
+          scrollContainer.addEventListener('wheel', (e) => {
+            if (!e) return;
+            e.preventDefault();
+            const deltaY = e.deltaY || 0;
+            if (!deltaY) return;
+            handlePageScroll(deltaY > 0 ? 1 : -1);
           }, { passive: false });
         })();
 

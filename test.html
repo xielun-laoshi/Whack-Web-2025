@@ -1,38 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Loader Animation</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track One | Technical Innovation</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="preload" href="../font/MinecraftRegular.otf" as="font" type="font/otf" crossorigin>
+
   <style>
-    /* HTML: <div class="loader"></div> */
-    .loader {
-      width: 60px;
-      aspect-ratio: 1;
-      background:
-        linear-gradient(90deg,#ffffff 50%,#2758e2 0) top/100% 50% no-repeat,
-        linear-gradient(90deg,#3abef9 50%,#fb6222 0);
-      -webkit-mask:linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
-      mask: linear-gradient(#000 0 0) 0 0/50% 50% no-repeat;
-      animation: l18 2s infinite; 
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+    /* Minecraft-styled text */
+    @font-face {
+      font-family: 'MinecraftRegular';
+      src: url('../font/MinecraftRegular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
     }
-    @keyframes l18 {
-      0%   {-webkit-mask-position:0    0   }
-      25%  {-webkit-mask-position:100% 0   }
-      50%  {-webkit-mask-position:100% 100%}
-      75%  {-webkit-mask-position:0    100%}
-      100% {-webkit-mask-position:0    0   }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+
+    html {
+      color-scheme: light only;
+    }
+
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      background: #222;
+      min-height: 100vh;
+      background-color: #000;
+      font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+      touch-action: none;
     }
+
+    body::before {
+      --line: rgba(255, 255, 255, 0.1);
+      --size: 60px;
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(90deg, var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size),
+        linear-gradient(var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size);
+      z-index: -1;
+    }
+
+    article {
+      position: relative;
+      width: min(90vw, 600px);
+      aspect-ratio: 2 / 1.1;
+      border-radius: 4em;
+      overflow: hidden;
+    }
+
+    .assets {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .assets > img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      translate: -50% 0;
+      width: 660px;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 43%;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .assets > img:first-of-type {
+      filter: saturate(1.5) brightness(0.9);
+      object-position: calc(-50% + (var(--x) * 30px)) calc(43% + (var(--y) * -20px));
+    }
+
+    .assets > img:last-of-type {
+      object-position: calc(-50% + (var(--x) * 40px)) calc(43% + (var(--y) * -40px));
+    }
+
+    .assets h3 {
+      position: absolute;
+      left: 50%;
+      top: 6%;
+      margin: 0;
+      font-size: 8rem;
+      translate: -50% 0;
+      text-transform: uppercase;
+      font-family: 'MinecraftRegular', monospace;
+      color: white;
+      translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
+    }
+
+    /* Blur overlay */
+    .blur {
+      --layers: 5;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .blur .layer {
+      --blur: calc(sin(((var(--layers) - var(--index)) / var(--layers)) * 90deg) * 30);
+      --stop: calc(sin(((var(--index)) / var(--layers)) * 90deg) * 15);
+      position: absolute;
+      inset: 0;
+      background: hsl(0 0% 60% / 0.05);
+      backdrop-filter: blur(calc(var(--blur) * 1px));
+      mask: radial-gradient(
+        90% 70% at 45% 90%,
+        #fff 15%,
+        #0000 calc((15 + var(--stop)) * 1%)
+      );
+    }
+
+    /* Centered content inside blurred area */
+    .content {
+     min-height: 32%;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      color: white;
+      display: grid;
+      gap: 0.2rem;
+      place-items: center;
+      align-content: center;
+      padding-bottom: 0.5rem;
+      z-index: 2;
+      }
+
+    .content p {
+      font-family: 'MinecraftRegular', monospace;
+      font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+      line-height: 1.2;
+    }
+
+    .content p:last-of-type {
+      opacity: 0.9;
+      font-size: clamp(1.2rem, 1.5vw + 0.8rem, 1.8rem);
+    }
+
   </style>
 </head>
 <body>
-  <div class="loader"></div>
+
+  <article>
+    <div class="assets">
+      <img src="../images/wave3_layer2.png" alt="Background" />
+      <h3>Track1</h3>
+      <img src="../images/whale.png" style="left: 70%; top: 10%" />
+    </div>
+
+    <div class="blur">
+      <div class="layer" style="--index:1;"></div>
+      <div class="layer" style="--index:2;"></div>
+      <div class="layer" style="--index:3;"></div>
+      <div class="layer" style="--index:4;"></div>
+      <div class="layer" style="--index:5;"></div>
+    </div>
+
+    <div class="content">
+      <p>Deep Dive</p>
+      <p>Technical Innovation</p>
+    </div>
+  </article>
+
+  <script type="module">
+    import gsap from 'https://cdn.skypack.dev/gsap@3.12.0';
+
+    const UPDATE = ({ x, y }) => {
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.mapRange(0, window.innerWidth, -1, 1, x),
+        '--y': gsap.utils.mapRange(0, window.innerHeight, -1, 1, y),
+      });
+    };
+
+    window.addEventListener('mousemove', UPDATE);
+
+    // Handle device orientation
+    const handleOrientation = ({ beta, gamma }) => {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(-45, 45, -1, 1, beta)
+          : gsap.utils.mapRange(-45, 45, -1, 1, gamma)),
+        '--y': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(20, 70, 1, -1, Math.abs(gamma))
+          : gsap.utils.mapRange(20, 70, 1, -1, beta)),
+      });
+    };
+
+    const START = () => {
+      if (DeviceOrientationEvent?.requestPermission) {
+        DeviceOrientationEvent.requestPermission()
+          .then(result => {
+            if (result === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            }
+          });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+
+    document.body.addEventListener('click', START, { once: true });
+  </script>
 </body>
 </html>
