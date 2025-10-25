@@ -51,13 +51,17 @@
       display: grid;
       grid-auto-flow: row;
       grid-template-rows: var(--row-1, 1fr) var(--row-2, 1fr);
-      inline-size: min(90vw, 700px);
+      inline-size: min(55vw, 450px);
       block-size: 90vh;
       border: none;
       gap: var(--size-3);
       border-radius: var(--radius-3);
       overflow: hidden;
       transition: grid-template-rows 1.8s var(--ease-spring-5);
+      position: absolute;
+      top: 50%;
+      left: 25%;
+      transform: translate(-50%, -50%);
     }
 
     fieldset:has(label:nth-child(1) > input:checked) {
@@ -129,7 +133,7 @@
       left: 50%;
       top: 6%;
       margin: 0;
-      font-size: 8rem;
+      font-size: 6rem;
       translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
       text-transform: uppercase;
       color: white;

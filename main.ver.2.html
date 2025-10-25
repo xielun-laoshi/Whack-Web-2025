@@ -320,21 +320,90 @@
       .page6-panel.show { transform: translate(-50%, 0); }
     }
   
-/* --- Panel card and non-blocking scroll (injected) --- */
-.page6-panel .card {
-  background: transparent;
-  backdrop-filter: blur(6px);
-  border: transparent;
-  border-radius: 10px;
-  padding: 1rem 1.1rem;
-  line-height: 1.45;
-}
-.page6-panel {
-  overflow: visible;
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: auto;
-}
-/* --- end injected --- */
+    /* --- Panel card and non-blocking scroll (injected) --- */
+    .page6-panel .card {
+      background: transparent;
+      backdrop-filter: blur(6px);
+      border: transparent;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      line-height: 1.45;
+    }
+    .page6-panel {
+      overflow: visible;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: auto;
+    }
+    /* --- end injected --- */
+    /* --- Track Panels (Page 3) --- */
+    .track-panels {
+      display:grid;
+      grid-auto-flow:row;
+      grid-template-rows:var(--row-1,1fr) var(--row-2,1fr);
+      inline-size:min(55vw,450px);
+      block-size:90vh;
+      border:none;
+      gap:var(--size-3,1rem);
+      border-radius:var(--radius-3,1.5rem);
+      overflow:hidden;
+      position:absolute;
+      top:50%;
+      left:25%;
+      transform:translate(-50%,-50%);
+      transition:grid-template-rows 1.8s var(--ease-spring-5,cubic-bezier(.25,.8,.25,1));
+    }
+
+    .track-panels:has(label:nth-child(1) > input:checked){--row-1:4fr;--row-2:2fr;}
+    .track-panels:has(label:nth-child(2) > input:checked){--row-1:2fr;--row-2:4fr;}
+
+    .track-panels label{position:relative;cursor:pointer;display:block;overflow:hidden;border-radius:1.5rem;}
+    .track-panels label>input{opacity:0;position:absolute;}
+
+    .track-panels article{position:relative;width:100%;height:100%;border-radius:3em;overflow:hidden;}
+    .track-panels .assets{position:absolute;inset:0;overflow:hidden;}
+    .track-panels .assets>img{
+      position:absolute;top:0;left:50%;translate:-50% 0;width:660px;height:100%;
+      object-fit:cover;object-position:center 43%;user-select:none;pointer-events:none;
+    }
+    .track-panels .assets>img:first-of-type{
+      width:900px;height:110%;filter:saturate(1.5) brightness(0.9);
+      object-position:calc(-50% + (var(--x)*30px)) calc(43% + (var(--y)*-20px));
+      transition:width .8s ease,height .8s ease;
+    }
+    .track-panels .assets>img:last-of-type{
+      object-position:calc(-50% + (var(--x)*40px)) calc(43% + (var(--y)*-40px));
+    }
+    .track-panels .assets h3{
+      position:absolute;left:50%;top:6%;margin:0;font-size:5rem;
+      translate:calc(-50% + (var(--x)*-30px)) calc(var(--y)*-20px);
+      text-transform:uppercase;color:#fff;
+    }
+    .track-panels .content{
+      min-height:32%;position:absolute;bottom:0;width:100%;color:#fff;
+      display:grid;place-items:center;align-content:center;gap:0;
+      padding-bottom:0.5rem;z-index:2;
+      transition:opacity 0.6s ease,transform 0.8s ease;
+    }
+    .track-panels .content p{
+      font-family:'MinecraftRegular',monospace;
+      font-size:clamp(1.5rem,2vw + 1rem,2.5rem);line-height: 0rem;
+    }
+    .track-panels .content p:last-of-type{opacity:.9;font-size:clamp(1.2rem,1.5vw + .8rem,1.8rem);}
+
+    .track-panels label:not(:has(input:checked)) article{pointer-events:none;}
+    .track-panels label:not(:has(input:checked)) .assets h3{
+      top:50%;left:50%;translate:-50% -50%;transform:none;
+    }
+    .track-panels label:not(:has(input:checked)) .assets img:first-of-type{object-position:center center;}
+    .track-panels label:not(:has(input:checked)) .assets img:nth-of-type(2),
+    .track-panels label:not(:has(input:checked)) .content{
+      opacity:0;pointer-events:none;transform:translateY(100%);
+    }
+    .track-panels label:has(input:checked) .assets img:nth-of-type(2),
+    .track-panels label:has(input:checked) .content{
+      opacity:1;transform:translateY(0);pointer-events:auto;
+    }
+
 </style>
 </head>
 <body>
@@ -393,22 +462,41 @@
     <section class="page page3" style="background-color: #3d84e8;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
-          
-          <!-- Left-side vertical button list -->
-          <div class="page6-buttons" 
-              style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%);
-                      display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
-            <a data-panel="panel-track1" class="offset" role="button" href="#" 
-              style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em;
-                      display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
-              Track 1
-            </a >
-            <a data-panel="panel-track2" class="offset" role="button" href="#" 
-              style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em;
-                      display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
-              Track 2
-            </a >
-          </div>
+
+          <!-- Interactive expanding panels (replace old buttons) -->
+          <fieldset class="track-panels">
+            <!-- Track 1 -->
+            <label data-target="panel-track1">
+              <input type="radio" name="tracks" value="Track 1" checked>
+              <article>
+                <div class="assets">
+                  <img src="../images/wave3_layer2.png" alt="Background" />
+                  <h3>Track1</h3>
+                  <img src="../images/whale.png" style="left:77%; top:10%" />
+                </div>
+                <div class="content">
+                  <p>Deep Dive</p>
+                  <p>Technical Innovation</p>
+                </div>
+              </article>
+            </label>
+
+            <!-- Track 2 -->
+            <label data-target="panel-track2">
+              <input type="radio" name="tracks" value="Track 2">
+              <article>
+                <div class="assets">
+                  <img src="../images/wave3_layer2.png" alt="Background" />
+                  <h3>Track2</h3>
+                  <img src="../images/fish.png" style="left:70%; top:10%" />
+                </div>
+                <div class="content">
+                  <p>Make Waves</p>
+                  <p>Social Impact</p>
+                </div>
+              </article>
+            </label>
+          </fieldset>
 
           <!-- Panels for each track -->
           <div class="page6-panel" id="panel-track1" role="dialog" aria-modal="false" aria-hidden="true">
@@ -530,7 +618,7 @@
       document.addEventListener('DOMContentLoaded', () => {
         // Cache DOM elements with defensive checks
         const bg = document.querySelector('.background');
-  const waves = Array.from(document.querySelectorAll('.wave')) || [];
+        const waves = Array.from(document.querySelectorAll('.wave')) || [];
         const container = document.getElementById('container');
         const mainImg = document.getElementById('mainImg');
         const shadowImg = document.getElementById('shadowImg');
@@ -538,21 +626,22 @@
         const scrollContainer = document.querySelector('.scroll-container');
         const loaderGif = document.getElementById('loader-gif');
         const loaderGifImg = loaderGif && loaderGif.querySelector('img');
-  const aboutContainer = document.getElementById('about-container');
-  const aboutMain = document.getElementById('aboutMain');
-  const aboutShadow = document.getElementById('aboutShadow');
-  // Sponsors elements (mirror of about)
-  const sponsorsContainer = document.getElementById('sponsors-container');
-  const sponsorsMain = document.getElementById('sponsorsMain');
-  const sponsorsShadow = document.getElementById('sponsorsShadow');
-  // Speakers elements (mirror of sponsors/about)
-  const speakersContainer = document.getElementById('speakers-container');
-  const speakersMain = document.getElementById('speakersMain');
-  const speakersShadow = document.getElementById('speakersShadow');
-  // Timeline elements (mirror of sponsors)
-  const timelineContainer = document.getElementById('timeline-container');
-  const timelineMain = document.getElementById('timelineMain');
-  const timelineShadow = document.getElementById('timelineShadow');
+        const aboutContainer = document.getElementById('about-container');
+        const aboutMain = document.getElementById('aboutMain');
+        const aboutShadow = document.getElementById('aboutShadow');
+        // Sponsors elements (mirror of about)
+        const sponsorsContainer = document.getElementById('sponsors-container');
+        const sponsorsMain = document.getElementById('sponsorsMain');
+        const sponsorsShadow = document.getElementById('sponsorsShadow');
+        // Speakers elements (mirror of sponsors/about)
+        const speakersContainer = document.getElementById('speakers-container');
+        const speakersMain = document.getElementById('speakersMain');
+        const speakersShadow = document.getElementById('speakersShadow');
+        // Timeline elements (mirror of sponsors)
+        const timelineContainer = document.getElementById('timeline-container');
+        const timelineMain = document.getElementById('timelineMain');
+        const timelineShadow = document.getElementById('timelineShadow');
+        
 
         if (!scrollContainer) return; // nothing to do if core container missing
 
@@ -565,16 +654,16 @@
 
         // Movement and animation variables
         const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
-    let centerX = window.innerWidth * 0.5;
-  let centerY = window.innerHeight * 0.5;
-    // cached viewport halves to avoid repeated division per-frame
-    let halfWindowWidth = window.innerWidth * 0.5;
-    let halfWindowHeight = window.innerHeight * 0.5;
-  let box = null;
-  let aboutbox = null;
-  let sponsorsbox = null;
-  let speakersbox = null;
-  let timelinebox = null;
+        let centerX = window.innerWidth * 0.5;
+        let centerY = window.innerHeight * 0.5;
+        // cached viewport halves to avoid repeated division per-frame
+        let halfWindowWidth = window.innerWidth * 0.5;
+        let halfWindowHeight = window.innerHeight * 0.5;
+        let box = null;
+        let aboutbox = null;
+        let sponsorsbox = null;
+        let speakersbox = null;
+        let timelinebox = null;
         let lastX = centerX, lastY = centerY;
         let isAnimating = true;
 
@@ -615,12 +704,11 @@
           if (timelineContainer && timelineContainer.getBoundingClientRect) timelinebox = timelineContainer.getBoundingClientRect();
         }
 
-  if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
-  if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
-  if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', updateSpeakersBox);
-  if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', updateTimelineBox);
-  window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateSpeakersBox(); updateTimelineBox(); }, 16));
-
+        if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
+        if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
+        if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', updateSpeakersBox);
+        if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', updateTimelineBox);
+        window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateSpeakersBox(); updateTimelineBox(); }, 16));
         if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
         // Consolidated resize handler: update cached sizes and boxes
         let resizeTimeout;
@@ -1004,6 +1092,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+<script type="module">
+    import gsap from 'https://cdn.skypack.dev/gsap@3.12.0';
+    const UPDATE = ({ x, y }) => {
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.mapRange(0, window.innerWidth, -1, 1, x),
+        '--y': gsap.utils.mapRange(0, window.innerHeight, -1, 1, y),
+      });
+    };
+    window.addEventListener('mousemove', UPDATE);
 
+    const handleOrientation = ({ beta, gamma }) => {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(-45, 45, -1, 1, beta)
+          : gsap.utils.mapRange(-45, 45, -1, 1, gamma)),
+        '--y': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(20, 70, 1, -1, Math.abs(gamma))
+          : gsap.utils.mapRange(20, 70, 1, -1, beta)),
+      });
+    };
+    const START = () => {
+      if (DeviceOrientationEvent?.requestPermission) {
+        DeviceOrientationEvent.requestPermission().then(result => {
+          if (result === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+          }
+        });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+    document.body.addEventListener('click', START, { once: true });
+  </script>
+
+  <!-- ---------- Connect panels to right-side text boxes ---------- -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const labels = document.querySelectorAll('.track-panels label');
+      labels.forEach(label => {
+        label.addEventListener('click', () => {
+          const id = label.dataset.target;
+          document.querySelectorAll('.page6-panel').forEach(p => {
+            if (p.id === id) {
+              p.classList.add('show');
+              p.setAttribute('aria-hidden', 'false');
+            } else {
+              p.classList.remove('show');
+              p.setAttribute('aria-hidden', 'true');
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>
