@@ -1,215 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Track Two</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Bookmark Sidebar</title>
+<style>
+/* Font */
+@font-face {
+  font-family: pixles;
+  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/04B_03__.TTF);
+}
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-  <link rel="preload" href="../font/MinecraftRegular.otf" as="font" type="font/otf" crossorigin>
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: pixles, monospace;
+  background: #f0f0f0;
+}
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+/* Sidebar container */
+.bookmark-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+}
 
-    /* Minecraft-styled text */
-    @font-face {
-      font-family: 'MinecraftRegular';
-      src: url('../font/MinecraftRegular.otf') format('opentype');
-      font-weight: normal;
-      font-style: normal;
-    }
+/* Pixel box variables based on bookmark base color */
+:root {
+  --bookmarkBase: #4b9fff;          /* main color */
+  --pixelBorderColor: #256cb9;      /* darker border */
+  --pixelHighlightColor: #7cc4ff;   /* lighter highlight */
+  --pixelShadowColor: rgba(0, 0, 0, 0.216); /* shadow */
+  --pixelWidth: 3px;
+  --pixelWidthAlt: -3px;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* Pixelated bookmark box */
+.bookmark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 8px 12px; /* slightly shorter */
+  background: var(--bookmarkBase);
+  color: white;
+  width: 180px;
+  transform: translateX(-170px);
+  transition: transform 0.3s ease;
+  font-size: 16px;
+  border-radius: 0;
+  text-decoration: none;
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background-color: transparent;
-      font-family: 'MinecraftRegular', monospace;
-      overflow: hidden;
-      touch-action: none;
-    }
+  /* Pixel box shadow simulating borders, highlights, and shadow */
+  box-shadow:
+    0px var(--pixelWidth) var(--pixelHighlightColor),        /* bottom highlight */
+    0px var(--pixelWidthAlt) var(--bookmarkBase),             /* top inner */
+    var(--pixelWidth) 0px var(--bookmarkBase),                /* right inner */
+    var(--pixelWidthAlt) 0px var(--bookmarkBase),             /* left inner */
+    0px calc(var(--pixelWidthAlt)*2) var(--pixelBorderColor), /* top border */
+    0px calc(var(--pixelWidth)*2) var(--pixelBorderColor),    /* bottom border */
+    calc(var(--pixelWidth)*2) 0px var(--pixelBorderColor),    /* right border */
+    calc(var(--pixelWidthAlt)*2) 0px var(--pixelBorderColor), /* left border */
+    calc(var(--pixelWidth)*3) 0px var(--pixelShadowColor),    /* right shadow */
+    0px calc(var(--pixelWidth)*3) var(--pixelShadowColor);    /* bottom shadow */
+}
 
-    body::before {
-      --line: rgba(255, 255, 255, 0.1);
-      --size: 60px;
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        linear-gradient(90deg, var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size),
-        linear-gradient(var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size);
-      z-index: -1;
-    }
+/* Slide out on hover */
+.bookmark:hover {
+  transform: translateX(0);
+}
 
-    article {
-      position: relative;
-      width: min(90vw, 600px);
-      aspect-ratio: 2 / 1.1;
-      border-radius: 4em;
-      overflow: hidden;
-    }
+/* Bookmark text fade-in */
+.bookmark span {
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.1s;
+}
 
-    .assets {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
+.bookmark:hover span {
+  opacity: 1;
+}
 
-    .assets > img {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      translate: -50% 0;
-      width: 660px;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 43%;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    .assets > img:first-of-type {
-      filter: saturate(1.5) brightness(0.9);
-      object-position: calc(-50% + (var(--x) * 30px)) calc(43% + (var(--y) * -20px));
-    }
-
-    .assets > img:last-of-type {
-      object-position: calc(-50% + (var(--x) * 40px)) calc(43% + (var(--y) * -40px));
-    }
-
-    .assets h3 {
-      position: absolute;
-      left: 50%;
-      top: 6%;
-      margin: 0;
-      font-size: 8rem;
-      translate: -50% 0;
-      text-transform: uppercase;
-      font-family: 'MinecraftRegular', monospace;
-      color: white;
-      translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
-    }
-
-    /* Blur overlay */
-    .blur {
-      --layers: 5;
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .blur .layer {
-      --blur: calc(sin(((var(--layers) - var(--index)) / var(--layers)) * 90deg) * 30);
-      --stop: calc(sin(((var(--index)) / var(--layers)) * 90deg) * 15);
-      position: absolute;
-      inset: 0;
-      background: hsl(0 0% 60% / 0.05);
-      backdrop-filter: blur(calc(var(--blur) * 1px));
-      mask: radial-gradient(
-        70% 50% at 45% 90%,
-        #fff 15%,
-        #0000 calc((15 + var(--stop)) * 1%)
-      );
-    }
-
-    /* Centered content inside blurred area */
-    .content {
-     min-height: 32%;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      color: white;
-      display: grid;
-      gap: 0.2rem;
-      place-items: center;
-      align-content: center;
-      padding-bottom: 0.5rem;
-      z-index: 2;
-      }
-
-    .content p {
-      font-family: 'MinecraftRegular', monospace;
-      font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
-      line-height: 1.2;
-    }
-
-    .content p:last-of-type {
-      opacity: 0.9;
-      font-size: clamp(1.2rem, 1.5vw + 0.8rem, 1.8rem);
-    }
-
-  </style>
+</style>
 </head>
 <body>
 
-  <article>
-    <div class="assets">
-      <img src="../images/wave3_layer2.png" alt="Background" />
-      <h3>Track2</h3>
-      <img src="../images/fish.png" style="left: 70%; top: 10%" />
-    </div>
+<div class="bookmark-container">
+  <a href="#page1" class="bookmark"><span>Tracks</span></a>
+  <a href="#page2" class="bookmark"><span>Speakers</span></a>
+  <a href="#page3" class="bookmark"><span>Schedule</span></a>
+  <a href="#page4" class="bookmark"><span>FAQ</span></a>
+  <a href="https://github.com/MLH/mlh-policies/blob/main/code-of-conduct.md" class="bookmark"><span>MLH Resources</span></a>
+</div>
 
-    <div class="blur">
-      <div class="layer" style="--index:1;"></div>
-      <div class="layer" style="--index:2;"></div>
-      <div class="layer" style="--index:3;"></div>
-      <div class="layer" style="--index:4;"></div>
-      <div class="layer" style="--index:5;"></div>
-    </div>
-
-    <div class="content">
-      <p>Make Waves</p>
-      <p>Social Impact</p>
-    </div>
-  </article>
-
-  <script type="module">
-    import gsap from 'https://cdn.skypack.dev/gsap@3.12.0';
-
-    const UPDATE = ({ x, y }) => {
-      gsap.set(document.documentElement, {
-        '--x': gsap.utils.mapRange(0, window.innerWidth, -1, 1, x),
-        '--y': gsap.utils.mapRange(0, window.innerHeight, -1, 1, y),
-      });
-    };
-
-    window.addEventListener('mousemove', UPDATE);
-
-    // Handle device orientation
-    const handleOrientation = ({ beta, gamma }) => {
-      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-      gsap.set(document.documentElement, {
-        '--x': gsap.utils.clamp(-1, 1, isLandscape
-          ? gsap.utils.mapRange(-45, 45, -1, 1, beta)
-          : gsap.utils.mapRange(-45, 45, -1, 1, gamma)),
-        '--y': gsap.utils.clamp(-1, 1, isLandscape
-          ? gsap.utils.mapRange(20, 70, 1, -1, Math.abs(gamma))
-          : gsap.utils.mapRange(20, 70, 1, -1, beta)),
-      });
-    };
-
-    const START = () => {
-      if (DeviceOrientationEvent?.requestPermission) {
-        DeviceOrientationEvent.requestPermission()
-          .then(result => {
-            if (result === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation);
-            }
-          });
-      } else {
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    };
-
-    document.body.addEventListener('click', START, { once: true });
-  </script>
 </body>
 </html>

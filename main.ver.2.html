@@ -371,10 +371,10 @@
       transition:width .8s ease,height .8s ease;
     }
     .track-panels .assets>img:last-of-type{
-      object-position:calc(-50% + (var(--x)*40px)) calc(43% + (var(--y)*-40px));
+      width:90%;height:90%;object-position:calc(-50% + (var(--x)*40px)) calc(43% + (var(--y)*-40px));
     }
     .track-panels .assets h3{
-      position:absolute;left:50%;top:6%;margin:0;font-size:5rem;
+      position:absolute;left:50%;top:7%;margin:0;font-size:5rem;
       translate:calc(-50% + (var(--x)*-30px)) calc(var(--y)*-20px);
       text-transform:uppercase;color:#fff;
     }
@@ -404,6 +404,62 @@
       opacity:1;transform:translateY(0);pointer-events:auto;
     }
 
+    @font-face {
+      font-family: pixles;
+      src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/04B_03__.TTF);
+    }
+    .bookmark-container {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+    }
+    :root {
+      --bookmarkBase: #fb6222;
+      --pixelBorderColor: #c24712;
+      --pixelHighlightColor: #ff8049;
+      --pixelShadowColor: rgba(0, 0, 0, 0.216);
+      --pixelWidth: 3px;
+      --pixelWidthAlt: -3px;
+    }
+    .bookmark {
+      position: relative;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      cursor: pointer;
+      padding: 8px 12px;
+      background: var(--bookmarkBase);
+      color: white;
+      width: 180px;
+      transform: translateX(-170px);
+      transition: transform 0.3s ease;
+      font-family: pixles, monospace;
+      font-size: 16px;
+      text-decoration: none;
+      box-shadow:
+        0px var(--pixelWidth) var(--pixelHighlightColor),
+        0px var(--pixelWidthAlt) var(--bookmarkBase),
+        var(--pixelWidth) 0px var(--bookmarkBase),
+        var(--pixelWidthAlt) 0px var(--bookmarkBase),
+        0px calc(var(--pixelWidthAlt)*2) var(--pixelBorderColor),
+        0px calc(var(--pixelWidth)*2) var(--pixelBorderColor),
+        calc(var(--pixelWidth)*2) 0px var(--pixelBorderColor),
+        calc(var(--pixelWidthAlt)*2) 0px var(--pixelBorderColor),
+        calc(var(--pixelWidth)*3) 0px var(--pixelShadowColor),
+        0px calc(var(--pixelWidth)*3) var(--pixelShadowColor);
+    }
+    .bookmark:hover { transform: translateX(0); }
+    .bookmark span {
+      margin-left: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.1s;
+    }
+    .bookmark:hover span { opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -413,7 +469,7 @@
   </div>
 
   <div class="scroll-container">
-    <section class="page page1">
+    <section id = "page1" class="page page1">
       <div class="background" aria-hidden="true"></div>
       <a id="mlh-trust-badge" style="display:block;max-width:100px;min-width:60px;position:absolute;right:50px;top:0;width:10%;z-index:100" href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white" target="_blank"><img src="https://s3.amazonaws.com/logged-assets/trust-badge/2026/mlh-trust-badge-2026-white.svg" alt="Major League Hacking 2026 Hackathon Season" style="width:100%"></a>
       <img class="wave" id="wave1" src="../images/wave1.png" loading="lazy">
@@ -431,9 +487,16 @@
         <a class="offset" href="https://forms.gle/LBRGVTyU59hJLcfJ7" target="_blank" rel="noopener noreferrer" role="button">Register!</a>
       </div>
       <div class="deadline-label" aria-hidden="true">Application Deadline is Nov 22 @ 11:00am</div>
+      <div class="bookmark-container">
+        <a href="#page3" class="bookmark"><span>Tracks</span></a>
+        <a href="#page4" class="bookmark"><span>Speakers</span></a>
+        <a href="#page5" class="bookmark"><span>Schedule</span></a>
+        <a href="#page6" class="bookmark"><span>FAQ</span></a>
+        <a href="https://github.com/MLH/mlh-policies/blob/main/code-of-conduct.md" class="bookmark" target="_blank" rel="noopener noreferrer"><span>MLH Resources</span></a>
+      </div>
     </section>
 
-    <section class="page page2">
+    <section id = "page2" class="page page2">
       <div id="about" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
         <div id="about-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
           <img id="aboutShadow" class="img-layer" src="../images/about shadow.png" loading="lazy" style="z-index:0;">
@@ -459,7 +522,7 @@
       </div>
     </section>
 
-    <section class="page page3" style="background-color: #3d84e8;">
+    <section id = "page3" class="page page3" style="background-color: #3d84e8;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
 
@@ -472,7 +535,7 @@
                 <div class="assets">
                   <img src="../images/wave3_layer2.png" alt="Background" />
                   <h3>Track1</h3>
-                  <img src="../images/whale.png" style="left:77%; top:10%" />
+                  <img src="../images/whale.png" style="left:77%; top:0%" />
                 </div>
                 <div class="content">
                   <p>Deep Dive</p>
@@ -517,7 +580,7 @@
       </div>
     </section>
 
-    <section class="page page4" style="background-color: #1b6ed3;">
+    <section id = "page4" class="page page4" style="background-color: #1b6ed3;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
           <p>
@@ -534,7 +597,7 @@
       </div>
     </section>
 
-    <section class="page page5" style="background-color: #1570bf;">
+    <section id = "page5" class="page page5" style="background-color: #1570bf;">
       <div style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); z-index: 1; width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-start; pointer-events: none;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align: center; max-width: 80%;">
           <p>(Rooms are TBD, and the schedule might change.)
@@ -564,7 +627,7 @@
       </div>
     </section>
 
-    <section class="page page6" style="background-color: #1c6a96;">
+    <section id = "page6" class="page page6" style="background-color: #1c6a96;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
           <!-- Left-side vertical button list: left 25%, vertically centered -->
@@ -589,7 +652,7 @@
       </div>
     </section>
 
-    <section class="page page7">
+    <section id = "page7" class="page page7">
       <div class="bottom-images">
     <img class="bottom-img" id="bottom5" src="../images/bottom5.png" loading="lazy" style="z-index: 0;">
     <img class="bottom-img" id="bottom4" src="../images/bottom4.png" loading="lazy" style="z-index: 1;">
@@ -917,36 +980,109 @@
         }
 
         // Improved wheel/touchpad handling: one page per gesture
+        // --- Shared page flip routine used by wheel + bookmarks ---
+        function flipToPage(targetPage) {
+          if (!scrollContainer) return;
+          const pageCount = document.querySelectorAll('.page').length;
+          targetPage = Math.max(0, Math.min(pageCount - 1, targetPage));
+
+          // mirror the same timing/animation used in the wheel pager
+          const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
+          const maxGifWait = 950;
+          const fraction = 0.4;
+          const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
+
+          showLoaderGif();
+          (async () => {
+            await waitForGif(gifWait);
+            try {
+              scrollContainer.scrollTo({
+                top: targetPage * window.innerHeight,
+                behavior: 'smooth'
+              });
+            } catch (e) {
+              scrollContainer.scrollTop = targetPage * window.innerHeight;
+            }
+            setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
+          })();
+        }
+
+        // Return page index for any element inside a .page
+        function pageIndexFor(el) {
+          const pages = Array.from(document.querySelectorAll('.page'));
+          const pageEl = el && el.closest('.page');
+          return pages.indexOf(pageEl);
+        }
+
+        // --- Wheel/touchpad handling: one page per gesture, now using flipToPage ---
         (function installWheelPager(){
           const pages = document.querySelectorAll('.page');
           const pageCount = pages.length;
           const scrollLockDuration = 700;
           let isDelayingScroll = false;
+
           scrollContainer.addEventListener('wheel', (e) => {
             if (!e) return;
             e.preventDefault();
             if (!e.deltaY) return;
             if (isDelayingScroll) return;
+
             const direction = e.deltaY > 0 ? 1 : -1;
             const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
             let targetPage = currentPage + direction;
             if (targetPage < 0) targetPage = 0;
             if (targetPage > pageCount - 1) targetPage = pageCount - 1;
             if (targetPage === currentPage) return;
+
             isDelayingScroll = true;
-            showLoaderGif();
-            const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
-            (async () => {
-              const maxGifWait = 950;
-              const fraction = 0.4;
-              const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
-              await waitForGif(gifWait);
-              try { scrollContainer.scrollTo({ top: targetPage * window.innerHeight, behavior: 'smooth' }); } catch(e) { scrollContainer.scrollTop = targetPage * window.innerHeight; }
-              setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
-              setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
-            })();
+            flipToPage(targetPage);
+            setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
           }, { passive: false });
         })();
+
+        // --- Bookmark handling: clicks on in-page anchors and hash changes ---
+        function handleHashJump(hash) {
+          if (!hash || hash === '#') return;
+          const target = document.querySelector(hash);
+          if (!target) return;
+          const idx = pageIndexFor(target);
+          if (idx >= 0) {
+            // Use the same flip animation as the wheel pager
+            flipToPage(idx);
+          } else {
+            // Fallback: smooth scroll to element if it isn't a full page
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+
+        // Intercept clicks on anchors like <a href="#page4">
+        document.addEventListener('click', (e) => {
+          const a = e.target.closest('a[href^="#"]');
+          if (!a) return;
+          const href = a.getAttribute('href');
+          if (!href || href.length < 2) return; // "#" only
+          const target = document.querySelector(href);
+          if (!target) return;
+
+          e.preventDefault();
+          // Update URL hash for deep linkability, then flip via hashchange handler
+          if (history.pushState) {
+            history.pushState(null, '', href);
+            handleHashJump(href);
+          } else {
+            // Fallback updates the hash; hashchange handler will catch it
+            location.hash = href;
+          }
+        }, { capture: true });
+
+        // Respond to manual hash changes (back/forward, programmatic changes)
+        window.addEventListener('hashchange', () => handleHashJump(location.hash));
+
+        // If the page loads with a hash, honor it with the flip animation
+        if (location.hash) {
+          // small defer to ensure layout is ready
+          setTimeout(() => handleHashJump(location.hash), 0);
+        }
 
         // Optimized scroll position tracking
         let scrollTicking = false;
