@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Panels</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="preload" href="../font/MinecraftRegular.otf" as="font" type="font/otf" crossorigin>
+
+  <style>
+    @import "https://unpkg.com/open-props" layer(design.system);
+
+    /* ---------- Global Styles ---------- */
+    @font-face {
+      font-family: 'MinecraftRegular';
+      src: url('../font/MinecraftRegular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100vh;
+      display: grid;
+      place-content: center;
+      background: var(--gradient-9);
+      font-family: 'MinecraftRegular', monospace;
+    }
+
+    body::before {
+      --line: rgba(255, 255, 255, 0.1);
+      --size: 60px;
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(90deg, var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size),
+        linear-gradient(var(--line) 1px, transparent 1px var(--size)) 0 0 / var(--size) var(--size);
+      z-index: -1;
+    }
+
+    /* ---------- Vertical Toggle Container ---------- */
+    fieldset {
+      display: grid;
+      grid-auto-flow: row;
+      grid-template-rows: var(--row-1, 1fr) var(--row-2, 1fr);
+      inline-size: min(90vw, 700px);
+      block-size: 90vh;
+      border: none;
+      gap: var(--size-3);
+      border-radius: var(--radius-3);
+      overflow: hidden;
+      transition: grid-template-rows 1.8s var(--ease-spring-5);
+    }
+
+    fieldset:has(label:nth-child(1) > input:checked) {
+      --row-1: 4fr;
+      --row-2: 2fr;
+    }
+
+    fieldset:has(label:nth-child(2) > input:checked) {
+      --row-1: 2fr;
+      --row-2: 4fr;
+    }
+
+    label {
+      position: relative;
+      cursor: pointer;
+      display: block;
+      overflow: hidden;
+      border-radius: var(--radius-4);
+    }
+
+    label > input {
+      opacity: 0;
+      position: absolute;
+    }
+
+    /* ---------- Panel Common Styles ---------- */
+    article {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 3em;
+      overflow: hidden;
+    }
+
+    .assets {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .assets > img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      translate: -50% 0;
+      width: 660px;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 43%;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .assets > img:first-of-type {
+        width: 900px; /* was 660px */
+        height: 110%;
+        object-fit: cover;
+        object-position: calc(-50% + (var(--x) * 30px)) calc(43% + (var(--y) * -20px));
+        transition: width 0.8s ease, height 0.8s ease;
+        filter: saturate(1.5) brightness(0.9);
+    }
+
+    .assets > img:last-of-type {
+      object-position: calc(-50% + (var(--x) * 40px)) calc(43% + (var(--y) * -40px));
+    }
+
+    .assets h3 {
+      position: absolute;
+      left: 50%;
+      top: 6%;
+      margin: 0;
+      font-size: 8rem;
+      translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
+      text-transform: uppercase;
+      color: white;
+    }
+
+    /* ---------- Content Overlay ---------- */
+    .content {
+      min-height: 32%;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      color: white;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 0.2rem;
+      padding-bottom: 0.5rem;
+      z-index: 2;
+    }
+
+    .content p {
+      font-family: 'MinecraftRegular', monospace;
+      font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+      line-height: 1.2;
+    }
+
+    .content p:last-of-type {
+      opacity: 0.9;
+      font-size: clamp(1.2rem, 1.5vw + 0.8rem, 1.8rem);
+    }
+
+    /* ---------- Non-Expanded Panel Restrictions ---------- */
+    label:not(:has(input:checked)) article {
+        pointer-events: none; /* Disable interaction for collapsed panels */
+    }
+
+    /* Center the h3 for non-expanded panels */
+    label:not(:has(input:checked)) .assets h3 {
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%; /* perfectly center */
+        transform: none; /* remove inherited transforms */
+    }
+
+    label:not(:has(input:checked)) .assets img:first-of-type {
+        object-position: center center; /* ensures true visual centering */
+        }
+
+    /* Hide the second image (after <h3>) and content when collapsed */
+    label:not(:has(input:checked)) .assets img:nth-of-type(2),
+    label:not(:has(input:checked)) .content {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(100%); /* Move them below the visible box */
+    transition: opacity 0.6s ease, transform 0.8s ease;
+    }
+
+    /* Smoothly show them again when expanded */
+    label:has(input:checked) .assets img:nth-of-type(2),
+    label:has(input:checked) .content {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition: opacity 0.6s ease, transform 0.8s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <fieldset>
+    <!-- Track 1 Panel -->
+    <label>
+      <input type="radio" name="tracks" value="Track 1" checked>
+      <article>
+        <div class="assets">
+          <img src="../images/wave3_layer2.png" alt="Background" />
+          <h3>Track1</h3>
+          <img src="../images/whale.png" style="left: 77%; top: 10%" />
+        </div>
+        <div class="content">
+          <p>Deep Dive</p>
+          <p>Technical Innovation</p>
+        </div>
+      </article>
+    </label>
+
+    <!-- Track 2 Panel -->
+    <label>
+      <input type="radio" name="tracks" value="Track 2">
+      <article>
+        <div class="assets">
+          <img src="../images/wave3_layer2.png" alt="Background" />
+          <h3>Track2</h3>
+          <img src="../images/fish.png" style="left: 70%; top: 10%" />
+        </div>
+        <div class="content">
+          <p>Make Waves</p>
+          <p>Social Impact</p>
+        </div>
+      </article>
+    </label>
+  </fieldset>
+
+  <script type="module">
+    import gsap from 'https://cdn.skypack.dev/gsap@3.12.0';
+
+    const UPDATE = ({ x, y }) => {
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.mapRange(0, window.innerWidth, -1, 1, x),
+        '--y': gsap.utils.mapRange(0, window.innerHeight, -1, 1, y),
+      });
+    };
+
+    window.addEventListener('mousemove', UPDATE);
+
+    // Device orientation motion support
+    const handleOrientation = ({ beta, gamma }) => {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      gsap.set(document.documentElement, {
+        '--x': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(-45, 45, -1, 1, beta)
+          : gsap.utils.mapRange(-45, 45, -1, 1, gamma)),
+        '--y': gsap.utils.clamp(-1, 1, isLandscape
+          ? gsap.utils.mapRange(20, 70, 1, -1, Math.abs(gamma))
+          : gsap.utils.mapRange(20, 70, 1, -1, beta)),
+      });
+    };
+
+    const START = () => {
+      if (DeviceOrientationEvent?.requestPermission) {
+        DeviceOrientationEvent.requestPermission().then(result => {
+          if (result === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+          }
+        });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    };
+
+    document.body.addEventListener('click', START, { once: true });
+  </script>
+</body>
+</html>

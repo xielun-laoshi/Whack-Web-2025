@@ -26,17 +26,13 @@
       padding: 0;
     }
 
-    html {
-      color-scheme: light only;
-    }
-
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-color: #000;
-      font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+      background-color: transparent;
+      font-family: 'MinecraftRegular', monospace;
       overflow: hidden;
       touch-action: none;
     }
@@ -118,7 +114,7 @@
       background: hsl(0 0% 60% / 0.05);
       backdrop-filter: blur(calc(var(--blur) * 1px));
       mask: radial-gradient(
-        90% 70% at 45% 90%,
+        70% 50% at 45% 90%,
         #fff 15%,
         #0000 calc((15 + var(--stop)) * 1%)
       );
