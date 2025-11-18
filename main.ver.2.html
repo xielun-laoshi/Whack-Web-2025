@@ -754,6 +754,11 @@
           waveStyles[i] = waves[i] && waves[i].style;
         }
 
+        // Precompute motion factor arrays once (reduces math in animate)
+        const waveFactors = waveStyles.map((_, i) => ((moveFactors[i] || 0.05) + 0.05));
+        const bottomFactors = bottomImgs.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.05));
+        const beneathFactors = beneathImgs.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.02));
+
         // Cache a few more style objects for other images to avoid repeated lookups
         const aboutMainStyle = aboutMain ? aboutMain.style : null;
         const aboutShadowStyle = aboutShadow ? aboutShadow.style : null;
@@ -766,6 +771,12 @@
 
         // viewport height cached (used frequently)
         let vh = window.innerHeight;
+
+        // Precompute motion factor arrays (reduces per-frame math)
+        // We'll compute these after bottom/beneath arrays are populated below.
+
+        // minimal per-frame change detection (skip heavy work when pointer hasn't moved)
+        let prevFrameX = null, prevFrameY = null;
 
         // Utility: single box updater (reduced duplication)
         function updateBoxFor(el, storeName) {
@@ -846,30 +857,41 @@
             try {
               const offsetX = lastX - centerX;
               const offsetY = lastY - centerY;
+
+              // If pointer hasn't moved since last rendered frame, skip heavy updates
+              if (prevFrameX === lastX && prevFrameY === lastY) {
+                requestAnimationFrame(animate);
+                return;
+              }
+
               if (bgStyle && bgStyle.backgroundPosition !== undefined) bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
 
-              // waves
-              for (let i = 0, wl = waves.length; i < wl; i++) {
+              const ofx = offsetX, ofy = offsetY;
+
+              // waves (use precomputed factors)
+              for (let i = 0, wl = waveStyles.length; i < wl; i++) {
                 const ws = waveStyles[i];
-                const factor = moveFactors[i] + 0.05;
-                const tx = offsetX * factor;
-                const ty = offsetY * factor;
+                const factor = waveFactors[i] || (moveFactors[i] + 0.05);
+                const tx = ofx * factor;
+                const ty = ofy * factor;
                 if (ws) ws.transform = `translate3d(${tx}px, ${ty}px, 0)`;
               }
 
+              // bottom images
               for (let i = 0, bl = bottomImgs.length; i < bl; i++) {
                 const imgObj = bottomImgs[i];
-                const factor = moveFactors[moveFactors.length - 1 - i] || 0.05;
-                const tx = offsetX * factor * 0.75;
-                const ty = offsetY * factor * 0.75;
+                const factor = bottomFactors[i] || 0.05;
+                const tx = ofx * factor * 0.75;
+                const ty = ofy * factor * 0.75;
                 if (imgObj.style) imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
               }
 
+              // beneath images
               for (let i = 0, bl2 = beneathImgs.length; i < bl2; i++) {
                 const imgObj = beneathImgs[i];
-                const factor = moveFactors[moveFactors.length - 1 - i] || 0.02;
-                const tx = offsetX * factor * 1.1;
-                const ty = offsetY * factor * 1.1;
+                const factor = beneathFactors[i] || 0.02;
+                const tx = ofx * factor * 1.1;
+                const ty = ofy * factor * 1.1;
                 if (imgObj.style) imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
               }
 
@@ -959,6 +981,10 @@
                 if (timelineMainStyle) timelineMainStyle.transform = `rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale}, ${tscale}, 1)`;
                 if (timelineShadowStyle) timelineShadowStyle.transform = `translate3d(${tpercentX * 8}px, ${tpercentY * 8}px, 0) rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale * 1.07}, ${tscale * 1.07}, 1)`;
               }
+
+              // remember last frame pointer position
+              prevFrameX = lastX;
+              prevFrameY = lastY;
             } catch (innerErr) {
               // Avoid noisy console logging inside animation loop (can drastically reduce framerate)
               // console.error('frame error', innerErr);
