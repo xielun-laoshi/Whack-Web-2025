@@ -527,6 +527,7 @@
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
 
+
           <!-- Interactive expanding panels (replace old buttons) -->
           <fieldset class="track-panels">
             <!-- Track 1 -->
@@ -675,6 +676,7 @@
           </p>
     </section>
   </div>
+
 <script>
   (function(){
     'use strict';
@@ -705,14 +707,18 @@
         const timelineContainer = document.getElementById('timeline-container');
         const timelineMain = document.getElementById('timelineMain');
         const timelineShadow = document.getElementById('timelineShadow');
-        
 
         if (!scrollContainer) return; // nothing to do if core container missing
 
+        // --- Cached NodeLists used in multiple places (avoid repeated queries) ---
+        const pages = Array.from(document.querySelectorAll('.page'));
+        const page6Panels = Array.from(document.querySelectorAll('.page6-panel'));
+        const page6Buttons = Array.from(document.querySelectorAll('.page6-buttons [data-panel]'));
+
         // Cache styles for performance (guarded)
         const bgStyle = bg ? bg.style : { setProperty: () => {} };
-        const mainImgStyle = mainImg ? mainImg.style : { transform: '' };
-        const shadowImgStyle = shadowImg ? shadowImg.style : { transform: '' };
+        const mainImgStyle = mainImg ? mainImg.style : null;
+        const shadowImgStyle = shadowImg ? shadowImg.style : null;
         const titleStyle = title ? title.style : { opacity: 1, transform: '' };
         const loaderGifStyle = loaderGif ? loaderGif.style : null;
 
@@ -748,46 +754,55 @@
           waveStyles[i] = waves[i] && waves[i].style;
         }
 
-        function updateBox() { 
-          if (container && container.getBoundingClientRect) box = container.getBoundingClientRect(); 
+        // Cache a few more style objects for other images to avoid repeated lookups
+        const aboutMainStyle = aboutMain ? aboutMain.style : null;
+        const aboutShadowStyle = aboutShadow ? aboutShadow.style : null;
+        const sponsorsMainStyle = sponsorsMain ? sponsorsMain.style : null;
+        const sponsorsShadowStyle = sponsorsShadow ? sponsorsShadow.style : null;
+        const speakersMainStyle = speakersMain ? speakersMain.style : null;
+        const speakersShadowStyle = speakersShadow ? speakersShadow.style : null;
+        const timelineMainStyle = timelineMain ? timelineMain.style : null;
+        const timelineShadowStyle = timelineShadow ? timelineShadow.style : null;
+
+        // viewport height cached (used frequently)
+        let vh = window.innerHeight;
+
+        // Utility: single box updater (reduced duplication)
+        function updateBoxFor(el, storeName) {
+          if (el && el.getBoundingClientRect) {
+            const rect = el.getBoundingClientRect();
+            if (storeName === 'container') box = rect;
+            else if (storeName === 'about') aboutbox = rect;
+            else if (storeName === 'sponsors') sponsorsbox = rect;
+            else if (storeName === 'speakers') speakersbox = rect;
+            else if (storeName === 'timeline') timelinebox = rect;
+          }
+        }
+        function updateAllBoxes() {
+          updateBoxFor(container, 'container');
+          updateBoxFor(aboutContainer, 'about');
+          updateBoxFor(sponsorsContainer, 'sponsors');
+          updateBoxFor(speakersContainer, 'speakers');
+          updateBoxFor(timelineContainer, 'timeline');
         }
 
-        function updateAboutBox() {
-          if (aboutContainer && aboutContainer.getBoundingClientRect) aboutbox = aboutContainer.getBoundingClientRect();
-        }
+        if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', () => updateBoxFor(aboutContainer, 'about'));
+        if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', () => updateBoxFor(sponsorsContainer, 'sponsors'));
+        if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', () => updateBoxFor(speakersContainer, 'speakers'));
+        if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', () => updateBoxFor(timelineContainer, 'timeline'));
+        if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', () => updateBoxFor(container, 'container'));
 
-        function updateSponsorsBox() {
-          if (sponsorsContainer && sponsorsContainer.getBoundingClientRect) sponsorsbox = sponsorsContainer.getBoundingClientRect();
-        }
-
-        function updateSpeakersBox() {
-          if (speakersContainer && speakersContainer.getBoundingClientRect) speakersbox = speakersContainer.getBoundingClientRect();
-        }
-
-        function updateTimelineBox() {
-          if (timelineContainer && timelineContainer.getBoundingClientRect) timelinebox = timelineContainer.getBoundingClientRect();
-        }
-
-        if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', updateAboutBox);
-        if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', updateSponsorsBox);
-        if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', updateSpeakersBox);
-        if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', updateTimelineBox);
-        window.addEventListener('resize', () => setTimeout(() => { updateAboutBox(); updateSponsorsBox(); updateSpeakersBox(); updateTimelineBox(); }, 16));
-        if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', updateBox);
-        // Consolidated resize handler: update cached sizes and boxes
+        // Consolidated resize handler: update cached sizes and boxes (throttled)
         let resizeTimeout;
         function handleResize() {
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
-            updateBox();
+            updateAllBoxes();
             centerX = window.innerWidth * 0.5;
             centerY = window.innerHeight * 0.5;
             halfWindowWidth = window.innerWidth * 0.5;
             halfWindowHeight = window.innerHeight * 0.5;
-            updateAboutBox();
-            updateSponsorsBox();
-            updateSpeakersBox();
-            updateTimelineBox();
+            vh = window.innerHeight;
           }, 32);
         }
         window.addEventListener('resize', handleResize, {passive: true});
@@ -887,8 +902,8 @@
                 const arotateX = (-apercentY * 15 * strength);
                 const arotateY = (apercentX * 15 * strength);
                 const ascale = 1 + ((Math.abs(apercentX) + Math.abs(apercentY)) * 0.5) * 0.05;
-                if (aboutMain && aboutMain.style) aboutMain.style.transform = `rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale}, ${ascale}, 1)`;
-                if (aboutShadow && aboutShadow.style) aboutShadow.style.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale * 1.07}, ${ascale * 1.07}, 1)`;
+                if (aboutMainStyle) aboutMainStyle.transform = `rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale}, ${ascale}, 1)`;
+                if (aboutShadowStyle) aboutShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale * 1.07}, ${ascale * 1.07}, 1)`;
               }
 
               // Sponsors: apply same tilt/parallax behavior if present
@@ -905,26 +920,28 @@
                 const srotateX = (-spercentY * 15 * sstrength);
                 const srotateY = (spercentX * 15 * sstrength);
                 const sscale = 1 + ((Math.abs(spercentX) + Math.abs(spercentY)) * 0.5) * 0.05;
-                if (sponsorsMain && sponsorsMain.style) sponsorsMain.style.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
-                if (sponsorsShadow && sponsorsShadow.style) sponsorsShadow.style.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
+                if (sponsorsMainStyle) sponsorsMainStyle.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
+                if (sponsorsShadowStyle) sponsorsShadowStyle.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
               }
-                // Speakers: apply same tilt/parallax behavior if present
-                if (speakersbox) {
-                  const spdx = lastX - centerX;
-                  const spdy = lastY - centerY;
-                  const sphalfW = halfWindowWidth || 1;
-                  const sphalfH = halfWindowHeight || 1;
-                  let spercentX2 = spdx / sphalfW;
-                  let spercentY2 = spdy / sphalfH;
-                  spercentX2 = Math.max(-1, Math.min(1, spercentX2));
-                  spercentY2 = Math.max(-1, Math.min(1, spercentY2));
-                  const sstrength2 = 0.6;
-                  const srotateX2 = (-spercentY2 * 15 * sstrength2);
-                  const srotateY2 = (spercentX2 * 15 * sstrength2);
-                  const sscale2 = 1 + ((Math.abs(spercentX2) + Math.abs(spercentY2)) * 0.5) * 0.05;
-                  if (speakersMain && speakersMain.style) speakersMain.style.transform = `rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2}, ${sscale2}, 1)`;
-                  if (speakersShadow && speakersShadow.style) speakersShadow.style.transform = `translate3d(${spercentX2 * 8}px, ${spercentY2 * 8}px, 0) rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2 * 1.07}, ${sscale2 * 1.07}, 1)`;
-                }
+
+              // Speakers: apply same tilt/parallax behavior if present
+              if (speakersbox) {
+                const spdx = lastX - centerX;
+                const spdy = lastY - centerY;
+                const sphalfW = halfWindowWidth || 1;
+                const sphalfH = halfWindowHeight || 1;
+                let spercentX2 = spdx / sphalfW;
+                let spercentY2 = spdy / sphalfH;
+                spercentX2 = Math.max(-1, Math.min(1, spercentX2));
+                spercentY2 = Math.max(-1, Math.min(1, spercentY2));
+                const sstrength2 = 0.6;
+                const srotateX2 = (-spercentY2 * 15 * sstrength2);
+                const srotateY2 = (spercentX2 * 15 * sstrength2);
+                const sscale2 = 1 + ((Math.abs(spercentX2) + Math.abs(spercentY2)) * 0.5) * 0.05;
+                if (speakersMainStyle) speakersMainStyle.transform = `rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2}, ${sscale2}, 1)`;
+                if (speakersShadowStyle) speakersShadowStyle.transform = `translate3d(${spercentX2 * 8}px, ${spercentY2 * 8}px, 0) rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2 * 1.07}, ${sscale2 * 1.07}, 1)`;
+              }
+
               // Timeline: apply same tilt/parallax behavior if present
               if (timelinebox) {
                 const tdx = lastX - centerX;
@@ -939,12 +956,12 @@
                 const trotateX = (-tpercentY * 15 * tstrength);
                 const trotateY = (tpercentX * 15 * tstrength);
                 const tscale = 1 + ((Math.abs(tpercentX) + Math.abs(tpercentY)) * 0.5) * 0.05;
-                if (timelineMain && timelineMain.style) timelineMain.style.transform = `rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale}, ${tscale}, 1)`;
-                if (timelineShadow && timelineShadow.style) timelineShadow.style.transform = `translate3d(${tpercentX * 8}px, ${tpercentY * 8}px, 0) rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale * 1.07}, ${tscale * 1.07}, 1)`;
+                if (timelineMainStyle) timelineMainStyle.transform = `rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale}, ${tscale}, 1)`;
+                if (timelineShadowStyle) timelineShadowStyle.transform = `translate3d(${tpercentX * 8}px, ${tpercentY * 8}px, 0) rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale * 1.07}, ${tscale * 1.07}, 1)`;
               }
             } catch (innerErr) {
-              // swallow individual frame errors to avoid killing the loop
-              console.error('frame error', innerErr);
+              // Avoid noisy console logging inside animation loop (can drastically reduce framerate)
+              // console.error('frame error', innerErr);
             }
           }
           requestAnimationFrame(animate);
@@ -984,7 +1001,7 @@
         // --- Shared page flip routine used by wheel + bookmarks ---
         function flipToPage(targetPage) {
           if (!scrollContainer) return;
-          const pageCount = document.querySelectorAll('.page').length;
+          const pageCount = pages.length;
           targetPage = Math.max(0, Math.min(pageCount - 1, targetPage));
 
           // mirror the same timing/animation used in the wheel pager
@@ -998,11 +1015,11 @@
             await waitForGif(gifWait);
             try {
               scrollContainer.scrollTo({
-                top: targetPage * window.innerHeight,
+                top: targetPage * vh,
                 behavior: 'smooth'
               });
             } catch (e) {
-              scrollContainer.scrollTop = targetPage * window.innerHeight;
+              scrollContainer.scrollTop = targetPage * vh;
             }
             setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
           })();
@@ -1010,14 +1027,12 @@
 
         // Return page index for any element inside a .page
         function pageIndexFor(el) {
-          const pages = Array.from(document.querySelectorAll('.page'));
           const pageEl = el && el.closest('.page');
           return pages.indexOf(pageEl);
         }
 
         // --- Wheel/touchpad handling: one page per gesture, now using flipToPage ---
         (function installWheelPager(){
-          const pages = document.querySelectorAll('.page');
           const pageCount = pages.length;
           const scrollLockDuration = 700;
           let isDelayingScroll = false;
@@ -1029,7 +1044,7 @@
             if (isDelayingScroll) return;
 
             const direction = e.deltaY > 0 ? 1 : -1;
-            const currentPage = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
+            const currentPage = Math.round(scrollContainer.scrollTop / vh || 0);
             let targetPage = currentPage + direction;
             if (targetPage < 0) targetPage = 0;
             if (targetPage > pageCount - 1) targetPage = pageCount - 1;
@@ -1087,7 +1102,6 @@
 
         // Optimized scroll position tracking
         let scrollTicking = false;
-        const vh = window.innerHeight;
         function onScroll() {
           if (scrollTicking) return;
           scrollTicking = true;
@@ -1101,16 +1115,112 @@
             } else {
               if (titleStyle) { titleStyle.opacity = '0.5'; titleStyle.transform = 'translate(-50%, -100vh)'; }
             }
+
+            // close all page6 panels when page changes (fast check using cached panels)
+            const current = Math.round(scrollY / vh || 0);
+            if (typeof window._lastPage === 'undefined') window._lastPage = current;
+            if (current !== window._lastPage) {
+              page6Panels.forEach(p => {
+                p.classList.remove('show');
+                p.setAttribute('aria-hidden', 'true');
+              });
+              page6Buttons.forEach(b => b.setAttribute('aria-expanded', 'false'));
+              window._lastPage = current;
+              // update boxes on page change - avoids frequent calls otherwise
+              updateAllBoxes();
+            }
+
             scrollTicking = false;
           });
         }
         scrollContainer.addEventListener('scroll', onScroll, {passive: true});
         onScroll();
-        updateBox();
-        updateAboutBox();
-        updateSponsorsBox();
-        updateSpeakersBox();
-        updateTimelineBox();
+        updateAllBoxes();
+
+        // --- Panel initialization (merged and optimized) ---
+        function initPanels(sectionSelector) {
+          const section = document.querySelector(sectionSelector);
+          if (!section) return;
+
+          // get buttons and panels inside the section (use cached page6Buttons/pages where applicable)
+          const btns = Array.from(section.querySelectorAll('.page6-buttons [data-panel]'));
+          const panels = new Map();
+          section.querySelectorAll('.page6-panel[id]').forEach(p => panels.set(p.id, p));
+
+          let openId = null;
+
+          function showPanel(id, btn) {
+            if (openId && panels.get(openId)) {
+              hidePanel(openId);
+              if (openId === id) return;
+            }
+            const panel = panels.get(id);
+            if (!panel) return;
+            panel.classList.add('show');
+            panel.setAttribute('aria-hidden', 'false');
+            if (btn) btn.setAttribute('aria-expanded', 'true');
+            openId = id;
+          }
+
+          function hidePanel(id) {
+            const panel = panels.get(id);
+            if (!panel) return;
+            panel.classList.remove('show');
+            panel.setAttribute('aria-hidden', 'true');
+            btns.forEach(b => {
+              if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
+            });
+            if (openId === id) openId = null;
+          }
+
+          btns.forEach(btn => {
+            if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+            if (!btn.hasAttribute('role')) btn.setAttribute('role', 'button');
+            btn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const id = btn.getAttribute('data-panel');
+              if (!id) return;
+              if (openId === id) hidePanel(id);
+              else showPanel(id, btn);
+            });
+            btn.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                btn.click();
+              }
+            });
+            btn.tabIndex = 0;
+          });
+
+          section.addEventListener('pointerdown', (e) => {
+            if (!openId) return;
+            const panel = panels.get(openId);
+            if (panel && !panel.contains(e.target) && !btns.includes(e.target)) {
+              hidePanel(openId);
+            }
+          });
+        }
+
+        initPanels('.page3');
+        initPanels('.page6');
+
+        // --- track-panels click-to-show-panel (kept behavior identical) ---
+        const labels = document.querySelectorAll('.track-panels label');
+        labels.forEach(label => {
+          label.addEventListener('click', () => {
+            const id = label.dataset.target;
+            document.querySelectorAll('.page6-panel').forEach(p => {
+              if (p.id === id) {
+                p.classList.add('show');
+                p.setAttribute('aria-hidden', 'false');
+              } else {
+                p.classList.remove('show');
+                p.setAttribute('aria-hidden', 'true');
+              }
+            });
+          });
+        });
+
       });
 
       // Optimized window load handler
@@ -1143,92 +1253,6 @@
   })();
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  function initPanels(sectionSelector) {
-    const section = document.querySelector(sectionSelector);
-    if (!section) return;
-
-    const btns = Array.from(section.querySelectorAll('.page6-buttons [data-panel]'));
-    const panels = new Map();
-    section.querySelectorAll('.page6-panel[id]').forEach(p => panels.set(p.id, p));
-
-    let openId = null;
-
-    function showPanel(id, btn) {
-      if (openId && panels.get(openId)) {
-        hidePanel(openId);
-        if (openId === id) return;
-      }
-      const panel = panels.get(id);
-      if (!panel) return;
-      panel.classList.add('show');
-      panel.setAttribute('aria-hidden', 'false');
-      if (btn) btn.setAttribute('aria-expanded', 'true');
-      openId = id;
-    }
-
-    function hidePanel(id) {
-      const panel = panels.get(id);
-      if (!panel) return;
-      panel.classList.remove('show');
-      panel.setAttribute('aria-hidden', 'true');
-      btns.forEach(b => {
-        if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
-      });
-      if (openId === id) openId = null;
-    }
-
-    btns.forEach(btn => {
-      if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
-      if (!btn.hasAttribute('role')) btn.setAttribute('role', 'button');
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const id = btn.getAttribute('data-panel');
-        if (!id) return;
-        if (openId === id) hidePanel(id);
-        else showPanel(id, btn);
-      });
-      btn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          btn.click();
-        }
-      });
-      btn.tabIndex = 0;
-    });
-
-    section.addEventListener('pointerdown', (e) => {
-      if (!openId) return;
-      const panel = panels.get(openId);
-      if (panel && !panel.contains(e.target) && !btns.includes(e.target)) {
-        hidePanel(openId);
-      }
-    });
-  }
-
-  initPanels('.page3');
-  initPanels('.page6');
-
-  const scrollContainer = document.querySelector('.scroll-container');
-  if (scrollContainer) {
-    let lastPage = 0;
-    scrollContainer.addEventListener('scroll', () => {
-      const current = Math.round(scrollContainer.scrollTop / window.innerHeight || 0);
-      if (current !== lastPage) {
-        document.querySelectorAll('.page6-panel.show').forEach(p => {
-          p.classList.remove('show');
-          p.setAttribute('aria-hidden', 'true');
-        });
-        document.querySelectorAll('.page6-buttons [data-panel][aria-expanded="true"]').forEach(b => {
-          b.setAttribute('aria-expanded', 'false');
-        });
-        lastPage = current;
-      }
-    }, { passive: true });
-  }
-});
-</script>
 <script type="module">
     import gsap from 'https://cdn.skypack.dev/gsap@3.12.0';
     const UPDATE = ({ x, y }) => {
@@ -1264,25 +1288,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', START, { once: true });
   </script>
 
-  <!-- ---------- Connect panels to right-side text boxes ---------- -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const labels = document.querySelectorAll('.track-panels label');
-      labels.forEach(label => {
-        label.addEventListener('click', () => {
-          const id = label.dataset.target;
-          document.querySelectorAll('.page6-panel').forEach(p => {
-            if (p.id === id) {
-              p.classList.add('show');
-              p.setAttribute('aria-hidden', 'false');
-            } else {
-              p.classList.remove('show');
-              p.setAttribute('aria-hidden', 'true');
-            }
-          });
-        });
-      });
-    });
-  </script>
 </body>
 </html>
