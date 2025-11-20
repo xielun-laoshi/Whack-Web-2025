@@ -153,7 +153,6 @@
       color: #fff;
     }
 
-    /* Style anchors inside .buttons to look and act like the original button element */
     .buttons a {
       background: none;
       border: 3px solid;
@@ -315,13 +314,11 @@
       opacity: 1;
       pointer-events: auto;
     }
-    /* Responsive fallback: panels full width on narrow screens */
     @media (max-width: 700px) {
       .page6-panel { left: 50%; transform: translate(-50%, 16px); top: auto; bottom: 8vh; max-width: 90vw; }
       .page6-panel.show { transform: translate(-50%, 0); }
     }
-  
-    /* --- Panel card and non-blocking scroll (injected) --- */
+
     .page6-panel .card {
       background: transparent;
       backdrop-filter: blur(6px);
@@ -335,8 +332,7 @@
       touch-action: pan-y;
       -webkit-overflow-scrolling: auto;
     }
-    /* --- end injected --- */
-    /* --- Track Panels (Page 3) --- */
+
     .track-panels {
       display:grid;
       grid-auto-flow:row;
@@ -484,7 +480,6 @@
         </div>
       </div>
       <div class="buttons">
-        <!-- Use an anchor so it opens the registration form in a new tab; preserve button styling and accessibility -->
         <a class="offset" href="https://forms.gle/LBRGVTyU59hJLcfJ7" target="_blank" rel="noopener noreferrer" role="button">Apply Now!</a>
       </div>
       <div class="deadline-label" aria-hidden="true">Early Application (11:59 PM EST) Friday, Nov 7th<br>Regular Application (11:59 PM EST) Saturday, Nov 15th<br>Early Decision Announced (8:00 AM EST) Monday, Nov 10th<br>Regular Decision Announced (8:00 AM EST) Monday, Nov 17th</div>
@@ -510,7 +505,7 @@
       </p>
 
       <div class="beneath-images">
-  <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 5;">
+        <img class="beneath-img" id="beneath1" src="../images/Beneath1.gif" loading="lazy" style="z-index: 5;">
         <img class="beneath-img" id="beneath2" src="../images/Light.png" loading="lazy" 
         style="z-index: 4; width: 40vw; left: 10vw; top: 10vh; opacity: 0.3;">
         <img class="beneath-img" id="beneath3" src="../images/Beneath2.gif" loading="lazy" style="z-index: 3;">
@@ -526,11 +521,7 @@
     <section id = "page3" class="page page3" style="background-color: #3d84e8;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
-
-
-          <!-- Interactive expanding panels (replace old buttons) -->
           <fieldset class="track-panels">
-            <!-- Track 1 -->
             <label data-target="panel-track1">
               <input type="radio" name="tracks" value="Track 1" checked>
               <article>
@@ -545,8 +536,6 @@
                 </div>
               </article>
             </label>
-
-            <!-- Track 2 -->
             <label data-target="panel-track2">
               <input type="radio" name="tracks" value="Track 2">
               <article>
@@ -563,7 +552,6 @@
             </label>
           </fieldset>
 
-          <!-- Panels for each track -->
           <div class="page6-panel" id="panel-track1" role="dialog" aria-modal="false" aria-hidden="true">
             <div class="card">
               <strong>Deep Dive (Technical Innovation) </strong><br>
@@ -590,7 +578,6 @@
           </p>
         </div>
       </div>
-      <!-- Speakers block: mirrors about/about shadow structure -->
       <div id="speakers" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:12; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
         <div id="speakers-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
           <img id="speakersShadow" class="img-layer" src="../images/speakers shadow.png" loading="lazy" style="z-index:5;">
@@ -610,7 +597,7 @@
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align: left; max-width: 80%;">
           <p>
             Friday, November 21st<br>
-            <pre>6:00 - 8:00 PM        Pre-WHACK Social        Boba & Mafia        LWC-212 Anderson Forum</pre>
+            6:00 - 8:00 PM        Pre-WHACK Social        Boba & Mafia        LWC-212 Anderson Forum
             <br><br>
             Saturday, November 22nd<br>
             Welcome to WHACK! This is an introduction to who we are, what we do, and why you should join. Note: There will be a Q&amp;A session at the end.<br><br>
@@ -634,7 +621,6 @@
     <section id = "page6" class="page page6" style="background-color: #1c6a96;">
       <div style="position: relative; z-index: 1; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align:center; max-width: 80%;">
-          <!-- Left-side vertical button list: left 25%, vertically centered -->
           <div class="page6-buttons" style="position: absolute; left: 25%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 1.2em; align-items: flex-start; z-index: 30;">
             <a data-panel="panel-what" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">What?</a>
             <a data-panel="panel-who" class="offset" role="button" href="#" style="height: 1em; font-size: 1.5em; line-height: 1em; padding: 1em 1.2em; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">Who?</a>
@@ -664,7 +650,6 @@
     <img class="bottom-img" id="bottom2" src="../images/bottom2.gif" loading="lazy" style="z-index: 3;">
     <img class="bottom-img" id="bottom1" src="../images/bottom1.gif" loading="lazy" style="z-index: 4;">
       </div>
-      <!-- Sponsors block: mirrors about/about shadow structure -->
       <div id="sponsors" role="banner" style="top:20%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:25vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
         <div id="sponsors-container" style="position:relative; perspective:800px; justify-content:center; align-items:center; display:inline-block; max-width:90vw; width:60vw; min-width:220px;">
           <img id="sponsorsShadow" class="img-layer" src="../images/sponsors shadow.png" loading="lazy" style="z-index:5;">
@@ -682,602 +667,521 @@
 <script>
   (function(){
     'use strict';
-    try {
-      document.addEventListener('DOMContentLoaded', () => {
-        // Cache DOM elements with defensive checks
-        const bg = document.querySelector('.background');
-        const waves = Array.from(document.querySelectorAll('.wave')) || [];
-        const container = document.getElementById('container');
-        const mainImg = document.getElementById('mainImg');
-        const shadowImg = document.getElementById('shadowImg');
-        const title = document.getElementById('title');
-        const scrollContainer = document.querySelector('.scroll-container');
-        const loaderGif = document.getElementById('loader-gif');
-        const loaderGifImg = loaderGif && loaderGif.querySelector('img');
-        const aboutContainer = document.getElementById('about-container');
-        const aboutMain = document.getElementById('aboutMain');
-        const aboutShadow = document.getElementById('aboutShadow');
-        // Sponsors elements (mirror of about)
-        const sponsorsContainer = document.getElementById('sponsors-container');
-        const sponsorsMain = document.getElementById('sponsorsMain');
-        const sponsorsShadow = document.getElementById('sponsorsShadow');
-        // Speakers elements (mirror of sponsors/about)
-        const speakersContainer = document.getElementById('speakers-container');
-        const speakersMain = document.getElementById('speakersMain');
-        const speakersShadow = document.getElementById('speakersShadow');
-        // Timeline elements (mirror of sponsors)
-        const timelineContainer = document.getElementById('timeline-container');
-        const timelineMain = document.getElementById('timelineMain');
-        const timelineShadow = document.getElementById('timelineShadow');
 
-        if (!scrollContainer) return; // nothing to do if core container missing
+    // --- Utility helpers & cached references ---
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-        // --- Cached NodeLists used in multiple places (avoid repeated queries) ---
-        const pages = Array.from(document.querySelectorAll('.page'));
-        const page6Panels = Array.from(document.querySelectorAll('.page6-panel'));
-        const page6Buttons = Array.from(document.querySelectorAll('.page6-buttons [data-panel]'));
+    document.addEventListener('DOMContentLoaded', () => {
+      // Core DOM cache
+      const scrollContainer = $('.scroll-container');
+      if (!scrollContainer) return;
 
-        // Cache styles for performance (guarded)
-        const bgStyle = bg ? bg.style : { setProperty: () => {} };
-        const mainImgStyle = mainImg ? mainImg.style : null;
-        const shadowImgStyle = shadowImg ? shadowImg.style : null;
-        const titleStyle = title ? title.style : { opacity: 1, transform: '' };
-        const loaderGifStyle = loaderGif ? loaderGif.style : null;
+      const bg = $('.background');
+      const waves = $$('.wave');
+      const container = $('#container');
+      const mainImg = $('#mainImg');
+      const shadowImg = $('#shadowImg');
+      const title = $('#title');
+      const loaderGif = $('#loader-gif');
+      const loaderGifImg = loaderGif && loaderGif.querySelector('img');
 
-        // Movement and animation variables
-        const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
-        let centerX = window.innerWidth * 0.5;
-        let centerY = window.innerHeight * 0.5;
-        // cached viewport halves to avoid repeated division per-frame
-        let halfWindowWidth = window.innerWidth * 0.5;
-        let halfWindowHeight = window.innerHeight * 0.5;
-        let box = null;
-        let aboutbox = null;
-        let sponsorsbox = null;
-        let speakersbox = null;
-        let timelinebox = null;
-        let lastX = centerX, lastY = centerY;
-        let isAnimating = true;
+      const aboutContainer = $('#about-container');
+      const aboutMain = $('#aboutMain');
+      const aboutShadow = $('#aboutShadow');
 
-        // Cache bottom and beneath images with their styles
-        const bottomImgs = [];
-        const beneathImgs = [];
-        for (let i = 1; i <= 5; i++) {
-          const img = document.getElementById(`bottom${i}`);
-          if (img) bottomImgs.push({el: img, style: img.style});
+      const sponsorsContainer = $('#sponsors-container');
+      const sponsorsMain = $('#sponsorsMain');
+      const sponsorsShadow = $('#sponsorsShadow');
+
+      const speakersContainer = $('#speakers-container');
+      const speakersMain = $('#speakersMain');
+      const speakersShadow = $('#speakersShadow');
+
+      const timelineContainer = $('#timeline-container');
+      const timelineMain = $('#timelineMain');
+      const timelineShadow = $('#timelineShadow');
+
+      const pages = $$('.page');
+      const page6Panels = $$('.page6-panel');
+      const page6Buttons = $$('.page6-buttons [data-panel]');
+
+      // collect bottom & beneath images
+      const bottomImgs = [];
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`bottom${i}`);
+        if (el) bottomImgs.push(el);
+      }
+      const beneathImgs = [];
+      for (let i = 1; i <= 7; i++) {
+        const el = document.getElementById(`beneath${i}`);
+        if (el) beneathImgs.push(el);
+      }
+
+      // fast style access to avoid repeated lookups
+      const bgStyle = bg && bg.style;
+      const mainImgStyle = mainImg && mainImg.style;
+      const shadowImgStyle = shadowImg && shadowImg.style;
+      const aboutMainStyle = aboutMain && aboutMain.style;
+      const aboutShadowStyle = aboutShadow && aboutShadow.style;
+      const sponsorsMainStyle = sponsorsMain && sponsorsMain.style;
+      const sponsorsShadowStyle = sponsorsShadow && sponsorsShadow.style;
+      const speakersMainStyle = speakersMain && speakersMain.style;
+      const speakersShadowStyle = speakersShadow && speakersShadow.style;
+      const timelineMainStyle = timelineMain && timelineMain.style;
+      const timelineShadowStyle = timelineShadow && timelineShadow.style;
+
+      const waveStyles = waves.map(w => w.style);
+      const bottomStyles = bottomImgs.map(el => el.style);
+      const beneathStyles = beneathImgs.map(el => el.style);
+
+      // motion factors (precomputed)
+      const moveFactors = [0.0005, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2];
+      const waveFactors = waveStyles.map((_, i) => ((moveFactors[i] || 0.05) + 0.05));
+      const bottomFactors = bottomStyles.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.05));
+      const beneathFactors = beneathStyles.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.02));
+
+      // viewport & boxes cached for calculations
+      let centerX = window.innerWidth * 0.5;
+      let centerY = window.innerHeight * 0.5;
+      let halfWindowWidth = centerX;
+      let halfWindowHeight = centerY;
+      let vh = window.innerHeight;
+
+      let box = container && container.getBoundingClientRect();
+      let aboutbox = aboutContainer && aboutContainer.getBoundingClientRect();
+      let sponsorsbox = sponsorsContainer && sponsorsContainer.getBoundingClientRect();
+      let speakersbox = speakersContainer && speakersContainer.getBoundingClientRect();
+      let timelinebox = timelineContainer && timelineContainer.getBoundingClientRect();
+
+      const pagesArr = pages; // kept for closure usage
+
+      let lastX = centerX, lastY = centerY;
+      let prevFrameX = null, prevFrameY = null;
+      let pointerMoveQueued = false;
+      let lastPointerEventX = null, lastPointerEventY = null;
+
+      // small helper to clamp
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+      // update boxes when layout changes or images load
+      function updateBox(el, store) {
+        if (!el || !el.getBoundingClientRect) return;
+        const r = el.getBoundingClientRect();
+        switch (store) {
+          case 'container': box = r; break;
+          case 'about': aboutbox = r; break;
+          case 'sponsors': sponsorsbox = r; break;
+          case 'speakers': speakersbox = r; break;
+          case 'timeline': timelinebox = r; break;
         }
-        for (let i = 1; i <= 7; i++) {
-          const img = document.getElementById(`beneath${i}`);
-          if (img) beneathImgs.push({el: img, style: img.style});
-        }
-        // Cache wave style objects to reduce lookup cost per-frame
-        const waveStyles = new Array(waves.length);
-        for (let i = 0; i < waves.length; i++) {
-          waveStyles[i] = waves[i] && waves[i].style;
-        }
+      }
+      function updateAllBoxes() {
+        updateBox(container, 'container');
+        updateBox(aboutContainer, 'about');
+        updateBox(sponsorsContainer, 'sponsors');
+        updateBox(speakersContainer, 'speakers');
+        updateBox(timelineContainer, 'timeline');
+      }
 
-        // Precompute motion factor arrays once (reduces math in animate)
-        const waveFactors = waveStyles.map((_, i) => ((moveFactors[i] || 0.05) + 0.05));
-        const bottomFactors = bottomImgs.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.05));
-        const beneathFactors = beneathImgs.map((_, i) => (moveFactors[moveFactors.length - 1 - i] || 0.02));
+      // call on image load to get correct boxes
+      if (aboutMain) aboutMain.addEventListener('load', () => updateBox(aboutContainer, 'about'));
+      if (sponsorsMain) sponsorsMain.addEventListener('load', () => updateBox(sponsorsContainer, 'sponsors'));
+      if (speakersMain) speakersMain.addEventListener('load', () => updateBox(speakersContainer, 'speakers'));
+      if (timelineMain) timelineMain.addEventListener('load', () => updateBox(timelineContainer, 'timeline'));
+      if (mainImg) mainImg.addEventListener('load', () => updateBox(container, 'container'));
 
-        // Cache a few more style objects for other images to avoid repeated lookups
-        const aboutMainStyle = aboutMain ? aboutMain.style : null;
-        const aboutShadowStyle = aboutShadow ? aboutShadow.style : null;
-        const sponsorsMainStyle = sponsorsMain ? sponsorsMain.style : null;
-        const sponsorsShadowStyle = sponsorsShadow ? sponsorsShadow.style : null;
-        const speakersMainStyle = speakersMain ? speakersMain.style : null;
-        const speakersShadowStyle = speakersShadow ? speakersShadow.style : null;
-        const timelineMainStyle = timelineMain ? timelineMain.style : null;
-        const timelineShadowStyle = timelineShadow ? timelineShadow.style : null;
+      // Resize: throttle slightly to avoid work during continuous resizing
+      let resizeTimeout = 0;
+      function onResize() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          centerX = window.innerWidth * 0.5;
+          centerY = window.innerHeight * 0.5;
+          halfWindowWidth = centerX;
+          halfWindowHeight = centerY;
+          vh = window.innerHeight;
+          updateAllBoxes();
+        }, 32);
+      }
+      window.addEventListener('resize', onResize, { passive: true });
 
-        // viewport height cached (used frequently)
-        let vh = window.innerHeight;
+      // Pointer move throttling using rAF-friendly queuing
+      function onPointerMove(e) {
+        if (!e) return;
+        const x = e.clientX, y = e.clientY;
+        if (x === lastPointerEventX && y === lastPointerEventY) return;
+        lastPointerEventX = x;
+        lastPointerEventY = y;
+        if (pointerMoveQueued) return;
+        pointerMoveQueued = true;
+        requestAnimationFrame(() => {
+          lastX = lastPointerEventX;
+          lastY = lastPointerEventY;
+          pointerMoveQueued = false;
+        });
+      }
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
 
-        // Precompute motion factor arrays (reduces per-frame math)
-        // We'll compute these after bottom/beneath arrays are populated below.
+      // Efficient per-entity parallax/tilt applying helper
+      function applyTiltAndScale(styleObj, percentX, percentY, strength = 0.6, scaleFactor = 0.05) {
+        if (!styleObj) return;
+        const rotateX = (-percentY * 15 * strength);
+        const rotateY = (percentX * 15 * strength);
+        const scale = 1 + ((Math.abs(percentX) + Math.abs(percentY)) * 0.5) * scaleFactor;
+        styleObj.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, 1)`;
+      }
 
-        // minimal per-frame change detection (skip heavy work when pointer hasn't moved)
-        let prevFrameX = null, prevFrameY = null;
+      // Animation loop with FPS cap
+      const TARGET_FPS = 30;
+      const FRAME_INTERVAL = 1000 / TARGET_FPS;
+      let lastFrameTime = performance.now();
+      let isAnimating = true;
 
-        // Utility: single box updater (reduced duplication)
-        function updateBoxFor(el, storeName) {
-          if (el && el.getBoundingClientRect) {
-            const rect = el.getBoundingClientRect();
-            if (storeName === 'container') box = rect;
-            else if (storeName === 'about') aboutbox = rect;
-            else if (storeName === 'sponsors') sponsorsbox = rect;
-            else if (storeName === 'speakers') speakersbox = rect;
-            else if (storeName === 'timeline') timelinebox = rect;
-          }
-        }
-        function updateAllBoxes() {
-          updateBoxFor(container, 'container');
-          updateBoxFor(aboutContainer, 'about');
-          updateBoxFor(sponsorsContainer, 'sponsors');
-          updateBoxFor(speakersContainer, 'speakers');
-          updateBoxFor(timelineContainer, 'timeline');
-        }
-
-        if (aboutMain && aboutMain.addEventListener) aboutMain.addEventListener('load', () => updateBoxFor(aboutContainer, 'about'));
-        if (sponsorsMain && sponsorsMain.addEventListener) sponsorsMain.addEventListener('load', () => updateBoxFor(sponsorsContainer, 'sponsors'));
-        if (speakersMain && speakersMain.addEventListener) speakersMain.addEventListener('load', () => updateBoxFor(speakersContainer, 'speakers'));
-        if (timelineMain && timelineMain.addEventListener) timelineMain.addEventListener('load', () => updateBoxFor(timelineContainer, 'timeline'));
-        if (mainImg && mainImg.addEventListener) mainImg.addEventListener('load', () => updateBoxFor(container, 'container'));
-
-        // Consolidated resize handler: update cached sizes and boxes (throttled)
-        let resizeTimeout;
-        function handleResize() {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(() => {
-            updateAllBoxes();
-            centerX = window.innerWidth * 0.5;
-            centerY = window.innerHeight * 0.5;
-            halfWindowWidth = window.innerWidth * 0.5;
-            halfWindowHeight = window.innerHeight * 0.5;
-            vh = window.innerHeight;
-          }, 32);
-        }
-        window.addEventListener('resize', handleResize, {passive: true});
-
-        // Throttled pointer movement for parallax effects
-        let pointerMoveQueued = false;
-        let lastPointerEventX = null;
-        let lastPointerEventY = null;
-        function onPointerMove(e) {
-          if (!e) return;
-          if (e.clientX === lastPointerEventX && e.clientY === lastPointerEventY) return;
-          lastPointerEventX = e.clientX;
-          lastPointerEventY = e.clientY;
-          if (pointerMoveQueued) return;
-          pointerMoveQueued = true;
-          requestAnimationFrame(() => {
-            lastX = lastPointerEventX;
-            lastY = lastPointerEventY;
-            pointerMoveQueued = false;
-          });
-        }
-
-        window.addEventListener('pointermove', onPointerMove, {passive: true});
-
-        // Animation loop with FPS cap
-        const TARGET_FPS = 30;
-        const FRAME_INTERVAL = 1000 / TARGET_FPS;
-        let lastFrameTime = performance.now();
-
-        function animate(now) {
-          if (!isAnimating) return;
-          if (!now) now = performance.now();
-          const elapsed = now - lastFrameTime;
-          if (elapsed < FRAME_INTERVAL) {
-            requestAnimationFrame(animate);
-            return;
-          }
-          lastFrameTime = now - (elapsed % FRAME_INTERVAL);
-
-          if (box) {
-            try {
-              const offsetX = lastX - centerX;
-              const offsetY = lastY - centerY;
-
-              // If pointer hasn't moved since last rendered frame, skip heavy updates
-              if (prevFrameX === lastX && prevFrameY === lastY) {
-                requestAnimationFrame(animate);
-                return;
-              }
-
-              if (bgStyle && bgStyle.backgroundPosition !== undefined) bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
-
-              const ofx = offsetX, ofy = offsetY;
-
-              // waves (use precomputed factors)
-              for (let i = 0, wl = waveStyles.length; i < wl; i++) {
-                const ws = waveStyles[i];
-                const factor = waveFactors[i] || (moveFactors[i] + 0.05);
-                const tx = ofx * factor;
-                const ty = ofy * factor;
-                if (ws) ws.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-              }
-
-              // bottom images
-              for (let i = 0, bl = bottomImgs.length; i < bl; i++) {
-                const imgObj = bottomImgs[i];
-                const factor = bottomFactors[i] || 0.05;
-                const tx = ofx * factor * 0.75;
-                const ty = ofy * factor * 0.75;
-                if (imgObj.style) imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-              }
-
-              // beneath images
-              for (let i = 0, bl2 = beneathImgs.length; i < bl2; i++) {
-                const imgObj = beneathImgs[i];
-                const factor = beneathFactors[i] || 0.02;
-                const tx = ofx * factor * 1.1;
-                const ty = ofy * factor * 1.1;
-                if (imgObj.style) imgObj.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-              }
-
-              const centerBx = box.left + box.width * 0.5;
-              const centerBy = box.top + box.height * 0.5;
-              const dx = lastX - centerBx;
-              const dy = lastY - centerBy;
-              const percentX = dx / (box.width * 0.5);
-              const percentY = dy / (box.height * 0.5);
-              const rotateX = (-percentY * 15);
-              const rotateY = (percentX * 15);
-              const scale = 1 + ((Math.abs(percentX) + Math.abs(percentY)) * 0.5) * 0.1;
-              if (mainImgStyle) mainImgStyle.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, 1)`;
-
-              const shadowScale = scale * 1.07;
-              const offsetX2 = percentX * 10;
-              const offsetY2 = percentY * 10;
-              if (shadowImgStyle) shadowImgStyle.transform = `translate3d(${offsetX2}px, ${offsetY2}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${shadowScale}, ${shadowScale}, 1)`;
-
-              if (aboutbox) {
-                const vdx = lastX - centerX;
-                const vdy = lastY - centerY;
-                const halfW = halfWindowWidth || 1;
-                const halfH = halfWindowHeight || 1;
-                let apercentX = vdx / halfW;
-                let apercentY = vdy / halfH;
-                apercentX = Math.max(-1, Math.min(1, apercentX));
-                apercentY = Math.max(-1, Math.min(1, apercentY));
-                const strength = 0.6;
-                const arotateX = (-apercentY * 15 * strength);
-                const arotateY = (apercentX * 15 * strength);
-                const ascale = 1 + ((Math.abs(apercentX) + Math.abs(apercentY)) * 0.5) * 0.05;
-                if (aboutMainStyle) aboutMainStyle.transform = `rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale}, ${ascale}, 1)`;
-                if (aboutShadowStyle) aboutShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) rotateX(${arotateX}deg) rotateY(${arotateY}deg) scale3d(${ascale * 1.07}, ${ascale * 1.07}, 1)`;
-              }
-
-              // Sponsors: apply same tilt/parallax behavior if present
-              if (sponsorsbox) {
-                const sdx = lastX - centerX;
-                const sdy = lastY - centerY;
-                const shalfW = halfWindowWidth || 1;
-                const shalfH = halfWindowHeight || 1;
-                let spercentX = sdx / shalfW;
-                let spercentY = sdy / shalfH;
-                spercentX = Math.max(-1, Math.min(1, spercentX));
-                spercentY = Math.max(-1, Math.min(1, spercentY));
-                const sstrength = 0.6;
-                const srotateX = (-spercentY * 15 * sstrength);
-                const srotateY = (spercentX * 15 * sstrength);
-                const sscale = 1 + ((Math.abs(spercentX) + Math.abs(spercentY)) * 0.5) * 0.05;
-                if (sponsorsMainStyle) sponsorsMainStyle.transform = `rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale}, ${sscale}, 1)`;
-                if (sponsorsShadowStyle) sponsorsShadowStyle.transform = `translate3d(${spercentX * 8}px, ${spercentY * 8}px, 0) rotateX(${srotateX}deg) rotateY(${srotateY}deg) scale3d(${sscale * 1.07}, ${sscale * 1.07}, 1)`;
-              }
-
-              // Speakers: apply same tilt/parallax behavior if present
-              if (speakersbox) {
-                const spdx = lastX - centerX;
-                const spdy = lastY - centerY;
-                const sphalfW = halfWindowWidth || 1;
-                const sphalfH = halfWindowHeight || 1;
-                let spercentX2 = spdx / sphalfW;
-                let spercentY2 = spdy / sphalfH;
-                spercentX2 = Math.max(-1, Math.min(1, spercentX2));
-                spercentY2 = Math.max(-1, Math.min(1, spercentY2));
-                const sstrength2 = 0.6;
-                const srotateX2 = (-spercentY2 * 15 * sstrength2);
-                const srotateY2 = (spercentX2 * 15 * sstrength2);
-                const sscale2 = 1 + ((Math.abs(spercentX2) + Math.abs(spercentY2)) * 0.5) * 0.05;
-                if (speakersMainStyle) speakersMainStyle.transform = `rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2}, ${sscale2}, 1)`;
-                if (speakersShadowStyle) speakersShadowStyle.transform = `translate3d(${spercentX2 * 8}px, ${spercentY2 * 8}px, 0) rotateX(${srotateX2}deg) rotateY(${srotateY2}deg) scale3d(${sscale2 * 1.07}, ${sscale2 * 1.07}, 1)`;
-              }
-
-              // Timeline: apply same tilt/parallax behavior if present
-              if (timelinebox) {
-                const tdx = lastX - centerX;
-                const tdy = lastY - centerY;
-                const thalfW = halfWindowWidth || 1;
-                const thalfH = halfWindowHeight || 1;
-                let tpercentX = tdx / thalfW;
-                let tpercentY = tdy / thalfH;
-                tpercentX = Math.max(-1, Math.min(1, tpercentX));
-                tpercentY = Math.max(-1, Math.min(1, tpercentY));
-                const tstrength = 0.6;
-                const trotateX = (-tpercentY * 15 * tstrength);
-                const trotateY = (tpercentX * 15 * tstrength);
-                const tscale = 1 + ((Math.abs(tpercentX) + Math.abs(tpercentY)) * 0.5) * 0.05;
-                if (timelineMainStyle) timelineMainStyle.transform = `rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale}, ${tscale}, 1)`;
-                if (timelineShadowStyle) timelineShadowStyle.transform = `translate3d(${tpercentX * 8}px, ${tpercentY * 8}px, 0) rotateX(${trotateX}deg) rotateY(${trotateY}deg) scale3d(${tscale * 1.07}, ${tscale * 1.07}, 1)`;
-              }
-
-              // remember last frame pointer position
-              prevFrameX = lastX;
-              prevFrameY = lastY;
-            } catch (innerErr) {
-              // Avoid noisy console logging inside animation loop (can drastically reduce framerate)
-              // console.error('frame error', innerErr);
-            }
-          }
+      function animate(now = performance.now()) {
+        if (!isAnimating) return;
+        const elapsed = now - lastFrameTime;
+        if (elapsed < FRAME_INTERVAL) {
           requestAnimationFrame(animate);
+          return;
         }
+        lastFrameTime = now - (elapsed % FRAME_INTERVAL);
+
+        // If nothing changed since last rendered frame, skip heavy updates
+        if (prevFrameX === lastX && prevFrameY === lastY) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        // Compute offsets relative to center
+        const offsetX = lastX - centerX;
+        const offsetY = lastY - centerY;
+
+        // background parallax
+        if (bgStyle) bgStyle.backgroundPosition = `${-offsetX * moveFactors[0]}px ${-offsetY * moveFactors[0]}px`;
+
+        // waves
+        for (let i = 0; i < waveStyles.length; i++) {
+          const ws = waveStyles[i];
+          if (!ws) continue;
+          const f = waveFactors[i] || 0.05;
+          ws.transform = `translate3d(${offsetX * f}px, ${offsetY * f}px, 0)`;
+        }
+
+        // bottom images
+        for (let i = 0; i < bottomStyles.length; i++) {
+          const s = bottomStyles[i];
+          if (!s) continue;
+          const f = bottomFactors[i] || 0.05;
+          s.transform = `translate3d(${offsetX * f * 0.75}px, ${offsetY * f * 0.75}px, 0)`;
+        }
+
+        // beneath images
+        for (let i = 0; i < beneathStyles.length; i++) {
+          const s = beneathStyles[i];
+          if (!s) continue;
+          const f = beneathFactors[i] || 0.02;
+          s.transform = `translate3d(${offsetX * f * 1.1}px, ${offsetY * f * 1.1}px, 0)`;
+        }
+
+        // Main container tilt: compute percent relative to container center
+        if (box) {
+          const centerBx = box.left + box.width * 0.5;
+          const centerBy = box.top + box.height * 0.5;
+          const dx = lastX - centerBx;
+          const dy = lastY - centerBy;
+          const percentX = dx / (box.width * 0.5);
+          const percentY = dy / (box.height * 0.5);
+          const pXclamped = clamp(percentX, -1, 1);
+          const pYclamped = clamp(percentY, -1, 1);
+          const rotateX = (-pYclamped * 15);
+          const rotateY = (pXclamped * 15);
+          const scale = 1 + ((Math.abs(pXclamped) + Math.abs(pYclamped)) * 0.5) * 0.1;
+
+          if (mainImgStyle) mainImgStyle.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, 1)`;
+
+          const shadowScale = scale * 1.07;
+          const offsetX2 = pXclamped * 10;
+          const offsetY2 = pYclamped * 10;
+          if (shadowImgStyle) shadowImgStyle.transform = `translate3d(${offsetX2}px, ${offsetY2}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${shadowScale}, ${shadowScale}, 1)`;
+        }
+
+        // Apply same tilt/parallax to other section elements if present (use cached halves)
+        const vx = lastX - centerX;
+        const vy = lastY - centerY;
+        const apercentX = clamp(vx / (halfWindowWidth || 1), -1, 1);
+        const apercentY = clamp(vy / (halfWindowHeight || 1), -1, 1);
+
+        applyTiltAndScale(aboutMainStyle, apercentX, apercentY, 0.6, 0.05);
+        if (aboutShadowStyle) aboutShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) ${aboutMainStyle ? aboutMainStyle.transform.replace(/^rotateX\([^)]*\) rotateY\([^)]*\) /, '') : ''}`;
+
+        applyTiltAndScale(sponsorsMainStyle, apercentX, apercentY, 0.6, 0.05);
+        if (sponsorsShadowStyle) sponsorsShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) ${sponsorsMainStyle ? sponsorsMainStyle.transform.replace(/^rotateX\([^)]*\) rotateY\([^)]*\) /, '') : ''}`;
+
+        applyTiltAndScale(speakersMainStyle, apercentX, apercentY, 0.6, 0.05);
+        if (speakersShadowStyle) speakersShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) ${speakersMainStyle ? speakersMainStyle.transform.replace(/^rotateX\([^)]*\) rotateY\([^)]*\) /, '') : ''}`;
+
+        applyTiltAndScale(timelineMainStyle, apercentX, apercentY, 0.6, 0.05);
+        if (timelineShadowStyle) timelineShadowStyle.transform = `translate3d(${apercentX * 8}px, ${apercentY * 8}px, 0) ${timelineMainStyle ? timelineMainStyle.transform.replace(/^rotateX\([^)]*\) rotateY\([^)]*\) /, '') : ''}`;
+
+        prevFrameX = lastX;
+        prevFrameY = lastY;
 
         requestAnimationFrame(animate);
+      }
 
-        // Reset on blur
-        window.addEventListener('blur', () => {
-          if (mainImgStyle) mainImgStyle.transform = '';
-          if (shadowImgStyle) shadowImgStyle.transform = '';
-        });
+      requestAnimationFrame(animate);
 
-        // Loader GIF management
-        const loaderGifDuration = parseInt(loaderGifImg && loaderGifImg.dataset && loaderGifImg.dataset.duration) || 1100;
-        let currentGifSrc = '';
+      // blur handler resets transforms
+      window.addEventListener('blur', () => {
+        if (mainImgStyle) mainImgStyle.transform = '';
+        if (shadowImgStyle) shadowImgStyle.transform = '';
+      });
 
-        function showLoaderGif() {
-          if (!loaderGif || !loaderGifImg || !loaderGifStyle) return;
-          if (loaderGifStyle.opacity !== '1') {
-            if (!currentGifSrc) currentGifSrc = loaderGifImg.src;
-            // refresh GIF
-            try { loaderGifImg.src = currentGifSrc + '?t=' + Date.now(); } catch(e){}
-            loaderGifStyle.opacity = '1';
-            loaderGifStyle.pointerEvents = 'auto';
+      // Loader GIF management (keeps existing behavior)
+      const loaderGifDuration = parseInt(loaderGifImg && loaderGifImg.dataset && loaderGifImg.dataset.duration) || 1100;
+      let currentGifSrc = '';
+
+      function showLoaderGif() {
+        if (!loaderGif || !loaderGifImg) return;
+        const st = loaderGif.style;
+        if (st.opacity !== '1') {
+          if (!currentGifSrc) currentGifSrc = loaderGifImg.src;
+          try { loaderGifImg.src = currentGifSrc + '?t=' + Date.now(); } catch(e){}
+          st.opacity = '1';
+          st.pointerEvents = 'auto';
+        }
+      }
+
+      function hideLoaderGif() {
+        if (!loaderGif) return;
+        const st = loaderGif.style;
+        if (st.opacity !== '0') {
+          st.opacity = '0';
+          st.pointerEvents = 'none';
+        }
+      }
+
+      // Page flip with loader animation (preserve behavior)
+      const pagesList = pagesArr;
+      function pageIndexFor(el) {
+        const pageEl = el && el.closest('.page');
+        return pagesList.indexOf(pageEl);
+      }
+
+      function flipToPage(targetPage) {
+        if (!scrollContainer) return;
+        const pageCount = pagesList.length;
+        targetPage = Math.max(0, Math.min(pageCount - 1, targetPage));
+
+        const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
+        const maxGifWait = 950;
+        const fraction = 0.4;
+        const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
+
+        showLoaderGif();
+        (async () => {
+          await waitForGif(gifWait);
+          try {
+            scrollContainer.scrollTo({ top: targetPage * vh, behavior: 'smooth' });
+          } catch (e) {
+            scrollContainer.scrollTop = targetPage * vh;
           }
-        }
-
-        function hideLoaderGif() {
-          if (loaderGifStyle && loaderGifStyle.opacity !== '0') {
-            loaderGifStyle.opacity = '0';
-            loaderGifStyle.pointerEvents = 'none';
-          }
-        }
-
-        // Improved wheel/touchpad handling: one page per gesture
-        // --- Shared page flip routine used by wheel + bookmarks ---
-        function flipToPage(targetPage) {
-          if (!scrollContainer) return;
-          const pageCount = pages.length;
-          targetPage = Math.max(0, Math.min(pageCount - 1, targetPage));
-
-          // mirror the same timing/animation used in the wheel pager
-          const waitForGif = (ms) => new Promise(res => setTimeout(res, ms));
-          const maxGifWait = 950;
-          const fraction = 0.4;
-          const gifWait = Math.min(Math.round((loaderGifDuration || 1200) * fraction), maxGifWait);
-
-          showLoaderGif();
-          (async () => {
-            await waitForGif(gifWait);
-            try {
-              scrollContainer.scrollTo({
-                top: targetPage * vh,
-                behavior: 'smooth'
-              });
-            } catch (e) {
-              scrollContainer.scrollTop = targetPage * vh;
-            }
-            setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
-          })();
-        }
-
-        // Return page index for any element inside a .page
-        function pageIndexFor(el) {
-          const pageEl = el && el.closest('.page');
-          return pages.indexOf(pageEl);
-        }
-
-        // --- Wheel/touchpad handling: one page per gesture, now using flipToPage ---
-        (function installWheelPager(){
-          const pageCount = pages.length;
-          const scrollLockDuration = 700;
-          let isDelayingScroll = false;
-
-          scrollContainer.addEventListener('wheel', (e) => {
-            if (!e) return;
-            e.preventDefault();
-            if (!e.deltaY) return;
-            if (isDelayingScroll) return;
-
-            const direction = e.deltaY > 0 ? 1 : -1;
-            const currentPage = Math.round(scrollContainer.scrollTop / vh || 0);
-            let targetPage = currentPage + direction;
-            if (targetPage < 0) targetPage = 0;
-            if (targetPage > pageCount - 1) targetPage = pageCount - 1;
-            if (targetPage === currentPage) return;
-
-            isDelayingScroll = true;
-            flipToPage(targetPage);
-            setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
-          }, { passive: false });
+          setTimeout(() => { hideLoaderGif(); }, Math.min(loaderGifDuration, 600));
         })();
+      }
 
-        // --- Bookmark handling: clicks on in-page anchors and hash changes ---
-        function handleHashJump(hash) {
-          if (!hash || hash === '#') return;
-          const target = document.querySelector(hash);
-          if (!target) return;
-          const idx = pageIndexFor(target);
-          if (idx >= 0) {
-            // Use the same flip animation as the wheel pager
-            flipToPage(idx);
-          } else {
-            // Fallback: smooth scroll to element if it isn't a full page
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
+      // Wheel handling: one page per gesture (throttled)
+      (function installWheelPager(){
+        const pageCount = pagesList.length;
+        const scrollLockDuration = 700;
+        let isDelayingScroll = false;
 
-        // Intercept clicks on anchors like <a href="#page4">
-        document.addEventListener('click', (e) => {
-          const a = e.target.closest('a[href^="#"]');
-          if (!a) return;
-          const href = a.getAttribute('href');
-          if (!href || href.length < 2) return; // "#" only
-          const target = document.querySelector(href);
-          if (!target) return;
-
+        scrollContainer.addEventListener('wheel', (e) => {
+          if (!e) return;
           e.preventDefault();
-          // Update URL hash for deep linkability, then flip via hashchange handler
-          if (history.pushState) {
-            history.pushState(null, '', href);
-            handleHashJump(href);
+          if (!e.deltaY) return;
+          if (isDelayingScroll) return;
+
+          const direction = e.deltaY > 0 ? 1 : -1;
+          const currentPage = Math.round(scrollContainer.scrollTop / vh || 0);
+          let targetPage = currentPage + direction;
+          if (targetPage < 0) targetPage = 0;
+          if (targetPage > pageCount - 1) targetPage = pageCount - 1;
+          if (targetPage === currentPage) return;
+
+          isDelayingScroll = true;
+          flipToPage(targetPage);
+          setTimeout(() => { isDelayingScroll = false; }, scrollLockDuration);
+        }, { passive: false });
+      })();
+
+      // Hash and anchor handling (uses flipToPage for in-page anchors)
+      function handleHashJump(hash) {
+        if (!hash || hash === '#') return;
+        const target = document.querySelector(hash);
+        if (!target) return;
+        const idx = pageIndexFor(target);
+        if (idx >= 0) flipToPage(idx);
+        else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        if (!href || href.length < 2) return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        if (history.pushState) {
+          history.pushState(null, '', href);
+          handleHashJump(href);
+        } else {
+          location.hash = href;
+        }
+      }, { capture: true });
+
+      window.addEventListener('hashchange', () => handleHashJump(location.hash));
+      if (location.hash) setTimeout(() => handleHashJump(location.hash), 0);
+
+      // Optimized scroll tracking (throttled via rAF)
+      let scrollTicking = false;
+      function onScroll() {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(() => {
+          const scrollY = scrollContainer.scrollTop;
+          if (scrollY < vh) {
+            if (title && title.style) { title.style.opacity = '1'; title.style.transform = 'translate(-50%, -50%)'; }
+          } else if (scrollY < vh * 2) {
+            const progress = (scrollY - vh) / vh;
+            if (title && title.style) { title.style.opacity = 1 - 0.5 * progress; title.style.transform = 'translate(-50%, -50%)'; }
           } else {
-            // Fallback updates the hash; hashchange handler will catch it
-            location.hash = href;
+            if (title && title.style) { title.style.opacity = '0.5'; title.style.transform = 'translate(-50%, -100vh)'; }
           }
-        }, { capture: true });
 
-        // Respond to manual hash changes (back/forward, programmatic changes)
-        window.addEventListener('hashchange', () => handleHashJump(location.hash));
+          const current = Math.round(scrollY / vh || 0);
+          if (typeof window._lastPage === 'undefined') window._lastPage = current;
+          if (current !== window._lastPage) {
+            page6Panels.forEach(p => { p.classList.remove('show'); p.setAttribute('aria-hidden', 'true'); });
+            page6Buttons.forEach(b => b.setAttribute('aria-expanded', 'false'));
+            window._lastPage = current;
+            updateAllBoxes();
+          }
 
-        // If the page loads with a hash, honor it with the flip animation
-        if (location.hash) {
-          // small defer to ensure layout is ready
-          setTimeout(() => handleHashJump(location.hash), 0);
+          scrollTicking = false;
+        });
+      }
+      scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      updateAllBoxes();
+
+      // Panel initialization (merged)
+      function initPanels(sectionSelector) {
+        const section = document.querySelector(sectionSelector);
+        if (!section) return;
+
+        const btns = Array.from(section.querySelectorAll('.page6-buttons [data-panel]'));
+        const panels = new Map();
+        section.querySelectorAll('.page6-panel[id]').forEach(p => panels.set(p.id, p));
+
+        let openId = null;
+        function showPanel(id, btn) {
+          if (openId && panels.get(openId)) {
+            hidePanel(openId);
+            if (openId === id) return;
+          }
+          const panel = panels.get(id);
+          if (!panel) return;
+          panel.classList.add('show');
+          panel.setAttribute('aria-hidden', 'false');
+          if (btn) btn.setAttribute('aria-expanded', 'true');
+          openId = id;
+        }
+        function hidePanel(id) {
+          const panel = panels.get(id);
+          if (!panel) return;
+          panel.classList.remove('show');
+          panel.setAttribute('aria-hidden', 'true');
+          btns.forEach(b => { if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false'); });
+          if (openId === id) openId = null;
         }
 
-        // Optimized scroll position tracking
-        let scrollTicking = false;
-        function onScroll() {
-          if (scrollTicking) return;
-          scrollTicking = true;
-          requestAnimationFrame(() => {
-            const scrollY = scrollContainer.scrollTop;
-            if (scrollY < vh) {
-              if (titleStyle) { titleStyle.opacity = '1'; titleStyle.transform = 'translate(-50%, -50%)'; }
-            } else if (scrollY < vh * 2) {
-              const progress = (scrollY - vh) / vh;
-              if (titleStyle) { titleStyle.opacity = 1 - 0.5 * progress; titleStyle.transform = 'translate(-50%, -50%)'; }
-            } else {
-              if (titleStyle) { titleStyle.opacity = '0.5'; titleStyle.transform = 'translate(-50%, -100vh)'; }
-            }
-
-            // close all page6 panels when page changes (fast check using cached panels)
-            const current = Math.round(scrollY / vh || 0);
-            if (typeof window._lastPage === 'undefined') window._lastPage = current;
-            if (current !== window._lastPage) {
-              page6Panels.forEach(p => {
-                p.classList.remove('show');
-                p.setAttribute('aria-hidden', 'true');
-              });
-              page6Buttons.forEach(b => b.setAttribute('aria-expanded', 'false'));
-              window._lastPage = current;
-              // update boxes on page change - avoids frequent calls otherwise
-              updateAllBoxes();
-            }
-
-            scrollTicking = false;
+        btns.forEach(btn => {
+          if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+          if (!btn.hasAttribute('role')) btn.setAttribute('role', 'button');
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.getAttribute('data-panel');
+            if (!id) return;
+            if (openId === id) hidePanel(id);
+            else showPanel(id, btn);
           });
-        }
-        scrollContainer.addEventListener('scroll', onScroll, {passive: true});
-        onScroll();
-        updateAllBoxes();
-
-        // --- Panel initialization (merged and optimized) ---
-        function initPanels(sectionSelector) {
-          const section = document.querySelector(sectionSelector);
-          if (!section) return;
-
-          // get buttons and panels inside the section (use cached page6Buttons/pages where applicable)
-          const btns = Array.from(section.querySelectorAll('.page6-buttons [data-panel]'));
-          const panels = new Map();
-          section.querySelectorAll('.page6-panel[id]').forEach(p => panels.set(p.id, p));
-
-          let openId = null;
-
-          function showPanel(id, btn) {
-            if (openId && panels.get(openId)) {
-              hidePanel(openId);
-              if (openId === id) return;
-            }
-            const panel = panels.get(id);
-            if (!panel) return;
-            panel.classList.add('show');
-            panel.setAttribute('aria-hidden', 'false');
-            if (btn) btn.setAttribute('aria-expanded', 'true');
-            openId = id;
-          }
-
-          function hidePanel(id) {
-            const panel = panels.get(id);
-            if (!panel) return;
-            panel.classList.remove('show');
-            panel.setAttribute('aria-hidden', 'true');
-            btns.forEach(b => {
-              if (b.getAttribute('data-panel') === id) b.setAttribute('aria-expanded', 'false');
-            });
-            if (openId === id) openId = null;
-          }
-
-          btns.forEach(btn => {
-            if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
-            if (!btn.hasAttribute('role')) btn.setAttribute('role', 'button');
-            btn.addEventListener('click', (e) => {
+          btn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              const id = btn.getAttribute('data-panel');
-              if (!id) return;
-              if (openId === id) hidePanel(id);
-              else showPanel(id, btn);
-            });
-            btn.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                btn.click();
-              }
-            });
-            btn.tabIndex = 0;
-          });
-
-          section.addEventListener('pointerdown', (e) => {
-            if (!openId) return;
-            const panel = panels.get(openId);
-            if (panel && !panel.contains(e.target) && !btns.includes(e.target)) {
-              hidePanel(openId);
+              btn.click();
             }
           });
-        }
-
-        initPanels('.page3');
-        initPanels('.page6');
-
-        // --- track-panels click-to-show-panel (kept behavior identical) ---
-        const labels = document.querySelectorAll('.track-panels label');
-        labels.forEach(label => {
-          label.addEventListener('click', () => {
-            const id = label.dataset.target;
-            document.querySelectorAll('.page6-panel').forEach(p => {
-              if (p.id === id) {
-                p.classList.add('show');
-                p.setAttribute('aria-hidden', 'false');
-              } else {
-                p.classList.remove('show');
-                p.setAttribute('aria-hidden', 'true');
-              }
-            });
-          });
+          btn.tabIndex = 0;
         });
 
+        section.addEventListener('pointerdown', (e) => {
+          if (!openId) return;
+          const panel = panels.get(openId);
+          if (panel && !panel.contains(e.target) && !btns.includes(e.target)) {
+            hidePanel(openId);
+          }
+        });
+      }
+
+      initPanels('.page3');
+      initPanels('.page6');
+
+      // Track panels click behavior
+      const labels = document.querySelectorAll('.track-panels label');
+      labels.forEach(label => {
+        label.addEventListener('click', () => {
+          const id = label.dataset.target;
+          document.querySelectorAll('.page6-panel').forEach(p => {
+            if (p.id === id) {
+              p.classList.add('show');
+              p.setAttribute('aria-hidden', 'false');
+            } else {
+              p.classList.remove('show');
+              p.setAttribute('aria-hidden', 'true');
+            }
+          });
+        });
       });
 
-      // Optimized window load handler
-      window.addEventListener('load', () => {
-        try {
-          const loader = document.getElementById('loader-wrapper');
-          const loaderGif = document.getElementById('loader-gif');
-          if (!loader) {
-            document.body.classList.remove('loading-bg');
-            return;
-          }
-          const showGifTimer = setTimeout(() => {
-            if (loaderGif) { loaderGif.style.opacity = '1'; loaderGif.style.pointerEvents = 'auto'; }
+    }); // DOMContentLoaded end
+
+    // window load: loader cleanup (keeps prior timings)
+    window.addEventListener('load', () => {
+      try {
+        const loader = document.getElementById('loader-wrapper');
+        const loaderGif = document.getElementById('loader-gif');
+        if (!loader) {
+          document.body.classList.remove('loading-bg');
+          return;
+        }
+        const showGifTimer = setTimeout(() => {
+          if (loaderGif) { loaderGif.style.opacity = '1'; loaderGif.style.pointerEvents = 'auto'; }
+        }, 500);
+        const hideLoaderTimer = setTimeout(() => {
+          loader.style.opacity = '0';
+          const removeLoaderTimer = setTimeout(() => {
+            try { loader.remove(); } catch(e){}
+            const finalCleanupTimer = setTimeout(() => {
+              if (loaderGif) { loaderGif.style.opacity = '0'; loaderGif.style.pointerEvents = 'none'; }
+              document.body.classList.remove('loading-bg');
+            }, 120);
           }, 500);
-          const hideLoaderTimer = setTimeout(() => {
-            loader.style.opacity = '0';
-            const removeLoaderTimer = setTimeout(() => {
-              try { loader.remove(); } catch(e){}
-              const finalCleanupTimer = setTimeout(() => {
-                if (loaderGif) { loaderGif.style.opacity = '0'; loaderGif.style.pointerEvents = 'none'; }
-                document.body.classList.remove('loading-bg');
-              }, 120);
-            }, 500);
-          }, 1000);
-        } catch(e) { console.error('load handler', e); }
-      });
-    } catch (err) {
-      console.error('initialization error', err);
-    }
+        }, 1000);
+      } catch(e) { console.error('load handler', e); }
+    });
   })();
 </script>
 
