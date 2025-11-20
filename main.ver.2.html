@@ -456,6 +456,63 @@
       transition: opacity 0.3s ease 0.1s;
     }
     .bookmark:hover span { opacity: 1; }
+    :root {
+      --scheduleBase: #5DADE2; /* shallow blue */
+      --pixelBorderColor: #2E86C1;
+      --pixelHighlightColor: #85C1E9;
+      --pixelShadowColor: rgba(0, 0, 0, 0.2);
+      --pixelWidth: 3px;
+      --pixelWidthAlt: -3px;
+    }
+
+    .schedule-container {
+      position: absolute;
+      top: 33%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: flex-start;
+      pointer-events: none;
+      width: 90%;
+      z-index: 1;
+    }
+
+    .schedule-box {
+      position: relative;
+      width: 400px;
+      height: 300px;
+      padding: 12px 16px;
+      background: var(--scheduleBase);
+      color: white;
+      font-family: 'MinecraftRegular', monospace;
+      font-size: 0.9em;
+      line-height: 1.3em;
+      text-align: justify;
+      box-shadow:
+        0px var(--pixelWidth) var(--pixelHighlightColor),
+        0px var(--pixelWidthAlt) var(--scheduleBase),
+        var(--pixelWidth) 0px var(--scheduleBase),
+        var(--pixelWidthAlt) 0px var(--scheduleBase),
+        0px calc(var(--pixelWidthAlt)*2) var(--pixelBorderColor),
+        0px calc(var(--pixelWidth)*2) var(--pixelBorderColor),
+        calc(var(--pixelWidth)*2) 0px var(--pixelBorderColor),
+        calc(var(--pixelWidthAlt)*2) 0px var(--pixelBorderColor),
+        calc(var(--pixelWidth)*3) 0px var(--pixelShadowColor),
+        0px calc(var(--pixelWidth)*3) var(--pixelShadowColor);
+    }
+
+    .schedule-box h3 {
+      text-align: center;
+      margin: 0 0 8px 0;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .schedule-box p {
+      margin: 0;
+    }
 
 </style>
 </head>
@@ -595,19 +652,49 @@
       </div>
       <div style="position: absolute; top: 33%; left: 50%; transform: translateX(-50%); z-index: 1; width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-start; pointer-events: none;">
         <div style="color: #fff; font-family: 'MinecraftRegular', monospace; font-size: 1em; text-align: left; max-width: 80%;">
-          <p>
-            Friday, November 21st<br>
-            6:00 - 8:00 PM        Pre-WHACK Social        Boba & Mafia        LWC-212 Anderson Forum
-            <br><br>
-            Saturday, November 22nd<br>
-            Welcome to WHACK! This is an introduction to who we are, what we do, and why you should join. Note: There will be a Q&amp;A session at the end.<br><br>
+          <div class="schedule-container">
+            <div class="schedule-box">
+              <h3>Friday, November 21st</h3>
+              <p>
+                6:00 - 8:00 PM                Pre-WHACK Social                Boba & Mafia                LWC-212 Anderson Forum<br>
+              </p>
+            </div>
 
-            11/12 Thursday Virtual Event 2: Discord Game Night!<br>
-            Come join other WHACK participants for some games! Meet new people and have fun!<br><br>
+            <div class="schedule-box">
+              <h3>Saturday, November 22nd</h3>
+              <p>
+                Welcome to WHACK! This is an introduction to who we are, what we do, and why you should join.<br>
+                Note: There will be a Q&A session at the end.
+              </p>
+            </div>
 
-            11/21 Friday In-Person Event 3: Meet &amp; Greet!<br>
-            Relax and idea prep, meet your (potential) teammates in-person! (Highly suggested for those who haven’t joined a team)
-          </p>
+            <div class="schedule-box">
+              <h3>Sunday, November 23rdh</h3>
+              <p>
+                10:30 - 11:30 AM
+                Devpost Submissions Workshop
+                MLH
+                LWC-104 Cow Chair Room<br>
+
+                12:00 PM
+                Devpost Submissions Deadline<br>
+
+                12:00 - 2:00 PM
+                Brunch<br>
+
+                Tishman Commons
+                12:30 - 3:00 PM
+                Judging and Presentations<br>
+
+                LWC-212 Anderson Forum
+                3:30 - 4:30 PM 
+                Closing Ceremony & Awards<br>
+
+                LWC-105 Anderson Forum<br>
+
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       <div id="timeline" role="banner" style="top:13%; left:50%; transform:translate(-50%,-25%); position:absolute; z-index:10; width:20vw; display:flex; justify-content:center; align-items:center; pointer-events:none;">
